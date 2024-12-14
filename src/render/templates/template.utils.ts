@@ -1,40 +1,29 @@
 import { error } from '@/engine/services/error';
 
-//#region CONSTANTS
-const spriteFiles: Record<string, { default: string }>
-    = import.meta.glob('/src/assets/sprites/**/*.{png,gif}', { eager: true });
-//#endregion
-
 //#region UTILS
-export const getSpritePath = ({ spriteName, gif }: {
-    gif?: boolean,
-    spriteName: string,
+export const getElement = ({ elId }: { elId: string }) => {
+    return document.getElementById(elId)
+        ?? error({ message: `Element ${elId} does not exist`, where: getElement.name });
+};
+
+export const checkElement = ({ id }: { id: string }) => {
+    return document.getElementById(id) !== null;
+};
+
+export const searchElementsById = ({ partialid }: { partialid: string }) => {
+    return [...document.querySelectorAll(`[id*="${partialid}"]`)] as HTMLElement[];
+};
+
+export const searchElementsByClassName = ({ parent, className }: {
+    className: string,
+    parent: string,
 }) => {
-    const spriteKey = spriteName.replace(/^(.*?)(\/[^/]+)?(\.[^./]+)?$/, '$1').split('_')[0];
-    const spritePath = `/src/assets/sprites/${spriteKey}/${spriteName}.${(gif) ? 'gif' : 'png'}`;
+    const parentEl = getElement({ elId: parent });
 
-    return spriteFiles[spritePath].default
-        ?? error({ message: `Sprite ${spriteName} not found`, where: getSpritePath.name });
-};
+    const classEls = [...parentEl.querySelectorAll(`.${className}`)] as HTMLElement[];
 
-export const getElement = ({ elementId }: { elementId: string }) => {
-    return document.getElementById(elementId)
-        ?? error({ message: `Element ${elementId} does not exist`, where: getElement.name });
-};
-
-export const checkElement = ({ elementId }: { elementId: string }) => {
-    return document.getElementById(elementId) !== null;
-};
-
-export const searchElementsById = ({ partialElementId }: { partialElementId: string }) => {
-    return [...document.querySelectorAll(`[id*="${partialElementId}"]`)] as HTMLElement[];
-};
-
-export const searchElementsByClassName = ({ className }: { className: string }) => {
-    const elements = [...document.querySelectorAll(`.${className}`)] as HTMLElement[];
-
-    return (elements.length)
-        ? elements
+    return (classEls.length)
+        ? classEls
         : error({
             message: `No element with class ${className} found`,
             where: searchElementsByClassName.name,

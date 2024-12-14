@@ -1,116 +1,64 @@
-import { invalidPosition, updatePositionXY } from './position.utils';
-
-import { getComponent, isPlayer } from '@/engine/entities';
+import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
-import { EventTypes } from '@/engine/services/event';
-import { getStore } from '@/engine/services/store';
-import { updateSpriteDirection } from '@/engine/systems/sprite';
-import { event } from '@/render/events';
+import { getAdmin, getComponent, getTileMap } from '@/engine/systems/entities';
+import { RenderEventTypes } from '@/render/events';
+
+//#region CONSTANTS
+//#endregion
 
 //#region SYSTEMS
-export const updatePosition = ({ entityId, tileMapEntityId, target, x, y, subX = 0, subY = 0 }: {
-    entityId?: string | null,
-    subX?: number,
-    subY?: number,
-    target?: 'up' | 'down' | 'left' | 'right',
-    tileMapEntityId?: string | null,
-    x: number,
-    y: number,
+export const moveToTarget = ({ entityId, targetX, targetY }: {
+    entityId: string,
+    targetX: number,
+    targetY: number
 }) => {
-    if (invalidPosition({ x, y })) {
-        throw error({ message: `Position (${x}-${y}) is invalid`, where: updatePosition.name });
+    const entityPosition = getComponent({ componentId: 'Position', entityId });
+    if ((entityPosition._x === targetX && entityPosition._y === targetY)) {
+        return true;
     }
 
-    if (!(entityId)) entityId = getStore('playerId')
-        ?? error({ message: 'Store playerId is undefined', where: updatePosition.name });
+    const xDiff = targetX - entityPosition._x;
+    const yDiff = targetY - entityPosition._y;
 
-    if (target) {
-        updateSpriteDirection({ entityId, target });
+    if (Math.abs(xDiff) > Math.abs(yDiff)) {
+        if (xDiff > 0) entityPosition._x += 1;
+        else entityPosition._x -= 1;
+    } else {
+        if (yDiff > 0) entityPosition._y += 1;
+        else entityPosition._y -= 1;
     }
 
-    const position = getComponent({ componentId: 'Position', entityId });
+    emit({ entityId, target: 'render', type: RenderEventTypes.POSITION_UPDATE });
 
-    updatePositionXY({ entityId, subX, subY, x, y });
-
-    if (!(tileMapEntityId)) tileMapEntityId = getStore('tileMapId')
-        ?? error({ message: 'Store tileMapId is undefined', where: updatePosition.name });
-
-    const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapEntityId });
-    if (position._tileMapName !== tileMap._name) {
-        position._tileMapName = tileMap._name;
-    }
-
-    if (isPlayer({ entityId })) {
-        event({ entityId, type: EventTypes.MAIN_CAMERA_UPDATE });
-    }
-    else {
-        event({ entityId, type: EventTypes.ENTITY_POSITION_UPDATE });
-    }
-
-    event({ entityId, type: EventTypes.ENTITY_SPRITE_UPDATE });
+    return (entityPosition._x === targetX && entityPosition._y === targetY);
 };
 
-export const getTargetPosition = ({
-    target,
-    x,
-    y,
-    subX = 0,
-    subY = 0,
-    step = 0.1,
-}: {
-    step?: number,
-    subX?: number,
-    subY?: number,
-    target: 'up' | 'down' | 'left' | 'right',
-    x: number,
-    y: number,
-}) => {
-    let targetX = x;
-    let targetY = y;
-    let targetSubX = subX;
-    let targetSubY = subY;
+export const getTileAtPosition = ({ x, y }: { x: number; y: number }) => {
+    const tileMap = getTileMap();
 
-    switch (target) {
-        case 'up':
-            targetSubY -= step;
-            if (targetSubY < 0) {
-                targetY -= 1;
-                targetSubY = 1 + targetSubY;
-            }
-            break;
-        case 'down':
-            targetSubY += step;
-            if (targetSubY >= 1) {
-                targetY += 1;
-                targetSubY -= 1;
-            }
-            break;
-        case 'left':
-            targetSubX -= step;
-            if (targetSubX < 0) {
-                targetX -= 1;
-                targetSubX = 1 + targetSubX;
-            }
-            break;
-        case 'right':
-            targetSubX += step;
-            if (targetSubX >= 1) {
-                targetX += 1;
-                targetSubX -= 1;
-            }
-            break;
-        default:
-            throw error({
-                message: 'Invalid movement target',
-                where: getTargetPosition.name,
-            });
+    for (const tileId of tileMap.tiles) {
+        const tilePosition = getComponent({ componentId: 'Position', entityId: tileId });
+
+        if (tilePosition._x === x && tilePosition._y === y) {
+            return tileId;
+        }
     }
 
-    return {
-        targetSubX,
-        targetSubY,
-        targetX,
-        targetY,
-    };
+    throw error({
+        message: `Tile at position (${x},${y}) not found`,
+        where: getTileAtPosition.name,
+    });
+};
+
+export const getGemAtPosition = ({ x, y }: { x: number; y: number }) => {
+    const admin = getAdmin();
+
+    for (const gemId of admin.gems) {
+        const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+        if (gemPosition._x === x && gemPosition._y === y) {
+            return gemId;
+        }
+    }
 };
 //#endregion

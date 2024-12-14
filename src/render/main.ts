@@ -1,50 +1,16 @@
-import {
-    createDayTime,
-    createError,
-    createFrame,
-    createLaunchMenu,
-    createLoading,
-    createQuestMenu,
-    createSettingsMenu,
-} from './templates';
-
-import { initAudios } from '@/engine/services/audio';
-import { onKeyDown, onKeyUp } from '@/engine/services/input';
-
-//#region CONSTANTS
-export const app = document.getElementById('app')!;
-//#endregion
+import { createMenus, createUI, displayLaunch } from '@/render/templates';
 
 export const main = () => {
     launch();
 };
 
-export const run = () => {
-    initGameMenus();
-};
-
 const launch = () => {
-    createFrame();
-    createLoading();
-    createError();
+    createMenus();
+    createUI();
 
-    initEvents();
-    initMenus();
-    initAudios();
+    displayLaunch({ display: true });
 };
 
-const initEvents = () => {
-    document.addEventListener('keydown', (event) => onKeyDown(event.key));
-    document.addEventListener('keyup', (event) => onKeyUp(event.key));
+export const run = () => {
+    displayLaunch({ display: false });
 };
-
-const initMenus = () => {
-    createLaunchMenu();
-    createSettingsMenu();
-};
-
-const initGameMenus = () => {
-    createQuestMenu();
-    createDayTime();
-};
-

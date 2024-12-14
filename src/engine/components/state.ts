@@ -1,6 +1,6 @@
 export type State = {
     _: 'State';
-    _active?: boolean;
-    _cooldown?: boolean;
-    _load?: boolean;
+    _action: 'idle' | 'move' | 'work';
+    _request: boolean;
+    _store: boolean;
 };

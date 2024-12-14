@@ -1,0 +1,122 @@
+/* GAME */
+.game {
+    height: 100%;
+    width: 100%;
+}
+
+/* TILEMAP */
+.tilemap {
+    height: 100%;
+    width: 100%;
+}
+
+.tilemap .tile {
+    box-sizing: border-box;
+}
+
+.tilemap .tile:hover {
+    border: solid 2px rgb(255, 255, 255)
+}
+
+.tilemap .tile.request:hover {
+    border: solid 2px rgb(255, 231, 94)
+}
+
+.tilemap .tile.destroy {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* ENTITY */
+.tilemap .admin {
+    background-color: rgb(180, 165, 213);
+    border-radius: 20px 20px 0 0;
+    box-sizing: border-box;
+}
+
+.tilemap .admin:hover {
+    border: solid 2px rgb(255, 231, 94)
+}
+
+.tilemap .admin.disable {
+    pointer-events: none;
+}
+
+.tilemap .gem {
+    border-radius: 20px 20px 0 0;
+    box-sizing: border-box;
+}
+
+.tilemap .gem:hover {
+    border: solid 2px rgb(255, 231, 94);
+}
+
+.tilemap .gem.request {
+    border: solid 2px rgb(255, 231, 94);
+    pointer-events: none;
+}
+
+.tilemap .gem.disable {
+    pointer-events: none;
+}
+
+.tilemap .gem.mine {
+    animation: mine-anim 0.3s infinite;
+    transform-origin: bottom center;
+}
+
+@keyframes mine-anim {
+
+    0%,
+    100% {
+        transform: translateX(0) rotate(0deg);
+    }
+
+    10% {
+        transform: translateX(-2px) rotate(-1deg);
+    }
+
+    20% {
+        transform: translateX(2px) rotate(1deg);
+    }
+
+    30% {
+        transform: translateX(-2px) rotate(-1deg);
+    }
+
+    40% {
+        transform: translateX(2px) rotate(1deg);
+    }
+
+    50% {
+        transform: translateY(-3px) rotate(-0.5deg);
+    }
+
+    60% {
+        transform: translateY(3px) rotate(0.5deg);
+    }
+
+    70% {
+        transform: translateX(-1px) rotate(-0.5deg);
+    }
+
+    80% {
+        transform: translateX(1px) rotate(0.5deg);
+    }
+}
+
+.tilemap .gem.carry {
+    animation: carry-anim 1.2s ease-in-out infinite;
+}
+
+@keyframes carry-anim {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}

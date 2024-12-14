@@ -1,6 +1,0 @@
-[
-    { "id": 1, "name": "BugNet1", "ingredients": [{ "name": "Wood1", "amount": 1 }, { "name": "Rock1", "amount": 1 }], "tool": "ResourceBug" },
-    { "id": 2, "name": "FishRod1", "ingredients": [{ "name": "Wood1", "amount": 1 }, { "name": "Rock1", "amount": 1 }], "tool": "ResourceFish" },
-    { "id": 3, "name": "Campfire", "ingredients": [{ "name": "Wood1", "amount": 5 }, { "name": "Rock1", "amount": 5 }, { "name": "Leaf1", "amount": 5 }] },
-    { "id": 4, "name": "Tent", "ingredients": [{ "name": "Wood1", "amount": 10 }, { "name": "Rock1", "amount": 10 }, { "name": "Leaf1", "amount": 10 }] }
-]

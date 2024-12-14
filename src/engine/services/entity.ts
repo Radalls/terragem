@@ -1,341 +1,98 @@
+import { Admin, Drop, GemTypes } from '@/engine/components';
 import {
-    addSprite,
+    addAdmin,
+    addCarry,
+    addMine,
     addPosition,
-    addInventory,
-    addTileMap,
-    addResourceItem,
-    addTrigger,
-    addResourceBug,
-    addCollider,
-    addResourceFish,
-    addDialog,
-    addResourceCraft,
-    addManager,
-    addEnergy,
+    addSprite,
     addState,
-    addResourcePlace,
-} from './component';
-import { EventTypes } from './event';
-
-import { Energy } from '@/engine/components/energy';
-import { Inventory } from '@/engine/components/inventory';
-import { Manager } from '@/engine/components/manager';
-import { Position } from '@/engine/components/position';
-import { createEntity, MANAGER_ENTITY_NAME, PLAYER_ENTITY_NAME, TILEMAP_ENTITY_NAME } from '@/engine/entities';
-import { getStore } from '@/engine/services/store';
-import { generateTileMap, setTile } from '@/engine/systems/tilemap';
-import { event } from '@/render/events';
+    addTile,
+    addTileMap,
+} from '@/engine/services/component';
+import { emit } from '@/engine/services/emit';
+import {
+    ADMIN_ENTITY_NAME,
+    createEntity,
+    GEM_ENTITY_NAME,
+    getAdmin,
+    TILE_ENTITY_NAME,
+    TILEMAP_ENTITY_NAME,
+} from '@/engine/systems/entities';
+import { getSpritePath } from '@/engine/systems/sprite';
+import { generateTileMap } from '@/engine/systems/tilemap';
+import { RenderEventTypes } from '@/render/events';
 
 //#region SERVICES
+export const createEntityAdmin = ({ adminId, saveAdmin }: {
+    adminId?: string | null,
+    saveAdmin?: Admin,
+}) => {
+    if (!(adminId)) adminId = createEntity({ entityName: ADMIN_ENTITY_NAME });
+
+    addAdmin({ adminId, saveAdmin });
+
+    emit({ entityId: adminId, target: 'render', type: RenderEventTypes.ADMIN_CREATE });
+};
+
 export const createEntityTileMap = ({ tileMapName }: { tileMapName: string }) => {
-    const entityId = createEntity({ entityName: TILEMAP_ENTITY_NAME });
+    const tileMapId = createEntity({ entityName: TILEMAP_ENTITY_NAME });
 
-    addTileMap({ entityId, tileMapName });
-
-    generateTileMap({ tileMapName });
-};
-
-export const createEntityManager = ({ savedManager, managerEntityId }: {
-    managerEntityId?: string | null,
-    savedManager?: Manager,
-}) => {
-    if (!(managerEntityId)) managerEntityId = getStore('managerId')
-        ?? createEntity({ entityName: MANAGER_ENTITY_NAME });
-
-    addManager({ entityId: managerEntityId, savedManager });
-};
-
-export const createEntityPlayer = ({
-    spriteHeight = 2,
-    spriteWidth = 1,
-    spritePath,
-    positionX = 0,
-    positionY = 0,
-    inventoryMaxSlots = 10,
-    energyMax = 10,
-    savedPosition,
-    savedInventory,
-    savedEnergy,
-}: {
-    energyMax?: number
-    inventoryMaxSlots?: number,
-    positionX?: number,
-    positionY?: number,
-    savedEnergy?: Energy,
-    savedInventory?: Inventory,
-    savedPosition?: Position,
-    spriteHeight?: number,
-    spritePath: string,
-    spriteWidth?: number,
-}) => {
-    const entityId = createEntity({ entityName: PLAYER_ENTITY_NAME });
-
-    addState({ entityId, load: true });
-    addSprite({ direction: 'down', entityId, height: spriteHeight, image: spritePath, width: spriteWidth });
-    addPosition({ entityId, savedPosition, x: positionX, y: positionY });
-    addInventory({ entityId, maxSlots: inventoryMaxSlots, savedInventory });
-    addEnergy({ current: energyMax, entityId, max: energyMax, savedEnergy });
-
-    setTile({ entityId });
-
-    event({ entityId, type: EventTypes.MAIN_CAMERA_UPDATE });
-};
-
-export const createEntityNpc = ({
-    entityName,
-    spriteHeight = 2,
-    spriteWidth = 1,
-    spritePath,
-    positionX,
-    positionY,
-    trigger,
-    collider,
-}: {
-    collider?: { x: number, y: number }[],
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    spriteHeight?: number,
-    spritePath: string,
-    spriteWidth?: number,
-    trigger?: { x: number, y: number }[],
-}) => {
-    const entityId = createEntity({ entityName });
-
-    addState({ active: false, entityId, load: true });
-    addSprite({ entityId, height: spriteHeight, image: spritePath, width: spriteWidth });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addDialog({ entityId });
-    addCollider({ entityId, points: collider });
-    addTrigger({
-        entityId,
-        points: trigger,
-        priority: 3,
-    });
-
-    setTile({ entityId });
-};
-
-export const createEntityResourceItem = ({
-    entityName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    positionX,
-    positionY,
-    resourceItems,
-    stateCooldown = true,
-}: {
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    resourceItems: { name: string, rate: number }[],
-    spriteHeight?: number,
-    spriteWidth?: number,
-    stateCooldown?: boolean,
-}) => {
-    const entityId = createEntity({ entityName });
-
-    addState({
-        cooldown: (stateCooldown)
-            ? false
-            : undefined,
-        entityId,
-        load: true,
-    });
-    const { resource } = addResourceItem({
-        entityId,
-        items: resourceItems,
-    });
-
+    const tileMap = addTileMap({ tileMapId, tileMapName });
     addSprite({
-        entityId,
-        height: spriteHeight,
-        image: `resource_${resource.item?.info._name.toLowerCase()}`,
-        width: spriteWidth,
+        entityId: tileMapId,
+        height: tileMap._height,
+        image: getSpritePath({ spriteName: `map_${tileMap._name}` }),
+        width: tileMap._width,
     });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addTrigger({ entityId, priority: 2 });
 
-    setTile({ entityId });
+    emit({ entityId: tileMapId, target: 'render', type: RenderEventTypes.TILEMAP_CREATE });
+
+    generateTileMap({});
 };
 
-export const createEntityResourceBug = ({
-    entityName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    positionX,
-    positionY,
-    resourceItems,
-}: {
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    resourceItems: { name: string, rate: number }[],
-    spriteHeight?: number,
-    spriteWidth?: number,
+export const createEntityTile = ({ drops, dropAmount, x, y }: {
+    dropAmount: number,
+    drops: Drop[],
+    x: number,
+    y: number,
 }) => {
-    const entityId = createEntity({ entityName });
+    const tileId = createEntity({ entityName: TILE_ENTITY_NAME });
 
-    addState({ cooldown: false, entityId, load: true });
-    addResourceBug({ entityId, items: resourceItems });
-
+    addTile({ dropAmount, drops, tileId });
+    addPosition({ entityId: tileId, x, y });
     addSprite({
-        entityId,
-        gif: true,
-        height: spriteHeight,
-        image: 'resource_bug', //TODO: temp
-        width: spriteWidth,
-    });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addTrigger({ entityId, priority: 1 });
-
-    setTile({ entityId });
-};
-
-export const createEntityResourceFish = ({
-    entityName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    positionX,
-    positionY,
-    resourceItems,
-}: {
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    resourceItems: { name: string, rate: number }[],
-    spriteHeight?: number,
-    spriteWidth?: number,
-}) => {
-    const entityId = createEntity({ entityName });
-
-    addState({ cooldown: false, entityId, load: true });
-    addResourceFish({ entityId, items: resourceItems });
-
-    addSprite({
-        entityId,
-        gif: true,
-        height: spriteHeight,
-        image: 'resource_fish', //TODO: temp
-        width: spriteWidth,
-    });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addCollider({ entityId });
-    addTrigger({
-        entityId,
-        points: [
-            { x: -2, y: 0 },
-            { x: 0, y: -2 },
-            { x: 2, y: 0 },
-            { x: 0, y: 2 },
-        ],
-        priority: 1,
+        entityId: tileId,
+        image: getSpritePath({ spriteName: 'tile_tile1' }),
     });
 
-    setTile({ entityId });
+    emit({ entityId: tileId, target: 'render', type: RenderEventTypes.TILE_CREATE });
+
+    return tileId;
 };
 
-export const createEntityResourceCraft = ({
-    entityName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    spritePath,
-    positionX,
-    positionY,
-    trigger,
-    collider,
-}: {
-    collider?: { x: number, y: number }[],
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    spriteHeight?: number,
-    spritePath: string,
-    spriteWidth?: number,
-    trigger?: { x: number, y: number }[],
+export const createEntityGem = ({ type, x = 0, y = 0 }: {
+    type: GemTypes,
+    x?: number,
+    y?: number,
 }) => {
-    const entityId = createEntity({ entityName });
+    const gemId = createEntity({ entityName: GEM_ENTITY_NAME });
 
-    addState({ entityId, load: true });
-    addResourceCraft({ entityId });
+    addPosition({ entityId: gemId, x, y });
+    addState({ action: 'idle', entityId: gemId });
 
-    addSprite({ entityId, height: spriteHeight, image: spritePath, width: spriteWidth });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addCollider({ entityId, points: collider });
-    addTrigger({ entityId, points: trigger, priority: 1 });
-
-    setTile({ entityId });
-};
-
-export const createEntityResourcePlace = ({
-    entityName,
-    itemName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    spritePath,
-    positionX,
-    positionY,
-    stateActive = false,
-    trigger,
-    collider,
-}: {
-    collider?: { x: number, y: number }[],
-    entityName: string,
-    itemName: string,
-    positionX: number,
-    positionY: number,
-    spriteHeight?: number,
-    spritePath: string,
-    spriteWidth?: number,
-    stateActive?: boolean
-    trigger?: { x: number, y: number }[],
-}) => {
-    const entityId = createEntity({ entityName });
-
-    addState({
-        active: (stateActive)
-            ? false
-            : undefined,
-        entityId,
-        load: true,
-    });
-    addResourcePlace({ entityId, itemName });
-
-    addSprite({ entityId, height: spriteHeight, image: spritePath, width: spriteWidth });
-    addPosition({ entityId, x: positionX, y: positionY });
-    addCollider({ entityId, points: collider });
-    addTrigger({ entityId, points: trigger, priority: 1 });
-
-    setTile({ entityId });
-};
-
-export const createEntityAsset = ({
-    entityName,
-    spriteHeight = 1,
-    spriteWidth = 1,
-    spritePath,
-    positionX,
-    positionY,
-    collider,
-}: {
-    collider?: { x: number, y: number }[],
-    entityName: string,
-    positionX: number,
-    positionY: number,
-    spriteHeight?: number,
-    spritePath: string,
-    spriteWidth?: number,
-}) => {
-    const entityId = createEntity({ entityName });
-
-    addState({ entityId, load: true });
-    addSprite({ entityId, height: spriteHeight, image: spritePath, width: spriteWidth });
-    addPosition({ entityId, x: positionX, y: positionY });
-
-    if (collider) {
-        addCollider({ entityId, points: collider });
+    if (type === GemTypes.MINE) {
+        addMine({ gemId });
+    }
+    else if (type === GemTypes.CARRY) {
+        addCarry({ gemId });
     }
 
-    setTile({ entityId });
+    addSprite({
+        entityId: gemId,
+        image: getSpritePath({ spriteName: `gem_${type.toLowerCase()}` }),
+    });
+
+    const admin = getAdmin();
+    admin.gems.push(gemId);
 };
 //#endregion

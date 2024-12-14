@@ -1,0 +1,15 @@
+/* APP */
+body {
+    overflow: hidden;
+}
+
+.app {
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+}
+
+.btn {
+    cursor: pointer;
+    text-align: center;
+}
