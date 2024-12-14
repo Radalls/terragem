@@ -1,78 +1,61 @@
+import { Admin, GemTypes, ItemTypes } from './components';
+
+import { createAssetManager, AssetManager } from '@/engine/services/asset';
 import { startCycle } from '@/engine/services/cycle';
-import { createEntityManager, createEntityPlayer, createEntityTileMap } from '@/engine/services/entity';
+import { emit, GameEventTypes } from '@/engine/services/emit';
+import { createEntityAdmin, createEntityGem, createEntityTileMap } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
-import { EventTypes } from '@/engine/services/event';
-import { createLoadingManager, LoadingManager } from '@/engine/services/load';
-import { initState, setState } from '@/engine/services/state';
-import { initQuest, SaveData } from '@/engine/systems/manager';
-import { event } from '@/render/events';
+import { EngineEventTypes } from '@/engine/services/event';
+import { setState } from '@/engine/services/state';
 
-const playerInit = {
-    initMap: 'map_plains',
-    initPositionX: 58,
-    initPositionY: 31,
+//#region CONSTANTS
+export let asset: AssetManager;
+
+const testAdmin: Admin = {
+    _: 'Admin',
+    gems: [],
+    items: [
+        {
+            _amount: 5,
+            _type: ItemTypes.COPPER,
+        },
+        {
+            _amount: 5,
+            _type: ItemTypes.IRON,
+        },
+    ],
+    requests: [],
 };
-
-let loadingManager: LoadingManager;
+//#endregion
 
 export const main = () => {
-    loadingManager = createLoadingManager();
-    loadingManager.startLoading();
+    asset = createAssetManager();
+    asset.startLoading();
+
     launch();
 };
 
-export const run = ({ saveData }: { saveData?: SaveData }) => {
-    if (!(loadingManager.isLoadingComplete())) {
+const launch = () => {
+    setState({ key: 'gameLaunch', value: true });
+
+    createEntityAdmin({ saveAdmin: testAdmin });
+
+    startCycle();
+};
+
+export const run = () => {
+    if (!(asset.isLoadingComplete())) {
         error({
             message: 'Loading manager is not complete',
             where: run.name,
         });
     }
 
-    setState('isGameLoading', true);
-    event({ type: EventTypes.MAIN_LOADING_ON });
+    emit({ target: 'all', type: GameEventTypes.GAME_LOADING_ON });
 
-    if (saveData?.manager) {
-        createEntityManager({ savedManager: saveData.manager });
-    }
-    else {
-        createEntityManager({});
-    }
+    createEntityTileMap({ tileMapName: 'map1' });
+    createEntityGem({ type: GemTypes.MINE });
+    createEntityGem({ type: GemTypes.CARRY });
 
-    createEntityTileMap({
-        tileMapName: (saveData?.tileMapName)
-            ? saveData.tileMapName
-            : playerInit.initMap,
-    });
-
-    createEntityPlayer({
-        positionX: (saveData?.playerPosition)
-            ? undefined
-            : playerInit.initPositionX,
-        positionY: (saveData?.playerPosition)
-            ? undefined
-            : playerInit.initPositionY,
-        savedEnergy: saveData?.playerEnergy,
-        savedInventory: saveData?.playerInventory,
-        savedPosition: saveData?.playerPosition,
-        spritePath: 'player_player1_down',
-    });
-
-    initState({});
-    initQuest({});
-
-    setState('isGameRunning', true);
-
-    setTimeout(() => {
-        setState('isGameLoading', false);
-        event({ type: EventTypes.MAIN_LOADING_OFF });
-    }, 1000);
-};
-
-export const launch = () => {
-    setState('isGameLaunching', true);
-
-    createEntityManager({});
-    initState({});
-    startCycle();
+    emit({ target: 'engine', type: EngineEventTypes.ENGINE_PLAY });
 };

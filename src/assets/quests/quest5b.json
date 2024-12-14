@@ -1,5 +1,0 @@
-{
-    "name": "quest5b",
-    "places": [{ "name": "Campfire", "amount": 1, "active": true }],
-    "talk": "Npc1"
-}

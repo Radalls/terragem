@@ -1,19 +1,24 @@
-import { checkEntityId } from '@/engine/entities';
+import { error } from '@/engine/services/error';
+import { checkEntityId } from '@/engine/systems/entities';
 
-const store = {
-    activityId: '',
-    dialogId: '',
-    managerId: '',
-    playerId: '',
-    tileMapId: '',
+//#region TYPES
+type Store = {
+    adminId: string | null;
+    requestId: string | null;
+    tileMapId: string | null;
 };
 
-export const setStore = (key: keyof typeof store, value: string) => store[key] = value;
-export const getStore = (key: keyof typeof store) => checkEntityId({ entityId: store[key] }) && store[key];
-export const clearStore = (key: keyof typeof store) => store[key] = '';
-export const resetStore = () => {
-    store.activityId = '';
-    store.dialogId = '';
-    store.playerId = '';
-    store.tileMapId = '';
+const store: Store = {
+    adminId: null,
+    requestId: null,
+    tileMapId: null,
 };
+
+export const setStore = ({ key, value }: { key: keyof typeof store, value: string }) => store[key] = value;
+export const getStore = ({ key }: {
+    key: keyof typeof store,
+}) => (store[key] && checkEntityId({ entityId: store[key] })) ?? error({
+    message: `No ${key} in store`,
+    where: 'getStore',
+});
+export const clearStore = ({ key }: { key: keyof typeof store }) => store[key] = null;

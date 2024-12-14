@@ -1,3 +1,3 @@
-# BEAST INTERSECTION
+# Terragem
 
-A little web-based "Animal Crossing like" project.
+A web-browser space industry game

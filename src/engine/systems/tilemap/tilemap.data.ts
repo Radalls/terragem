@@ -1,3 +1,4 @@
+import { ItemTypes } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
 const tileMapFiles: Record<string, { default: TileMapData }>
@@ -5,35 +6,22 @@ const tileMapFiles: Record<string, { default: TileMapData }>
 
 //#region TYPES
 export type TileMapData = {
-    entities: {
-        items?: { name: string, rate: number }[],
-        name?: string,
-        type: string,
-        x: number,
-        y: number,
-    }[],
     height: number,
-    id: number,
-    name: string,
-    tiles: {
-        exits?: {
-            direction: 'up' | 'down' | 'left' | 'right',
-            map: string,
-            x: number,
-            y: number
+    layers: {
+        drops: {
+            rate: number,
+            type: ItemTypes,
         }[],
-        solid?: boolean,
-        sound?: string,
-        x: number,
-        y: number
+        height: number,
     }[],
+    name: string,
     width: number
 };
 //#endregion
 
 //#region DATA
 export const loadTileMapData = ({ tileMapName }: { tileMapName: string }) => {
-    const tileMapPath = `/src/assets/maps/${tileMapName.toLowerCase()}.json`;
+    const tileMapPath = `/src/assets/maps/${tileMapName}.json`;
     const tileMapData = tileMapFiles[tileMapPath].default
         ?? error({ message: `TileMapData for ${tileMapName} not found`, where: loadTileMapData.name });
 
