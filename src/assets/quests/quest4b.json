@@ -1,0 +1,11 @@
+{
+    "name": "quest4b",
+    "items": [
+        { "name": "Fish1", "amount": 1, "keep": false },
+        { "name": "Fish2", "amount": 1, "keep": false },
+        { "name": "Fish3", "amount": 1, "keep": false },
+        { "name": "Fish4", "amount": 1, "keep": false },
+        { "name": "Fish5", "amount": 1, "keep": false }
+    ],
+    "talk": "Npc1"
+}

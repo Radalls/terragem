@@ -1,0 +1,6 @@
+{
+    "name": "quest6a",
+    "recipes": ["Tent"],
+    "items": [{ "name": "Tent", "amount": 1, "keep": true }],
+    "talk": "Npc1"
+}

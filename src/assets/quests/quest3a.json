@@ -1,0 +1,6 @@
+{
+    "name": "quest3a",
+    "recipes": ["BugNet1"],
+    "items": [{ "name": "BugNet1", "amount": 1, "keep": true }],
+    "talk": "Npc1"
+}

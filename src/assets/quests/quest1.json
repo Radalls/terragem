@@ -1,0 +1,5 @@
+{
+    "name": "quest1",
+    "items": [{ "name": "Flower1", "amount": 3, "keep": false }, { "name": "Flower2", "amount": 3, "keep": false }],
+    "talk": "Npc1"
+}

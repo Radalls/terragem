@@ -1,0 +1,5 @@
+{
+    "name": "quest6b",
+    "places": [{ "name": "Tent", "amount": 1 }],
+    "talk": "Npc1"
+}

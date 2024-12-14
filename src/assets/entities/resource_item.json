@@ -1,0 +1,30 @@
+[
+    {
+        "type": "ResourceItem",
+        "name": "Wood1"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Rock1"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Flower1"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Flower2"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Fruit1"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Leaf1"
+    },
+    {
+        "type": "ResourceItem",
+        "name": "Seashell1"
+    }
+]

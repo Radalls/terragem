@@ -1,0 +1,305 @@
+/* MAIN ACTIVITY */
+.activity {
+    background-color: rgb(182, 103, 77);
+    border: 12px solid rgb(91, 48, 38);
+    border-radius: 20px;
+    color: rgb(255, 241, 216);
+    display: block;
+    height: 100%;
+    left: 50%;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    overflow: hidden;
+    padding: 0px;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    z-index: 100;
+}
+
+.activity-cancel {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 8px;
+    text-align: center;
+    top: 8px;
+    width: 64px;
+    z-index: 100;
+}
+
+.activity-win {
+    align-items: center;
+    background-color: rgb(182, 103, 77);
+    border: 8px solid rgb(91, 48, 38);
+    border-radius: 8px;
+    bottom: 8px;
+    color: rgb(255, 241, 216);
+    display: flex;
+    gap: 2px;
+    justify-content: center;
+    left: 32px;
+    padding: 16px;
+    z-index: 100;
+}
+
+.activity-win-message {
+    font-size: 16px;
+    text-align: center;
+}
+
+.activity-win-item {
+    height: 32px;
+    width: 32px;
+}
+
+/* ACTIVITY BUG */
+.activity-bug {
+    align-items: center;
+    background-size: cover;
+    display: flex;
+    gap: 32px;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.activity-bug-hp {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 450px;
+    text-align: center;
+    top: 180px;
+    width: 64px;
+}
+
+.activity-bug-error {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 450px;
+    text-align: center;
+    top: 380px;
+    width: 64px;
+}
+
+.activity-bug-score-label {
+    font-size: 24px;
+    text-align: center;
+}
+
+.activity-bug-symbol {
+    align-items: center;
+    display: flex;
+    font-size: 32px;
+    gap: 32px;
+    justify-content: center;
+}
+
+.activity-bug-symbol-value {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    color: black;
+    display: flex;
+    font-size: 32px;
+    font-weight: bold;
+    height: 64px;
+    justify-content: center;
+    text-align: center;
+    width: 64px;
+}
+
+.activity-bug-symbol-found {
+    background-position: center center;
+    background-repeat: no-repeat;
+    height: 64px;
+    left: 800px;
+    width: 64px
+}
+
+/* ACTIVITY FISH */
+.activity-fish {
+    align-items: center;
+    background-size: cover;
+    display: flex;
+    gap: 32px;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.activity-fish-hp {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 650px;
+    text-align: center;
+    top: 405px;
+    width: 64px;
+}
+
+.activity-fish-rod-tension {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 250px;
+    text-align: center;
+    top: 70px;
+    width: 64px;
+}
+
+.activity-fish-key {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 820px;
+    text-align: center;
+    top: 120px;
+    width: 64px;
+}
+
+.activity-fish-frenzy {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 900px;
+    text-align: center;
+    top: 460px;
+    width: 64px;
+}
+
+/* ACTIVITY CRAFT */
+.activity-craft {
+    align-items: center;
+    background-color: rgb(220, 128, 15);
+    background-size: cover;
+    display: flex;
+    gap: 32px;
+    height: 100%;
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+}
+
+.activity-craft-recipes {
+    align-items: center;
+    display: flex;
+    height: 512px;
+    flex-direction: column;
+    gap: 16px;
+    padding-top: 64px;
+    height: 100%;
+    width: 100%;
+}
+
+.activity-craft-recipe {
+    align-items: center;
+    background-color: rgb(182, 103, 77);
+    border-radius: 8px;
+    display: flex;
+    gap: 32px;
+    padding: 8px;
+    width: 33%;
+}
+
+.activity-craft-recipe-item {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.activity-craft-recipe-item-icon {
+    height: 72px;
+    width: 72px;
+}
+
+.activity-craft-recipe-ingredients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.activity-craft-recipe-ingredient {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+}
+
+.activity-craft-recipe-ingredient-icon {
+    height: 48px;
+    width: 48px;
+}
+
+.activity-craft-recipe-ingredient-check {
+    bottom: 0px;
+    right: 0px;
+    font-size: 12px;
+}
+
+.activity-craft-play {
+    align-items: center;
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    width: 100%;
+}
+
+.activity-craft-progress {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 400px;
+    text-align: center;
+    width: 64px;
+}
+
+.activity-craft-key {
+    align-items: center;
+    background-color: white;
+    border-radius: 100px;
+    display: flex;
+    font-size: 32px;
+    height: 64px;
+    justify-content: center;
+    left: 800px;
+    text-align: center;
+    top: 250px;
+    width: 64px;
+}

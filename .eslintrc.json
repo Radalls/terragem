@@ -1,0 +1,112 @@
+{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint",
+        "import",
+        "typescript-sort-keys"
+    ],
+    "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off", // Disable requiring explicit return and argument types in functions exported from modules
+        "@typescript-eslint/no-explicit-any": "off", // Disable the use of explicit `any` type
+        "@typescript-eslint/no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ], // Warn on unused variables, ignoring those starting with underscore
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ], // Require trailing commas in multiline object literals and arrays
+        "comma-spacing": "error", // Enforce consistent spacing before and after commas
+        "eol-last": [
+            "error",
+            "always"
+        ], // Enforce a newline at the end of the file
+        "import/newline-after-import": "error", // Enforce a newline after import statements
+        "import/order": [
+            "error",
+            {
+                "groups": [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index"
+                ],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc", /* sort in ascending order. Options: ['ignore', 'asc', 'desc'] */
+                    "caseInsensitive": true /* ignore case. Options: [true, false] */
+                }
+            }
+        ], // Enforce a consistent order and newlines between import groups
+        "indent": [
+            "error",
+            4,
+            {
+                "SwitchCase": 1
+            }
+        ], // Enforce consistent indentation (4 spaces)
+        "keyword-spacing": "error", // Enforce consistent spacing around keywords
+        "max-len": [
+            "error",
+            {
+                "code": 120
+            }
+        ], // Enforce a maximum line length of 120 characters
+        "no-console": [
+            "warn",
+            {
+                "allow": [
+                    "warn",
+                    "error"
+                ]
+            }
+        ], // Warn when using console.log, but allow console.warn and console.error
+        "no-multiple-empty-lines": [
+            "error",
+            {
+                "max": 1
+            }
+        ], // Disallow multiple empty lines
+        "no-trailing-spaces": "error", // Disallow trailing whitespace at the end of lines
+        "no-unused-vars": "off", // Disable the rule from eslint:recommended to avoid conflicts with TypeScript version
+        "object-curly-spacing": [
+            "error",
+            "always"
+        ], // Enforce consistent spacing inside braces of object literals
+        "quotes": [
+            "error",
+            "single"
+        ], // Enforce the use of single quotes
+        "semi": [
+            "error",
+            "always"
+        ], // Require semicolons at the end of statements
+        "sort-keys": "error", // Enforce object keys to be sorted
+        "space-infix-ops": "error", // Enforce consistent spacing around operators
+        "typescript-sort-keys/interface": [
+            "error",
+            "asc",
+            {
+                "caseSensitive": true,
+                "natural": false
+            }
+        ],
+        "typescript-sort-keys/string-enum": [
+            "error",
+            "asc",
+            {
+                "caseSensitive": true,
+                "natural": false
+            }
+        ]
+    }
+}

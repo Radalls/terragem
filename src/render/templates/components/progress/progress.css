@@ -1,0 +1,13 @@
+.progress-container {
+    align-items: flex-end;
+    background-color: white;
+    border: 4px solid white;
+    border-radius: 8px;
+    color: rgb(13, 193, 13);
+    display: flex;
+    overflow: hidden;
+}
+
+.progress {
+    transition: linear 0.1s;
+}
