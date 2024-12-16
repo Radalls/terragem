@@ -16,13 +16,25 @@ const testAdmin: Admin = {
     gems: [],
     items: [
         {
-            _amount: 5,
+            _amount: 25,
             _type: ItemTypes.COPPER,
         },
         {
-            _amount: 5,
+            _amount: 25,
             _type: ItemTypes.IRON,
         },
+        {
+            _amount: 25,
+            _type: ItemTypes.STONE,
+        },
+        {
+            _amount: 1,
+            _type: ItemTypes.LUMYN,
+        },
+    ],
+    recipes: [
+        'GEM_MINE',
+        'GEM_CARRY',
     ],
     requests: [],
 };

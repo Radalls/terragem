@@ -5,14 +5,10 @@
     "layers": [
         {
             "drops": [
-                {
-                    "type": "IRON",
-                    "rate": 0.4
-                },
-                {
-                    "type": "COPPER",
-                    "rate": 0.4
-                }
+                { "type": "IRON", "rate": 0.3 },
+                { "type": "COPPER", "rate": 0.2 },
+                { "type": "STONE", "rate": 0.5 },
+                { "type": "LUMYN", "rate": 0.05 }
             ],
             "height": 10
         }

@@ -63,7 +63,7 @@ const createInfo = () => {
     createElement({
         css: 'info',
         id: 'Info',
-        parent: 'UI',
+        parent: 'app',
     });
 };
 

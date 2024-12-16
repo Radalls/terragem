@@ -4,6 +4,7 @@ import { error } from '@/engine/services/error';
 import { setState } from '@/engine/services/state';
 import { clearStore, setStore } from '@/engine/services/store';
 import { requestGemMine, setGemStore, stopGemCarry, stopGemMine, stopGemMove } from '@/engine/systems/gem';
+import { craftAdminItem } from '@/engine/systems/item';
 import { selectTile } from '@/engine/systems/tilemap';
 
 //#region TYPES
@@ -14,6 +15,8 @@ export type EngineEvent = {
 };
 
 export enum EngineEventTypes {
+    /* CRAFT */
+    CRAFT_REQUEST = 'CRAFT_REQUEST',
     /* ENGINE */
     ENGINE_PLAY = 'ENGINE_PLAY',
     /* GEM */
@@ -101,6 +104,10 @@ export const onEvent = ({
     /* TILEMAP */
     else if (type === EngineEventTypes.TILE_SELECT && entityId) {
         selectTile({ tileId: entityId });
+    }
+    /* CRAFT */
+    else if (type === EngineEventTypes.CRAFT_REQUEST && data) {
+        craftAdminItem({ type: data });
     }
     else error({
         message: `Unknown event type: ${type} ${entityId} ${data}`,
