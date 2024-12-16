@@ -14,6 +14,7 @@ export const addAdmin = ({ adminId, saveAdmin }: {
         _: 'Admin',
         gems: [],
         items: [],
+        recipes: [],
         requests: [],
     };
 

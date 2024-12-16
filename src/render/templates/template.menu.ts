@@ -1,5 +1,7 @@
 import { emit, GameEventTypes } from '@/engine/services/emit';
+import { EngineEventTypes } from '@/engine/services/event';
 import { getAdmin, getComponent } from '@/engine/systems/entities';
+import { getItemRecipeData } from '@/engine/systems/item';
 import { createButton, createElement, getElement, searchElementsByClassName } from '@/render/templates';
 
 //#region CONSTANTS
@@ -154,7 +156,6 @@ const selectAdminTab = ({ tab }: { tab?: string }) => {
 
     if (tab) {
         const tabEl = getElement({ elId: tab });
-
         tabEl.style.border = adminTabBorderSelect;
 
         updateAdminContent({ tab });
@@ -162,87 +163,154 @@ const selectAdminTab = ({ tab }: { tab?: string }) => {
 };
 
 const updateAdminContent = ({ tab }: { tab: string }) => {
-    const admin = getAdmin();
-
-    const adminContentEl = getElement({ elId: 'AdminContent' });
-    adminContentEl.innerHTML = '';
+    clearAdminContent();
 
     if (tab === AdminTabs.STORAGE) {
-        adminContentEl.style.flexDirection = 'row';
+        createContentStorage();
+    }
+    else if (tab === AdminTabs.GEMS) {
+        createContentGems();
+    }
+    else if (tab === AdminTabs.WORKSHOP) {
+        createContentWorkshop();
+    }
+    else if (tab === AdminTabs.LAB) {
+        createContentLab();
+    }
+};
 
-        for (const item of admin.items) {
+const clearAdminContent = () => {
+    const adminContentEl = getElement({ elId: 'AdminContent' });
+    adminContentEl.innerHTML = '';
+};
+
+const createContentStorage = () => {
+    const admin = getAdmin();
+    const adminContentEl = getElement({ elId: 'AdminContent' });
+
+    adminContentEl.style.flexDirection = 'row';
+
+    for (const item of admin.items) {
+        createElement({
+            absolute: false,
+            css: 'item',
+            id: `Item${item._type}`,
+            parent: 'AdminContent',
+        });
+
+        createElement({
+            absolute: false,
+            css: 'label',
+            id: `ItemLabel${item._type}`,
+            parent: `Item${item._type}`,
+            text: item._type,
+        });
+
+        createElement({
+            css: 'amount',
+            id: `ItemAmount${item._type}`,
+            parent: `Item${item._type}`,
+            text: `x${item._amount}`,
+        });
+    }
+};
+
+const createContentGems = () => {
+    const admin = getAdmin();
+    const adminContentEl = getElement({ elId: 'AdminContent' });
+
+    adminContentEl.style.flexDirection = 'column';
+
+    for (const gem of admin.gems) {
+        createElement({
+            absolute: false,
+            css: 'gem',
+            id: `Gem${gem}`,
+            parent: 'AdminContent',
+            text: gem,
+        });
+
+        const gemState = getComponent({ componentId: 'State', entityId: gem });
+
+        if (gemState._store) {
+            createButton({
+                absolute: false,
+                click: () => {
+                    emit({ entityId: gem, target: 'all', type: GameEventTypes.GEM_STORE_DEPLOY });
+
+                    updateAdminContent({ tab: AdminTabs.GEMS });
+                },
+                css: 'deploy',
+                id: `GemDeploy${gem}`,
+                parent: `Gem${gem}`,
+                text: 'Deploy',
+            });
+        }
+        else {
+            createElement({
+                absolute: false,
+                css: 'state',
+                id: `GemState${gem}`,
+                parent: `Gem${gem}`,
+                text: `State: ${gemState._action}`,
+            });
+        }
+    }
+};
+
+const createContentWorkshop = () => {
+    const admin = getAdmin();
+    const adminContentEl = getElement({ elId: 'AdminContent' });
+
+    adminContentEl.style.flexDirection = 'column';
+
+    for (const recipe of admin.recipes) {
+        const data = getItemRecipeData({ recipe });
+
+        createElement({
+            absolute: false,
+            css: 'recipe',
+            id: `Recipe${recipe}`,
+            parent: 'AdminContent',
+            text: recipe,
+        });
+
+        createElement({
+            absolute: false,
+            css: 'items',
+            id: `RecipeItems${recipe}`,
+            parent: `Recipe${recipe}`,
+        });
+
+        for (const item of data.items) {
             createElement({
                 absolute: false,
                 css: 'item',
-                id: `AdminContentItem${item._type}`,
-                parent: 'AdminContent',
-            });
-
-            createElement({
-                absolute: false,
-                css: 'label',
-                id: `AdminContentItemLabel${item._type}`,
-                parent: `AdminContentItem${item._type}`,
-                text: item._type,
-            });
-
-            createElement({
-                css: 'amount',
-                id: `AdminContentItemAmount${item._type}`,
-                parent: `AdminContentItem${item._type}`,
-                text: `x${item._amount}`,
+                id: `RecipeItem${recipe}${item.type}`,
+                parent: `RecipeItems${recipe}`,
+                text: `${item.type} x${item.amount}`,
             });
         }
+
+        createButton({
+            absolute: false,
+            click: () => {
+                emit({ data: recipe, target: 'engine', type: EngineEventTypes.CRAFT_REQUEST });
+            },
+            css: 'craft',
+            id: `RecipeCraft${recipe}`,
+            parent: `Recipe${recipe}`,
+            text: 'Craft',
+        });
     }
-    else if (tab === AdminTabs.GEMS) {
-        adminContentEl.style.flexDirection = 'column';
+};
 
-        for (const gem of admin.gems) {
-            createElement({
-                absolute: false,
-                css: 'gem',
-                id: `AdminContentGem${gem}`,
-                parent: 'AdminContent',
-                text: gem,
-            });
+const createContentLab = () => {
+    const adminContentEl = getElement({ elId: 'AdminContent' });
 
-            const gemState = getComponent({ componentId: 'State', entityId: gem });
+    adminContentEl.style.flexDirection = 'column';
 
-            if (gemState._store) {
-                createButton({
-                    absolute: false,
-                    click: () => {
-                        emit({ entityId: gem, target: 'all', type: GameEventTypes.GEM_STORE_DEPLOY });
-
-                        updateAdminContent({ tab });
-                    },
-                    css: 'deploy',
-                    id: `AdminContentGemDeploy${gem}`,
-                    parent: `AdminContentGem${gem}`,
-                    text: 'Deploy',
-                });
-            }
-            else {
-                createElement({
-                    absolute: false,
-                    css: 'state',
-                    id: `AdminContentGemState${gem}`,
-                    parent: `AdminContentGem${gem}`,
-                    text: `State: ${gemState._action}`,
-                });
-            }
-        }
-    }
-    else if (tab === AdminTabs.WORKSHOP) {
-        adminContentEl.style.flexDirection = 'column';
-
-        adminContentEl.innerHTML = '(WIP)';
-    }
-    else if (tab === AdminTabs.LAB) {
-        adminContentEl.style.flexDirection = 'column';
-
-        adminContentEl.innerHTML = '(WIP)';
-    }
+    adminContentEl.innerHTML = '(WIP)';
 };
 //#endregion
 //#endregion

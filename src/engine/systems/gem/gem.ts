@@ -269,9 +269,9 @@ const findGemCarrySource = ({ gemId }: { gemId: string }) => {
 
     let gemSource;
     for (let y = gemPosition._y; y < gemPosition._y + 9; y++) { //TODO: remove magic
-        const gem = getGemAtPosition({ x: gemPosition._x, y });
+        const gem = getGemAtPosition({ gemId, x: gemPosition._x, y });
 
-        if (gem && gem !== gemId) {
+        if (gem) {
             gemSource = gem;
             break;
         }

@@ -1,0 +1,4 @@
+[
+    { "type": "GEM_MINE", "items": [{ "type": "IRON", "amount": 10 }, { "type": "STONE", "amount": 25 }, { "type": "LUMYN", "amount": 1 }] },
+    { "type": "GEM_CARRY", "items": [{ "type": "COPPER", "amount": 10 }, { "type": "STONE", "amount": 25 }, { "type": "LUMYN", "amount": 1 }] }
+]

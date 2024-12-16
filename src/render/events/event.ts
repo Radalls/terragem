@@ -91,6 +91,7 @@ export const onEvent = ({
     }
     else if (type === RenderEventTypes.GEM_MINE_STOP && entityId) {
         setGemMode({ gemId: entityId, mode: 'base' });
+        setGemMode({ gemId: entityId, mode: 'mine', remove: true });
     }
     else if (type === GameEventTypes.GEM_CARRY_REQUEST && entityId) {
         setGemMode({ gemId: entityId, mode: 'carry' });

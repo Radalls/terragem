@@ -50,14 +50,18 @@ export const getTileAtPosition = ({ x, y }: { x: number; y: number }) => {
     });
 };
 
-export const getGemAtPosition = ({ x, y }: { x: number; y: number }) => {
+export const getGemAtPosition = ({ gemId, x, y }: {
+    gemId: string,
+    x: number,
+    y: number,
+}) => {
     const admin = getAdmin();
 
-    for (const gemId of admin.gems) {
-        const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+    for (const gem of admin.gems) {
+        const gemPosition = getComponent({ componentId: 'Position', entityId: gem });
 
-        if (gemPosition._x === x && gemPosition._y === y) {
-            return gemId;
+        if (gemId !== gem && gemPosition._x === x && gemPosition._y === y) {
+            return gem;
         }
     }
 };

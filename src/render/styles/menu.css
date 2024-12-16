@@ -122,3 +122,31 @@
     border-radius: 20px;
     padding: 8px;
 }
+
+.admin .content .recipe {
+    align-items: center;
+    background-color: rgb(94, 81, 243);
+    border-radius: 20px;
+    color: rgb(255, 255, 255);
+    display: flex;
+    height: 15%;
+    justify-content: space-between;
+    padding: 0 24px;
+    width: calc(100% - 64px);
+}
+
+.admin .content .recipe .items {
+    display: flex;
+    gap: 16px;
+}
+
+.admin .content .recipe .item {
+    width: 100px;
+}
+
+.admin .content .recipe .craft {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
