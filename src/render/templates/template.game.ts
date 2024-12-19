@@ -1,8 +1,8 @@
 import { emit } from '@/engine/services/emit';
-import { EngineEventTypes } from '@/engine/services/event';
+import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
 import { getStore } from '@/engine/services/store';
-import { getComponent } from '@/engine/systems/entities';
+import { getComponent } from '@/engine/systems/entity';
 import {
     createButton,
     createElement,
@@ -98,6 +98,7 @@ export const setTileMode = ({ tileId, mode }: {
     }
     else if (mode === 'destroy') {
         if (!(tileId)) return;
+        console.log('a');
 
         const tileEl = getElement({ elId: tileId });
 
@@ -107,7 +108,7 @@ export const setTileMode = ({ tileId, mode }: {
 
 const selectTile = ({ tileId }: { tileId: string }) => {
     if (getState({ key: 'requestTile' })) {
-        emit({ entityId: tileId, target: 'engine', type: EngineEventTypes.TILE_SELECT });
+        emit({ entityId: tileId, target: 'engine', type: EngineEvents.TILE_SELECT });
     }
 };
 //#endregion

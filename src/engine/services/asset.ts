@@ -1,4 +1,4 @@
-import { emit, GameEventTypes } from '@/engine/services/emit';
+import { emit, GameEvents } from '@/engine/services/emit';
 
 const spriteFiles = import.meta.glob('/src/assets/sprites/**/*.{png,gif}', { eager: true });
 const audioFiles = import.meta.glob('/src/assets/audio/**/*.{mp3,wav,ogg}', { eager: true });
@@ -20,16 +20,16 @@ export const createAssetManager = () => {
         if (isLoading || loadingPromise) return;
 
         isLoading = true;
-        emit({ target: 'all', type: GameEventTypes.GAME_LOADING_ON });
+        emit({ target: 'all', type: GameEvents.GAME_LOADING_ON });
 
         loadingPromise = preloadAssets().then(success => {
             isLoading = false;
             loadingPromise = null;
 
             if (success) {
-                emit({ target: 'all', type: GameEventTypes.GAME_LOADING_OFF });
+                emit({ target: 'all', type: GameEvents.GAME_LOADING_OFF });
             } else {
-                emit({ target: 'all', type: GameEventTypes.GAME_LOADING_ERROR });
+                emit({ target: 'all', type: GameEvents.GAME_LOADING_ERROR });
             }
 
             return success;

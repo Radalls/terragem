@@ -4,6 +4,7 @@ export type Mine = {
     _: 'Mine';
     _itemCapacity: number;
     _mineSpeed: number;
+    _mineStrength: number;
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
@@ -26,7 +27,7 @@ export type Carry = {
     items: Item[];
 }
 
-export enum GemTypes {
+export enum Gems {
     CARRY = 'Carry',
     MINE = 'Mine',
 }

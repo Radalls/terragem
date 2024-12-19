@@ -1,7 +1,7 @@
-import { emit, GameEventTypes } from '@/engine/services/emit';
-import { EngineEventTypes } from '@/engine/services/event';
-import { getAdmin, getComponent } from '@/engine/systems/entities';
-import { getItemRecipeData } from '@/engine/systems/item';
+import { emit, GameEvents } from '@/engine/services/emit';
+import { EngineEvents } from '@/engine/services/event';
+import { getAdmin, getComponent } from '@/engine/systems/entity';
+import { getCraftData } from '@/engine/systems/item';
 import { createButton, createElement, getElement, searchElementsByClassName } from '@/render/templates';
 
 //#region CONSTANTS
@@ -31,7 +31,7 @@ export const createLaunch = () => {
 
     createButton({
         absolute: false,
-        click: () => emit({ target: 'all', type: GameEventTypes.GAME_RUN }),
+        click: () => emit({ target: 'all', type: GameEvents.GAME_RUN }),
         css: 'opt',
         id: 'LaunchStart',
         parent: 'Launch',
@@ -194,22 +194,22 @@ const createContentStorage = () => {
         createElement({
             absolute: false,
             css: 'item',
-            id: `Item${item._type}`,
+            id: `Item${item._name}`,
             parent: 'AdminContent',
         });
 
         createElement({
             absolute: false,
             css: 'label',
-            id: `ItemLabel${item._type}`,
-            parent: `Item${item._type}`,
-            text: item._type,
+            id: `ItemLabel${item._name}`,
+            parent: `Item${item._name}`,
+            text: item._name,
         });
 
         createElement({
             css: 'amount',
-            id: `ItemAmount${item._type}`,
-            parent: `Item${item._type}`,
+            id: `ItemAmount${item._name}`,
+            parent: `Item${item._name}`,
             text: `x${item._amount}`,
         });
     }
@@ -236,7 +236,7 @@ const createContentGems = () => {
             createButton({
                 absolute: false,
                 click: () => {
-                    emit({ entityId: gem, target: 'all', type: GameEventTypes.GEM_STORE_DEPLOY });
+                    emit({ entityId: gem, target: 'all', type: GameEvents.GEM_STORE_DEPLOY });
 
                     updateAdminContent({ tab: AdminTabs.GEMS });
                 },
@@ -264,53 +264,96 @@ const createContentWorkshop = () => {
 
     adminContentEl.style.flexDirection = 'column';
 
-    for (const recipe of admin.recipes) {
-        const data = getItemRecipeData({ recipe });
+    for (const craft of admin.crafts) {
+        const craftData = getCraftData({ itemName: craft });
 
         createElement({
             absolute: false,
             css: 'recipe',
-            id: `Recipe${recipe}`,
+            id: `Recipe${craft}`,
             parent: 'AdminContent',
-            text: recipe,
+            text: craft,
         });
 
         createElement({
             absolute: false,
             css: 'items',
-            id: `RecipeItems${recipe}`,
-            parent: `Recipe${recipe}`,
+            id: `RecipeItems${craft}`,
+            parent: `Recipe${craft}`,
         });
 
-        for (const item of data.items) {
+        for (const compItem of craftData.components) {
             createElement({
                 absolute: false,
                 css: 'item',
-                id: `RecipeItem${recipe}${item.type}`,
-                parent: `RecipeItems${recipe}`,
-                text: `${item.type} x${item.amount}`,
+                id: `RecipeItem${craft}${compItem.name}`,
+                parent: `RecipeItems${craft}`,
+                text: `${compItem.name} x${compItem.amount}`,
             });
         }
 
         createButton({
             absolute: false,
             click: () => {
-                emit({ data: recipe, target: 'engine', type: EngineEventTypes.CRAFT_REQUEST });
+                emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
+
+                updateAdminContent({ tab: AdminTabs.WORKSHOP });
             },
             css: 'craft',
-            id: `RecipeCraft${recipe}`,
-            parent: `Recipe${recipe}`,
+            id: `RecipeCraft${craft}`,
+            parent: `Recipe${craft}`,
             text: 'Craft',
         });
     }
 };
 
 const createContentLab = () => {
+    const admin = getAdmin();
+
     const adminContentEl = getElement({ elId: 'AdminContent' });
 
     adminContentEl.style.flexDirection = 'column';
 
-    adminContentEl.innerHTML = '(WIP)';
+    createElement({
+        absolute: false,
+        id: 'LabPoints',
+        parent: 'AdminContent',
+        text: `Lab Points: ${admin._labPoints}`,
+    });
+
+    createElement({
+        absolute: false,
+        id: 'GemMax',
+        parent: 'AdminContent',
+        text: `MAX Gem: ${admin._gemMax}`,
+    });
+
+    for (const lab of admin.labs) {
+        if (!(lab._done)) {
+            createElement({
+                absolute: false,
+                css: 'lab',
+                id: `Lab${lab.data.name}`,
+                parent: 'AdminContent',
+                text: `${lab.data.text}: ${lab._progress}/${lab.data.time} (Cost: ${lab.data.cost})`,
+            });
+
+            if (!(lab._run)) {
+                createButton({
+                    absolute: false,
+                    click: () => {
+                        emit({ data: lab.data.name, target: 'engine', type: EngineEvents.LAB_RUN });
+
+                        updateAdminContent({ tab: AdminTabs.LAB });
+                    },
+                    css: 'run',
+                    id: `LabRun${lab.data.name}`,
+                    parent: `Lab${lab.data.name}`,
+                    text: 'Run',
+                });
+            }
+        }
+    }
 };
 //#endregion
 //#endregion

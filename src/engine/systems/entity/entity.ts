@@ -1,17 +1,12 @@
 import { Component } from '@/engine/components';
 import { error } from '@/engine/services/error';
 import { setStore } from '@/engine/services/store';
-import { generateEntityId, getEntity } from '@/engine/systems/entities';
+import { generateEntityId, getEntity } from '@/engine/systems/entity';
 
 //#region TYPES
 export type Entity = {
     [K in keyof Component]: Component[K] | undefined;
 };
-
-export enum EntityTypes {
-    ASSET = 'Asset',
-    GEM = 'Gem',
-}
 //#endregion
 
 //#region CONSTANTS

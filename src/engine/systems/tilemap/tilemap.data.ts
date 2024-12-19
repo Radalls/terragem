@@ -1,4 +1,4 @@
-import { ItemTypes } from '@/engine/components';
+import { Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
 const tileMapFiles: Record<string, { default: TileMapData }>
@@ -9,8 +9,8 @@ export type TileMapData = {
     height: number,
     layers: {
         drops: {
+            name: Items,
             rate: number,
-            type: ItemTypes,
         }[],
         height: number,
     }[],

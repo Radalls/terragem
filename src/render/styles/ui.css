@@ -45,6 +45,24 @@
     }
 }
 
+/* INFO */
+.infos {
+    bottom: 8px;
+    font-size: 16px;
+    left: 50%;
+    padding: 8px 16px;
+    transform: translateX(-50%);
+    z-index: 100000000;
+}
+
+.infos .info {
+    background-color: rgb(94, 81, 243);
+    border: 5px solid rgb(89, 28, 219);
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    padding: 8px 16px;
+}
+
 /* GEM */
 .ui .gem {
     background-color: rgb(89, 28, 219);
@@ -71,7 +89,7 @@
     z-index: 10000;
 }
 
-.gem .infos {
+.gem .data {
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -89,4 +107,29 @@
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
     padding: 4px;
+}
+
+/* QUEST */
+.ui .quests {
+    background-color: rgb(89, 28, 219);
+    border: 5px solid rgb(255, 255, 255);
+    border-radius: 10px;
+    color: rgb(255, 255, 255);
+    display: none;
+    flex-direction: column;
+    font-size: 16px;
+    gap: 16px;
+    padding: 16px;
+    pointer-events: all;
+    right: 0;
+    top: 0;
+    width: 15%;
+    z-index: 100;
+}
+
+.quests .quest {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px;
 }

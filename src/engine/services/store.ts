@@ -1,5 +1,5 @@
 import { error } from '@/engine/services/error';
-import { checkEntityId } from '@/engine/systems/entities';
+import { checkEntityId } from '@/engine/systems/entity';
 
 //#region TYPES
 type Store = {

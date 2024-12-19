@@ -1,39 +1,39 @@
-import { ItemTypes } from '@/engine/components';
+import { Items } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { createEntityGem } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
-import { getAdmin } from '@/engine/systems/entities';
+import { getAdmin } from '@/engine/systems/entity';
 import { gemAtCapacity, getGem } from '@/engine/systems/gem';
-import { getItemRecipeData, isGem, toGem } from '@/engine/systems/item';
-import { RenderEventTypes } from '@/render/events';
+import { getCraftData, isItemGem, itemToGem } from '@/engine/systems/item';
+import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
 //#endregion
 
 //#region SYSTEMS
 //#region ADMIN
-export const addAdminItem = ({ type, amount }: {
+export const addAdminItem = ({ name, amount }: {
     amount: number,
-    type: ItemTypes,
+    name: Items,
 }) => {
     const admin = getAdmin();
 
-    const item = admin.items.find((item) => item._type === type);
+    const item = admin.items.find((item) => item._name === name);
     if (item) {
         item._amount += amount;
     }
     else {
-        admin.items.push({ _amount: amount, _type: type });
+        admin.items.push({ _amount: amount, _name: name });
     }
 };
 
-export const removeAdminItem = ({ type, amount }: {
+export const removeAdminItem = ({ name, amount }: {
     amount: number,
-    type: ItemTypes,
+    name: Items,
 }) => {
     const admin = getAdmin();
 
-    const item = admin.items.find((item) => item._type === type);
+    const item = admin.items.find((item) => item._name === name);
 
     if (!(item)) {
         return false;
@@ -48,41 +48,41 @@ export const removeAdminItem = ({ type, amount }: {
     }
 };
 
-export const craftAdminItem = ({ type }: { type: ItemTypes }) => {
+export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
     const admin = getAdmin();
 
-    if (admin.recipes.includes(type)) {
-        const itemRecipeData = getItemRecipeData({ recipe: type });
+    if (admin.crafts.includes(itemName)) {
+        const craftData = getCraftData({ itemName });
 
-        for (const recipeItem of itemRecipeData.items) {
-            const adminItem = admin.items.find((it) => it._type === recipeItem.type);
+        for (const compItem of craftData.components) {
+            const adminItem = admin.items.find((it) => it._name === compItem.name);
 
             if (!(adminItem)) {
                 emit({
-                    data: `Could not craft ${type}`,
+                    data: `Could not craft ${itemName}`,
                     target: 'render',
-                    type: RenderEventTypes.INFO_ALERT,
+                    type: RenderEvents.INFO_ALERT,
                 });
 
                 return false;
             }
-            else if (adminItem._amount < recipeItem.amount) {
+            else if (adminItem._amount < compItem.amount) {
                 emit({
-                    data: `Could not craft ${type}`,
+                    data: `Could not craft ${itemName}`,
                     target: 'render',
-                    type: RenderEventTypes.INFO_ALERT,
+                    type: RenderEvents.INFO_ALERT,
                 });
 
                 return false;
             }
             else {
-                const remove = removeAdminItem({ amount: recipeItem.amount, type: adminItem._type });
+                const remove = removeAdminItem({ amount: compItem.amount, name: adminItem._name });
 
                 if (!(remove)) {
                     emit({
-                        data: `Could not craft ${type}`,
+                        data: `Could not craft ${itemName}`,
                         target: 'render',
-                        type: RenderEventTypes.INFO_ALERT,
+                        type: RenderEvents.INFO_ALERT,
                     });
 
                     return false;
@@ -93,26 +93,26 @@ export const craftAdminItem = ({ type }: { type: ItemTypes }) => {
             }
         }
 
-        if (isGem({ type })) {
-            createEntityGem({ type: toGem({ type }) });
+        if (isItemGem({ itemName })) {
+            createEntityGem({ type: itemToGem({ itemName }) });
         }
         else {
-            addAdminItem({ amount: 1, type: itemRecipeData.type });
+            addAdminItem({ amount: 1, name: craftData.name });
         }
 
         emit({
-            data: `Crafted ${1} ${type} !`,
+            data: `Crafted ${1} ${itemName} !`,
             target: 'render',
-            type: RenderEventTypes.INFO,
+            type: RenderEvents.INFO,
         });
 
         return true;
     }
     else {
         emit({
-            data: `Could not craft ${type}`,
+            data: `Could not craft ${itemName}`,
             target: 'render',
-            type: RenderEventTypes.INFO_ALERT,
+            type: RenderEvents.INFO_ALERT,
         });
 
         return false;
@@ -121,10 +121,10 @@ export const craftAdminItem = ({ type }: { type: ItemTypes }) => {
 //#endregion
 
 //#region GEM
-export const addGemItem = ({ gemId, type, amount }: {
+export const addGemItem = ({ gemId, name, amount }: {
     amount: number,
     gemId: string,
-    type: ItemTypes,
+    name: Items,
 }) => {
     const gem = getGem({ gemId });
 
@@ -133,12 +133,12 @@ export const addGemItem = ({ gemId, type, amount }: {
         where: addGemItem.name,
     });
 
-    const item = gem.items.find((item) => item._type === type);
+    const item = gem.items.find((item) => item._name === name);
     if (item) {
         item._amount += amount;
     }
     else {
-        gem.items.push({ _amount: amount, _type: type });
+        gem.items.push({ _amount: amount, _name: name });
     }
 };
 
@@ -158,7 +158,7 @@ export const removeGemItem = ({ gemId, amount }: {
 
         return {
             amount: item._amount,
-            type: item._type,
+            name: item._name,
         };
     }
     else if (amount === item._amount) {
@@ -166,7 +166,7 @@ export const removeGemItem = ({ gemId, amount }: {
 
         return {
             amount: amount,
-            type: item._type,
+            name: item._name,
         };
     }
     else if (amount < item._amount) {
@@ -174,7 +174,7 @@ export const removeGemItem = ({ gemId, amount }: {
 
         return {
             amount: amount,
-            type: item._type,
+            name: item._name,
         };
     }
 };

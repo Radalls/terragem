@@ -1,8 +1,8 @@
-import { GemTypes, State } from '@/engine/components';
+import { Gems, State } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
-import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entities';
-import { RenderEventTypes } from '@/render/events';
+import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entity';
+import { RenderEvents } from '@/render/events';
 
 //#region UTILS
 export const getGem = ({ gemId }: { gemId: string }) => {
@@ -22,8 +22,8 @@ export const getGemType = ({ gemId }: { gemId: string }) => {
     });
 
     return (isMine)
-        ? GemTypes.MINE
-        : GemTypes.CARRY;
+        ? Gems.MINE
+        : Gems.CARRY;
 };
 
 export const setGemRequest = ({ gemId, request }: {
@@ -50,15 +50,22 @@ export const setGemStore = ({ gemId, store }: {
     store: boolean,
 }) => {
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+    const gem = getGem({ gemId });
 
     gemState._store = store;
     setGemAction({ action: 'idle', gemId });
+
+    gemPosition._x = 0;
+    gemPosition._y = 0;
+
+    gem.items = [];
 
     emit({
         data: `${gemId} ${store ? 'stored' : 'deployed'}`,
         entityId: gemId,
         target: 'render',
-        type: RenderEventTypes.INFO,
+        type: RenderEvents.INFO,
     });
 };
 
@@ -100,7 +107,7 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
     const gemType = getGemType({ gemId });
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
 
-    if (gemType === GemTypes.MINE) {
+    if (gemType === Gems.MINE) {
         const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
 
         const gemActionSpeed = (gemState._action === 'move')
@@ -109,7 +116,7 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
 
         return gemActionSpeed;
     }
-    else if (gemType === GemTypes.CARRY) {
+    else if (gemType === Gems.CARRY) {
         const gemCarry = getComponent({ componentId: 'Carry', entityId: gemId });
 
         const gemActionSpeed = (gemState._action === 'move')
