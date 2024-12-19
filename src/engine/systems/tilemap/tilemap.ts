@@ -1,18 +1,22 @@
 import { emit } from '@/engine/services/emit';
 import { createEntityTile } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
-import { EngineEventTypes } from '@/engine/services/event';
+import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
 import { getStore } from '@/engine/services/store';
-import { getComponent } from '@/engine/systems/entities';
+import { getComponent } from '@/engine/systems/entity';
 import { gemAtCapacity, requestGemCarry, requestGemMove } from '@/engine/systems/gem';
 import { addGemItem } from '@/engine/systems/item';
 import { moveToTarget } from '@/engine/systems/position';
 import { loadTileMapData } from '@/engine/systems/tilemap';
-import { RenderEventTypes } from '@/render/events';
+import { RenderEvents } from '@/render/events';
 
 //#region SYSTEMS
 //#region TILEMAP
+//#region CONSTANTS
+const TILEMAP_LAYER_DROP_AMOUNT = 20;
+//#endregion
+
 export const generateTileMap = ({ tileMapId }: { tileMapId?: string | null }) => {
     if ((!(tileMapId))) tileMapId = getStore({ key: 'tileMapId' });
 
@@ -26,12 +30,17 @@ const generateTileMapLayers = ({ tileMapId }: { tileMapId?: string | null }) => 
 
     const tileMapData = loadTileMapData({ tileMapName: tileMap._name });
 
+    let generatedHeight = 0;
     for (const layer of tileMapData.layers) {
-        for (let i = 0; i < layer.height; i++) {
+        for (let i = generatedHeight; i < generatedHeight + layer.height; i++) {
             for (let j = 0; j < tileMapData.width; j++) {
+                const layerIndex = tileMapData.layers.indexOf(layer) + 1;
+
                 const tileId = createEntityTile({
-                    dropAmount: (tileMapData.layers.indexOf(layer) + 1) * 20, //TODO: remove magic
-                    drops: layer.drops.map(({ rate, type }) => ({ _rate: rate, _type: type })),
+                    density: layerIndex,
+                    dropAmount: layerIndex * TILEMAP_LAYER_DROP_AMOUNT,
+                    drops: layer.drops.map(({ rate, name }) => ({ _name: name, _rate: rate })),
+                    sprite: `tile_tile${layerIndex}`,
                     x: j,
                     y: i,
                 });
@@ -39,6 +48,8 @@ const generateTileMapLayers = ({ tileMapId }: { tileMapId?: string | null }) => 
                 tileMap.tiles.push(tileId);
             }
         }
+
+        generatedHeight += layer.height;
     }
 };
 //#endregion
@@ -61,8 +72,8 @@ export const selectTile = ({ tileId }: { tileId: string }) => {
             targetY: 0,
         });
 
-        emit({ target: 'render', type: RenderEventTypes.MODE_BASE });
-        emit({ entityId: gemId, target: 'engine', type: EngineEventTypes.GEM_MOVE_CONFIRM });
+        emit({ target: 'render', type: RenderEvents.MODE_BASE });
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MOVE_CONFIRM });
     }
     else if (getState({ key: 'requestGemCarryStart' }) || getState({ key: 'requestGemCarryTarget' })) {
         const gemId = getStore({ key: 'requestId' });
@@ -75,15 +86,15 @@ export const selectTile = ({ tileId }: { tileId: string }) => {
         });
 
         if (getState({ key: 'requestGemCarryTarget' })) {
-            emit({ target: 'render', type: RenderEventTypes.MODE_BASE });
+            emit({ target: 'render', type: RenderEvents.MODE_BASE });
         }
 
         emit({
             entityId: gemId,
             target: 'engine',
             type: (getState({ key: 'requestGemCarryStart' }))
-                ? EngineEventTypes.GEM_CARRY_CONFIRM_START
-                : EngineEventTypes.GEM_CARRY_CONFIRM_TARGET,
+                ? EngineEvents.GEM_CARRY_CONFIRM_START
+                : EngineEvents.GEM_CARRY_CONFIRM_TARGET,
         });
     }
 };
@@ -93,18 +104,29 @@ export const mineTile = ({ tileId, gemId }: {
     tileId: string,
 }) => {
     const tile = getComponent({ componentId: 'Tile', entityId: tileId });
+    const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
 
     if (gemAtCapacity({ gemId })) {
-        return false;
+        return { drop: undefined, stop: false };
+    }
+
+    if (gemMine._mineStrength < tile._density) {
+        emit({
+            data: `${gemId} is not strong enough to mine`,
+            target: 'render',
+            type: RenderEvents.INFO_ALERT,
+        });
+
+        return { drop: undefined, stop: true };
     }
 
     if (tile._dropAmount <= 0) {
         moveToTarget({ entityId: gemId, targetX: gemPosition._x, targetY: gemPosition._y + 1 });
 
-        emit({ entityId: tileId, target: 'render', type: RenderEventTypes.TILE_DESTROY });
+        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_DESTROY });
 
-        return true;
+        return { drop: undefined, stop: false };
     }
     else {
         tile._dropAmount--;
@@ -112,10 +134,12 @@ export const mineTile = ({ tileId, gemId }: {
         const drop = rollTileDrop({ tileId });
 
         if (drop) {
-            addGemItem({ amount: 1, gemId, type: drop });
+            addGemItem({ amount: 1, gemId, name: drop });
+
+            return { drop, stop: false };
         }
 
-        return false;
+        return { drop: undefined, stop: false };
     }
 };
 
@@ -131,7 +155,7 @@ const rollTileDrop = ({ tileId }: { tileId: string }) => {
 
     for (const drop of tile.drops) {
         if (roll < drop._rate) {
-            return drop._type;
+            return drop._name;
         }
 
         roll -= drop._rate;

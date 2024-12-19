@@ -1,5 +1,5 @@
 import { emit as emitEvent } from '@/engine/services/emit';
-import { RenderEventTypes } from '@/render/events';
+import { RenderEvents } from '@/render/events';
 
 //#region TYPES
 export type ErrorData = {
@@ -19,7 +19,7 @@ export const error = ({ message, where, emit = false }: {
     if (emit) emitEvent({
         data: message,
         target: 'render',
-        type: RenderEventTypes.INFO_ALERT,
+        type: RenderEvents.INFO_ALERT,
     });
 
     throw errorData;

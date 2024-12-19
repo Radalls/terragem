@@ -82,6 +82,7 @@
     width: 100%;
 }
 
+/* STORAGE */
 .admin .content .item {
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
@@ -104,6 +105,7 @@
     right: 10px;
 }
 
+/* GEMS */
 .admin .content .gem {
     align-items: center;
     background-color: rgb(94, 81, 243);
@@ -123,6 +125,7 @@
     padding: 8px;
 }
 
+/* WORKSHOP */
 .admin .content .recipe {
     align-items: center;
     background-color: rgb(94, 81, 243);
@@ -145,6 +148,26 @@
 }
 
 .admin .content .recipe .craft {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+/* LAB */
+.admin .content .lab {
+    align-items: center;
+    background-color: rgb(94, 81, 243);
+    border-radius: 20px;
+    color: rgb(255, 255, 255);
+    display: flex;
+    height: 15%;
+    justify-content: space-between;
+    padding: 0 24px;
+    width: calc(100% - 64px);
+}
+
+.admin .content .lab .run {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;

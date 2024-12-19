@@ -1,13 +1,15 @@
 import { error } from '@/engine/services/error';
 import { getState } from '@/engine/services/state';
-import { getAdmin, getComponent, isGem } from '@/engine/systems/entities';
+import { getAdmin, getComponent, isGem } from '@/engine/systems/entity';
 import { getGemActionSpeed, runGemMove, runGemWork } from '@/engine/systems/gem';
+import { progressLab } from '@/engine/systems/lab';
 
 //#region TYPES
 type RequestCycle = { id: string, progress: number };
 
 const cycle = {
     deltaTime: 1 / 60,
+    labTime: 0,
     requests: [] as RequestCycle[],
 };
 
@@ -23,35 +25,38 @@ export const stopCycle = () => {
     clearInterval(cycleInterval);
 };
 
-const createCycle = ({ id }: { id: string }) => cycle.requests.push({ id, progress: 0 });
+//#region REQUEST
+const createRequestCycle = ({ id }: { id: string }) => cycle.requests.push({ id, progress: 0 });
 
-const getCycle = ({ id }: { id: string }) => cycle.requests.find((request) => request.id === id);
+const getRequestCycle = ({ id }: { id: string }) => cycle.requests.find((request) => request.id === id);
 
-const clearCycle = ({ id }: { id: string }) => cycle.requests = cycle.requests.filter((request) => request.id !== id);
+const clearRequestCycle = ({ id }: { id: string }) => cycle.requests = cycle.requests
+    .filter((request) => request.id !== id);
 
-const addProgress = ({ id }: { id: string }) => {
-    const reqCycle = getCycle({ id });
+const addRequestCycleProgress = ({ id }: { id: string }) => {
+    const reqCycle = getRequestCycle({ id });
 
     if (reqCycle) {
         reqCycle.progress += cycle.deltaTime;
     }
     else error({
         message: `Cycle ${id} not found`,
-        where: addProgress.name,
+        where: addRequestCycleProgress.name,
     });
 };
 
-const clearProgress = ({ id }: { id: string }) => {
-    const reqCycle = getCycle({ id });
+const clearRequestCycleProgress = ({ id }: { id: string }) => {
+    const reqCycle = getRequestCycle({ id });
 
     if (reqCycle) {
         reqCycle.progress = 0;
     }
     else error({
         message: `Cycle ${id} not found`,
-        where: clearProgress.name,
+        where: clearRequestCycleProgress.name,
     });
 };
+//#endregion
 
 const runCycle = () => {
     if (getState({ key: 'gamePlay' })) {
@@ -59,18 +64,18 @@ const runCycle = () => {
 
         for (const reqId of cycle.requests) {
             if (!(admin.requests.includes(reqId.id))) {
-                clearCycle({ id: reqId.id });
+                clearRequestCycle({ id: reqId.id });
             }
         }
 
         for (const reqId of admin.requests) {
-            const reqCycle = getCycle({ id: reqId });
+            const reqCycle = getRequestCycle({ id: reqId });
 
             if (!(reqCycle)) {
-                createCycle({ id: reqId });
+                createRequestCycle({ id: reqId });
             }
             else {
-                addProgress({ id: reqId });
+                addRequestCycleProgress({ id: reqId });
 
                 if (isGem({ gemId: reqId })) {
                     const gemState = getComponent({ componentId: 'State', entityId: reqId });
@@ -82,7 +87,7 @@ const runCycle = () => {
                     const gemTrigger = reqCycle.progress * gemActionSpeed;
 
                     if (gemTrigger >= 1) {
-                        clearProgress({ id: reqId });
+                        clearRequestCycleProgress({ id: reqId });
 
                         if (gemState._action === 'move') {
                             runGemMove({ gemId: reqId });
@@ -91,6 +96,16 @@ const runCycle = () => {
                             runGemWork({ gemId: reqId });
                         }
                     }
+                }
+            }
+        }
+
+        cycle.labTime += cycle.deltaTime;
+        if (cycle.labTime >= 1) {
+            cycle.labTime = 0;
+            for (const lab of admin.labs) {
+                if (lab._run) {
+                    progressLab({ name: lab.data.name });
                 }
             }
         }

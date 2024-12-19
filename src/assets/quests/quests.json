@@ -1,0 +1,50 @@
+[
+    {
+        "name": "QUEST_MINE_IRON_1",
+        "type": "mine",
+        "text": "Mine 50 Iron",
+        "mine": { "name": "IRON", "amount": 50 },
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": [{ "type": "lab", "name": "LAB1" }, { "type": "quest", "name": "QUEST_MINE_IRON_2" }]
+    },
+    {
+        "name": "QUEST_MINE_IRON_2",
+        "type": "mine",
+        "text": "Mine 250 Iron",
+        "mine": { "name": "IRON", "amount": 250 },
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": []
+    },
+    {
+        "name": "QUEST_MINE_COPPER_1",
+        "type": "mine",
+        "text": "Mine 50 Copper",
+        "mine": { "name": "COPPER", "amount": 50 },
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": [{ "type": "lab", "name": "LAB2" }, { "type": "quest", "name": "QUEST_MINE_COPPER_2" }]
+    },
+    {
+        "name": "QUEST_MINE_COPPER_2",
+        "type": "mine",
+        "text": "Mine 250 Copper",
+        "mine": { "name": "COPPER", "amount": 250 },
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": []
+    },
+    {
+        "name": "QUEST_CARRY_1",
+        "type": "carry",
+        "text": "Carry 500 items to the base",
+        "carry": 500,
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": [{ "type": "lab", "name": "LAB3" }, { "type": "quest", "name": "QUEST_CARRY_2" }]
+    },
+    {
+        "name": "QUEST_CARRY_2",
+        "type": "carry",
+        "text": "Carry 1500 items to the base",
+        "carry": 1500,
+        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
+        "unlock": []
+    }
+]

@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Component } from '@/engine/components';
 import { error } from '@/engine/services/error';
 import { getStore } from '@/engine/services/store';
-import { entities, GEM_ENTITY_NAME, getComponent } from '@/engine/systems/entities';
+import { entities, GEM_ENTITY_NAME, getComponent } from '@/engine/systems/entity';
 
 //#region UTILS
 export const getEntity = ({ entityId }: { entityId: string }) => entities[entityId] ? entities[entityId] : null;

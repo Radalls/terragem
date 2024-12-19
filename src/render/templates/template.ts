@@ -1,6 +1,6 @@
 import { error } from '@/engine/services/error';
-import { getRawEntityId } from '@/engine/systems/entities';
-import { getComponent } from '@/engine/systems/entities';
+import { getRawEntityId } from '@/engine/systems/entity';
+import { getComponent } from '@/engine/systems/entity';
 import { getElement, TILE_SIZE } from '@/render/templates';
 
 //#region CONSTANTS

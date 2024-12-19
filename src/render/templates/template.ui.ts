@@ -1,12 +1,14 @@
-import { GemTypes } from '@/engine/components';
-import { emit, GameEventTypes } from '@/engine/services/emit';
-import { EngineEventTypes } from '@/engine/services/event';
-import { getComponent } from '@/engine/systems/entities';
+import { Gems } from '@/engine/components';
+import { emit, GameEvents } from '@/engine/services/emit';
+import { EngineEvents } from '@/engine/services/event';
+import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { getGem, getGemType } from '@/engine/systems/gem';
-import { RenderEventTypes } from '@/render/events';
+import { RenderEvents } from '@/render/events';
 import {
+    checkElement,
     createButton,
     createElement,
+    destroyElement,
     getElement,
     setAdminMode,
     setAllOtherGemsMode,
@@ -18,6 +20,7 @@ export const createUI = () => {
     createLoading();
     createInfo();
     createGemUI();
+    createQuests();
 };
 
 export const setUIMode = ({ mode }: { mode: 'base' | 'request' }) => {
@@ -61,43 +64,42 @@ const INFO_TIMEOUT = 3000;
 
 const createInfo = () => {
     createElement({
-        css: 'info',
-        id: 'Info',
+        id: 'Infos',
         parent: 'app',
     });
 };
 
-const updateInfo = ({ text, alert }: {
+const addInfo = ({ text, alert }: {
     alert?: boolean
     text: string
 }) => {
-    const msgEl = getElement({ elId: 'Info' });
+    createElement({
+        absolute: false,
+        id: `Info-${text}`,
+        parent: 'Infos',
+        text: (alert)
+            ? `⚠ ${text} ⚠`
+            : text,
+    });
+};
 
-    msgEl.innerText = (alert)
-        ? `⚠ ${text} ⚠`
-        : text;
+const removeInfo = ({ text }: { text: string }) => {
+    destroyElement({ elId: `Info-${text}` });
 };
 
 export const displayInfo = ({ text, alert }: {
     alert: boolean
     text: string
 }) => {
-    const msgEl = getElement({ elId: 'Info' });
+    addInfo({ alert, text });
 
-    msgEl.style.display = 'block';
-    updateInfo({ alert, text });
-
-    setTimeout(() => {
-        msgEl.style.display = 'none';
-        updateInfo({ text: '' });
-    }, INFO_TIMEOUT);
+    setTimeout(() => { removeInfo({ text }); }, INFO_TIMEOUT);
 };
 //#endregion
 
 //#region GEM
 const createGemUI = () => {
     createElement({
-        css: 'gem',
         id: 'Gem',
         parent: 'UI',
     });
@@ -158,8 +160,8 @@ const createGemInfo = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'infos',
-        id: 'GemInfo',
+        css: 'data',
+        id: 'GemData',
         parent: 'Gem',
     });
 
@@ -167,7 +169,7 @@ const createGemInfo = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'id',
         id: 'GemId',
-        parent: 'GemInfo',
+        parent: 'GemData',
         text: gemId,
     });
 
@@ -175,7 +177,7 @@ const createGemInfo = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'type',
         id: 'GemType',
-        parent: 'GemInfo',
+        parent: 'GemData',
         text: `Type: ${gemType}`,
     });
 
@@ -183,7 +185,7 @@ const createGemInfo = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'state',
         id: 'GemState',
-        parent: 'GemInfo',
+        parent: 'GemData',
         text: `State: ${gemState._action}`,
     });
 
@@ -191,8 +193,8 @@ const createGemInfo = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'items',
         id: 'GemItems',
-        parent: 'GemInfo',
-        text: `Items: ${gem.items.map((item) => `(${item._type} ${item._amount})`)}`,
+        parent: 'GemData',
+        text: `Items: ${gem.items.map((item) => `(${item._name} ${item._amount})`)}`,
     });
 };
 
@@ -246,7 +248,7 @@ const onClickGemStore = ({ gemId }: { gemId: string }) => {
 
     if (gemState._action === 'idle') {
         displayGemUI({ display: false, gemId });
-        emit({ entityId: gemId, target: 'all', type: GameEventTypes.GEM_STORE });
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_STORE });
 
         return;
     }
@@ -255,7 +257,7 @@ const onClickGemStore = ({ gemId }: { gemId: string }) => {
             data: `${gemId} is already moving`,
             entityId: gemId,
             target: 'render',
-            type: RenderEventTypes.INFO,
+            type: RenderEvents.INFO,
         });
 
         return;
@@ -265,7 +267,7 @@ const onClickGemStore = ({ gemId }: { gemId: string }) => {
             data: `${gemId} is already working`,
             entityId: gemId,
             target: 'render',
-            type: RenderEventTypes.INFO,
+            type: RenderEvents.INFO,
         });
 
         return;
@@ -277,13 +279,13 @@ const onClickGemMove = ({ gemId }: { gemId: string }) => {
 
     if (gemState._action === 'idle') {
         displayGemUI({ display: false, gemId });
-        emit({ entityId: gemId, target: 'all', type: GameEventTypes.GEM_MOVE_REQUEST });
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MOVE_REQUEST });
 
         return;
     }
     else if (gemState._action === 'move') {
         displayGemUI({ display: false, gemId });
-        emit({ entityId: gemId, target: 'engine', type: EngineEventTypes.GEM_MOVE_CANCEL });
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MOVE_CANCEL });
 
         return;
     }
@@ -292,7 +294,7 @@ const onClickGemMove = ({ gemId }: { gemId: string }) => {
             data: `${gemId} is already working`,
             entityId: gemId,
             target: 'render',
-            type: RenderEventTypes.INFO,
+            type: RenderEvents.INFO,
         });
 
         return;
@@ -304,10 +306,10 @@ const onClickGemWork = ({ gemId }: { gemId: string }) => {
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
 
     if (gemState._action === 'idle') {
-        if (gemType === GemTypes.MINE) {
+        if (gemType === Gems.MINE) {
             onClickGemMine({ gemId });
         }
-        else if (gemType === GemTypes.CARRY) {
+        else if (gemType === Gems.CARRY) {
             onClickGemCarry({ gemId });
         }
 
@@ -318,7 +320,7 @@ const onClickGemWork = ({ gemId }: { gemId: string }) => {
             data: `${gemId} is already moving`,
             entityId: gemId,
             target: 'render',
-            type: RenderEventTypes.INFO,
+            type: RenderEvents.INFO,
         });
 
         return;
@@ -326,11 +328,11 @@ const onClickGemWork = ({ gemId }: { gemId: string }) => {
     else if (gemState._action === 'work') {
         displayGemUI({ display: false, gemId });
 
-        if (gemType === GemTypes.MINE) {
-            emit({ entityId: gemId, target: 'engine', type: EngineEventTypes.GEM_MINE_CANCEL });
+        if (gemType === Gems.MINE) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MINE_CANCEL });
         }
-        else if (gemType === GemTypes.CARRY) {
-            emit({ entityId: gemId, target: 'engine', type: EngineEventTypes.GEM_CARRY_CANCEL });
+        else if (gemType === Gems.CARRY) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_CARRY_CANCEL });
         }
 
         return;
@@ -339,12 +341,12 @@ const onClickGemWork = ({ gemId }: { gemId: string }) => {
 
 const onClickGemMine = ({ gemId }: { gemId: string }) => {
     displayGemUI({ display: false, gemId });
-    emit({ entityId: gemId, target: 'all', type: GameEventTypes.GEM_MINE_REQUEST });
+    emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MINE_REQUEST });
 };
 
 const onClickGemCarry = ({ gemId }: { gemId: string }) => {
     displayGemUI({ display: false, gemId });
-    emit({ entityId: gemId, target: 'all', type: GameEventTypes.GEM_CARRY_REQUEST });
+    emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_CARRY_REQUEST });
 };
 
 export const displayGemUI = ({ gemId, display }: {
@@ -367,6 +369,90 @@ export const displayGemUI = ({ gemId, display }: {
         setAllOtherGemsMode({ gemId, mode: 'disable', remove: true });
         setAdminMode({ mode: 'base' });
     }
+};
+//#endregion
+
+//#region QUEST
+const createQuests = () => {
+    createElement({
+        id: 'Quests',
+        parent: 'UI',
+    });
+};
+
+const createQuest = ({ name, progress, total, text }: {
+    name: string,
+    progress: number,
+    text: string,
+    total: number,
+}) => {
+    createElement({
+        absolute: false,
+        css: 'quest',
+        id: `Quest-${name}`,
+        parent: 'Quests',
+        text: `${text}: ${progress}/${total}`,
+    });
+};
+
+const updateQuest = ({ name, progress, total, text }: {
+    name: string,
+    progress: number,
+    text: string,
+    total: number,
+}) => {
+    const questEl = getElement({ elId: `Quest-${name}` });
+
+    questEl.innerText = `${text}: ${progress}/${total}`;
+};
+
+const removeQuest = ({ name }: { name: string }) => {
+    destroyElement({ elId: `Quest-${name}` });
+};
+
+export const updateQuests = () => {
+    const admin = getAdmin();
+
+    for (const quest of admin.quests) {
+        const questEl = checkElement({ id: `Quest-${quest.data.name}` });
+
+        if (quest._done) {
+            if (questEl) {
+                removeQuest({ name: quest.data.name });
+            }
+
+            continue;
+        }
+
+        if (!(questEl)) {
+            createQuest({
+                name: quest.data.name,
+                progress: quest._progress,
+                text: quest.data.text,
+                total: (quest.data.type === 'mine')
+                    ? quest.data.mine.amount
+                    : quest.data.carry,
+            });
+        }
+        else {
+            updateQuest({
+                name: quest.data.name,
+                progress: quest._progress,
+                text: quest.data.text,
+                total: (quest.data.type === 'mine')
+                    ? quest.data.mine.amount
+                    : quest.data.carry,
+            });
+        }
+    }
+};
+
+export const displayQuests = ({ display }: { display: boolean }) => {
+    const questsEl = getElement({ elId: 'Quests' });
+
+    questsEl.style.display = (display)
+        ? 'flex'
+        : 'none';
 };
 //#endregion
 //#endregion

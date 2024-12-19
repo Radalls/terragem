@@ -1,0 +1,23 @@
+[
+    {
+        "name": "LAB1",
+        "text": "Unlock crafting Carry Gems, increase maximum gem amount by 1",
+        "cost": 1,
+        "time": 15,
+        "unlock": [{ "type": "craft", "name": "GEM_CARRY" }, { "type": "stat", "name": "GEM_MAX", "amount": 1 }]
+    },
+    {
+        "name": "LAB2",
+        "text": "Increase maximum gem amount by 1",
+        "cost": 1,
+        "time": 60,
+        "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
+    },
+    {
+        "name": "LAB3",
+        "text": "Increase maximum gem amount by 1",
+        "cost": 1,
+        "time": 120,
+        "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
+    }
+]

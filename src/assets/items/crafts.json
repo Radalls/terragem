@@ -1,0 +1,4 @@
+[
+    { "name": "GEM_MINE", "components": [{ "name": "IRON", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] },
+    { "name": "GEM_CARRY", "components": [{ "name": "COPPER", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] }
+]

@@ -1,6 +1,6 @@
 import { error } from '@/engine/services/error';
-import { EngineEventTypes, onEvent as onEngineEvent } from '@/engine/services/event';
-import { RenderEventTypes, onEvent as onRenderEvent } from '@/render/events';
+import { EngineEvents, onEvent as onEngineEvent } from '@/engine/services/event';
+import { RenderEvents, onEvent as onRenderEvent } from '@/render/events';
 
 //#region TYPES
 export type Emit =
@@ -8,22 +8,22 @@ export type Emit =
         data?: any,
         entityId?: string,
         target: 'render'
-        type: RenderEventTypes
+        type: RenderEvents
     }
     | {
         data?: any,
         entityId?: string,
         target: 'engine'
-        type: EngineEventTypes
+        type: EngineEvents
     }
     | {
         data?: any,
         entityId?: string,
         target: 'all'
-        type: GameEventTypes
+        type: GameEvents
     }
 
-export enum GameEventTypes {
+export enum GameEvents {
     /* GAME */
     GAME_LOADING_ERROR = 'GAME_LOADING_ERROR',
     GAME_LOADING_OFF = 'GAME_LOADING_OFF',

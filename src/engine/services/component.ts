@@ -1,7 +1,11 @@
 import { Admin, TileMap, Tile, Sprite, Drop, Position, Mine, Carry, State } from '@/engine/components';
 import { getStore } from '@/engine/services/store';
-import { addComponent, getComponent } from '@/engine/systems/entities';
+import { addComponent, getComponent } from '@/engine/systems/entity';
 import { loadTileMapData } from '@/engine/systems/tilemap';
+
+//#region CONSTANTS
+const ADMIN_INIT_GEM_MAX = 2;
+//#endregion
 
 //#region SERVICES
 export const addAdmin = ({ adminId, saveAdmin }: {
@@ -12,9 +16,13 @@ export const addAdmin = ({ adminId, saveAdmin }: {
 
     const admin: Admin = (saveAdmin) ?? {
         _: 'Admin',
+        _gemMax: ADMIN_INIT_GEM_MAX,
+        _labPoints: 0,
+        crafts: [],
         gems: [],
         items: [],
-        recipes: [],
+        labs: [],
+        quests: [],
         requests: [],
     };
 
@@ -44,13 +52,15 @@ export const addTileMap = ({ tileMapId, tileMapName }: {
     return getComponent({ componentId: 'TileMap', entityId: tileMapId });
 };
 
-export const addTile = ({ tileId, drops, dropAmount }: {
+export const addTile = ({ tileId, density, drops, dropAmount }: {
+    density: number,
     dropAmount: number,
     drops: Drop[],
     tileId: string,
 }) => {
     const tile: Tile = {
         _: 'Tile',
+        _density: density,
         _dropAmount: dropAmount,
         drops,
     };
@@ -99,6 +109,7 @@ export const addMine = ({ gemId }: { gemId: string }) => {
         _: 'Mine',
         _itemCapacity: 10,
         _mineSpeed: 1,
+        _mineStrength: 1,
         _moveSpeed: 3,
         items: [],
     };

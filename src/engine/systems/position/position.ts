@@ -1,7 +1,7 @@
 import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
-import { getAdmin, getComponent, getTileMap } from '@/engine/systems/entities';
-import { RenderEventTypes } from '@/render/events';
+import { getAdmin, getComponent, getTileMap } from '@/engine/systems/entity';
+import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
 //#endregion
@@ -28,7 +28,7 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
         else entityPosition._y -= 1;
     }
 
-    emit({ entityId, target: 'render', type: RenderEventTypes.POSITION_UPDATE });
+    emit({ entityId, target: 'render', type: RenderEvents.POSITION_UPDATE });
 
     return (entityPosition._x === targetX && entityPosition._y === targetY);
 };
