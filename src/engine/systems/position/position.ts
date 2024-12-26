@@ -20,13 +20,93 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
     const xDiff = targetX - entityPosition._x;
     const yDiff = targetY - entityPosition._y;
 
-    if (Math.abs(xDiff) > Math.abs(yDiff)) {
-        if (xDiff > 0) entityPosition._x += 1;
-        else entityPosition._x -= 1;
-    } else {
-        if (yDiff > 0) entityPosition._y += 1;
-        else entityPosition._y -= 1;
+    const moveAxis = (Math.abs(yDiff) > Math.abs(xDiff))
+        ? 'vertical'
+        : 'horizontal';
+
+    const getMoveDirection = ({ moveAxis, xDiff, yDiff }: {
+        moveAxis: 'vertical' | 'horizontal',
+        xDiff: number,
+        yDiff: number
+    }) => {
+        const moveDirection = (moveAxis === 'vertical')
+            ? (yDiff > 0)
+                ? 'down'
+                : 'up'
+            : (xDiff > 0)
+                ? 'right'
+                : 'left';
+
+        return moveDirection;
+    };
+
+    const getMoveTarget = ({ moveAxis, moveDirection }: {
+        moveAxis: 'vertical' | 'horizontal',
+        moveDirection: 'down' | 'up' | 'right' | 'left'
+    }) => {
+        const moveTargetX = (moveAxis === 'vertical')
+            ? entityPosition._x
+            : (moveDirection === 'right')
+                ? entityPosition._x + 1
+                : entityPosition._x - 1;
+
+        const moveTargetY = (moveAxis === 'horizontal')
+            ? entityPosition._y
+            : (moveDirection === 'down')
+                ? entityPosition._y + 1
+                : entityPosition._y - 1;
+
+        return { moveTargetX, moveTargetY };
+    };
+
+    const isMoveTargetValid = ({ moveTargetX, moveTargetY }: { moveTargetX: number; moveTargetY: number }) => {
+        const moveTargetTileId = getTileAtPosition({ x: moveTargetX, y: moveTargetY });
+        const moveTargetTile = getComponent({ componentId: 'Tile', entityId: moveTargetTileId });
+
+        return moveTargetTile._destroy;
+    };
+
+    const moveDirection = getMoveDirection({ moveAxis, xDiff, yDiff });
+    const { moveTargetX, moveTargetY } = getMoveTarget({ moveAxis, moveDirection });
+    const canMove = isMoveTargetValid({ moveTargetX, moveTargetY });
+
+    let hasMoved = false;
+    if (canMove) {
+        entityPosition._x = moveTargetX;
+        entityPosition._y = moveTargetY;
+        hasMoved = true;
     }
+
+    if (!(hasMoved)) {
+        const moveDirection = getMoveDirection({
+            moveAxis: (moveAxis === 'vertical')
+                ? 'horizontal'
+                : 'vertical',
+            xDiff,
+            yDiff,
+        });
+
+        const { moveTargetX, moveTargetY } = getMoveTarget({
+            moveAxis: (moveAxis === 'vertical')
+                ? 'horizontal'
+                : 'vertical',
+            moveDirection,
+        });
+        const canMove = isMoveTargetValid({ moveTargetX, moveTargetY });
+
+        if (canMove) {
+            entityPosition._x = moveTargetX;
+            entityPosition._y = moveTargetY;
+            hasMoved = true;
+        }
+    }
+
+    if (!(hasMoved)) throw error({
+        message: `Unable to move entity ${entityId}
+            to (${targetX},${targetY})
+            through (${entityPosition._x},${entityPosition._y})`,
+        where: moveToTarget.name,
+    });
 
     emit({ entityId, target: 'render', type: RenderEvents.POSITION_UPDATE });
 
@@ -50,19 +130,22 @@ export const getTileAtPosition = ({ x, y }: { x: number; y: number }) => {
     });
 };
 
-export const getGemAtPosition = ({ gemId, x, y }: {
+export const getGemsAtPosition = ({ gemId, x, y }: {
     gemId: string,
     x: number,
     y: number,
 }) => {
     const admin = getAdmin();
 
+    const gemsAtPosition = [];
     for (const gem of admin.gems) {
         const gemPosition = getComponent({ componentId: 'Position', entityId: gem });
 
         if (gemId !== gem && gemPosition._x === x && gemPosition._y === y) {
-            return gem;
+            gemsAtPosition.push(gem);
         }
     }
+
+    return gemsAtPosition;
 };
 //#endregion

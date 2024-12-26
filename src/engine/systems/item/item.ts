@@ -3,7 +3,7 @@ import { emit } from '@/engine/services/emit';
 import { createEntityGem } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
 import { getAdmin } from '@/engine/systems/entity';
-import { gemAtCapacity, getGem } from '@/engine/systems/gem';
+import { isGemAtCapacity, getGem, gemHasItems } from '@/engine/systems/gem';
 import { getCraftData, isItemGem, itemToGem } from '@/engine/systems/item';
 import { RenderEvents } from '@/render/events';
 
@@ -52,6 +52,18 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
     const admin = getAdmin();
 
     if (admin.crafts.includes(itemName)) {
+        if (isItemGem({ itemName })) {
+            if (admin.gems.length >= admin.stats._gemMax) {
+                emit({
+                    data: 'Already at max gem capacity',
+                    target: 'render',
+                    type: RenderEvents.INFO_ALERT,
+                });
+
+                return false;
+            }
+        }
+
         const craftData = getCraftData({ itemName });
 
         for (const compItem of craftData.components) {
@@ -128,7 +140,12 @@ export const addGemItem = ({ gemId, name, amount }: {
 }) => {
     const gem = getGem({ gemId });
 
-    if (gemAtCapacity({ gemId })) throw error({
+    if (!(gemHasItems(gem))) throw error({
+        message: `${gemId} cannot use items`,
+        where: addGemItem.name,
+    });
+
+    if (isGemAtCapacity({ gemId })) throw error({
         message: `${gemId} is at capacity`,
         where: addGemItem.name,
     });
@@ -140,6 +157,8 @@ export const addGemItem = ({ gemId, name, amount }: {
     else {
         gem.items.push({ _amount: amount, _name: name });
     }
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
 };
 
 export const removeGemItem = ({ gemId, amount }: {
@@ -148,35 +167,43 @@ export const removeGemItem = ({ gemId, amount }: {
 }) => {
     const gem = getGem({ gemId });
 
+    if (!(gemHasItems(gem))) throw error({
+        message: `${gemId} cannot use items`,
+        where: addGemItem.name,
+    });
+
     if (!(gem.items.length)) {
         return;
     }
 
-    const item = gem.items[0];
-    if (amount > item._amount) {
-        gem.items.splice(0, 1);
+    const item = gem.items.pop();
+    if (!(item)) {
+        return;
+    }
 
-        return {
-            amount: item._amount,
-            name: item._name,
-        };
+    const removeItem = {
+        amount: 0,
+        name: item._name,
+    };
+
+    if (amount > item._amount) {
+        removeItem.amount = item._amount;
     }
     else if (amount === item._amount) {
-        gem.items.splice(0, 1);
-
-        return {
-            amount: amount,
-            name: item._name,
-        };
+        removeItem.amount = amount;
     }
     else if (amount < item._amount) {
-        item._amount -= amount;
+        gem.items.push({
+            _amount: item._amount - amount,
+            _name: item._name,
+        });
 
-        return {
-            amount: amount,
-            name: item._name,
-        };
+        removeItem.amount = amount;
     }
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
+
+    return removeItem;
 };
 //#endregion
 //#endregion

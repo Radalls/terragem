@@ -14,7 +14,7 @@ import {
 } from '@/render/templates';
 
 //#region CONSTANTS
-export const TILE_SIZE = 64;
+export const TILE_SIZE = 32;
 export const TILEMAP_GROUND_LEVEL = 5;
 
 let tileMapElId: string;
@@ -54,12 +54,8 @@ export const createTile = ({ tileId }: { tileId: string }) => {
     tileEl.style.left = `${tilePosition._x * TILE_SIZE}px`;
 };
 
-export const destroyTile = ({ tileId }: { tileId: string }) => {
-    setTileMode({ mode: 'destroy', tileId });
-};
-
 export const setTileMode = ({ tileId, mode }: {
-    mode: 'base' | 'request' | 'destroy',
+    mode: 'base' | 'request' | 'destroy' | 'ground',
     tileId?: string,
 }) => {
     const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
@@ -98,11 +94,17 @@ export const setTileMode = ({ tileId, mode }: {
     }
     else if (mode === 'destroy') {
         if (!(tileId)) return;
-        console.log('a');
 
         const tileEl = getElement({ elId: tileId });
 
         tileEl.classList.add('destroy');
+    }
+    else if (mode === 'ground') {
+        if (!(tileId)) return;
+
+        const tileEl = getElement({ elId: tileId });
+
+        tileEl.classList.add('ground');
     }
 };
 
@@ -125,8 +127,9 @@ const placeTileEntity = ({ elId, width, height, top, left }: {
 
     el.style.width = `${width * TILE_SIZE}px`;
     el.style.height = `${height * TILE_SIZE}px`;
-    el.style.top = `${TILEMAP_GROUND_LEVEL * TILE_SIZE - ((top ?? height) * TILE_SIZE)}px`;
+    el.style.top = `${(TILEMAP_GROUND_LEVEL + 1) * TILE_SIZE - ((top ?? height) * TILE_SIZE)}px`;
     el.style.left = `${left * TILE_SIZE}px`;
+    el.style.zIndex = '1';
 };
 
 export const updateTileEntity = ({ elId }: { elId: string }) => {
@@ -136,7 +139,7 @@ export const updateTileEntity = ({ elId }: { elId: string }) => {
     const elSprite = getComponent({ componentId: 'Sprite', entityId: elId });
 
     el.style.left = `${elPosition._x * TILE_SIZE}px`;
-    el.style.top = `${((elPosition._y + (TILEMAP_GROUND_LEVEL - elSprite._height)) * TILE_SIZE)}px`;
+    el.style.top = `${((elPosition._y + ((TILEMAP_GROUND_LEVEL + 1) - elSprite._height)) * TILE_SIZE)}px`;
 };
 
 //#region ADMIN

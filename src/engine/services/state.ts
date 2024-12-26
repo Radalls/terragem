@@ -5,6 +5,7 @@ const state = {
     gamePlay: false,
     requestGemCarryStart: false,
     requestGemCarryTarget: false,
+    requestGemLift: false,
     requestGemMove: false,
     requestTile: false,
 };

@@ -3,11 +3,22 @@ import { emit, GameEvents } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { setState } from '@/engine/services/state';
 import { clearStore, setStore } from '@/engine/services/store';
-import { requestGemMine, setGemStore, stopGemCarry, stopGemMine, stopGemMove } from '@/engine/systems/gem';
+import {
+    requestGemLift,
+    requestGemMine,
+    requestGemTunnel,
+    setGemStore,
+    stopGemCarry,
+    stopGemLift,
+    stopGemMine,
+    stopGemMove,
+    stopGemTunnel,
+} from '@/engine/systems/gem';
 import { craftAdminItem } from '@/engine/systems/item';
 import { runLab } from '@/engine/systems/lab';
 import { progressQuestCarry, progressQuestMine } from '@/engine/systems/quest';
 import { selectTile } from '@/engine/systems/tilemap';
+import { RenderEvents } from '@/render/events';
 
 //#region TYPES
 export type EngineEvent = {
@@ -26,10 +37,12 @@ export enum EngineEvents {
     GEM_CARRY_CANCEL = 'GEM_CARRY_CANCEL',
     GEM_CARRY_CONFIRM_START = 'GEM_CARRY_CONFIRM_START',
     GEM_CARRY_CONFIRM_TARGET = 'GEM_CARRY_CONFIRM_TARGET',
+    GEM_LIFT_CANCEL = 'GEM_LIFT_CANCEL',
     GEM_MINE = 'GEM_MINE',
     GEM_MINE_CANCEL = 'GEM_MINE_CANCEL',
     GEM_MOVE_CANCEL = 'GEM_MOVE_CANCEL',
     GEM_MOVE_CONFIRM = 'GEM_MOVE_CONFIRM',
+    GEM_TUNNEL_CANCEL = 'GEM_TUNNEL_CANCEL',
     /* LAB */
     LAB_RUN = 'LAB_RUN',
     /* TILEMAP */
@@ -78,7 +91,7 @@ export const onEvent = ({
     else if (type === EngineEvents.GEM_MOVE_CANCEL && entityId) {
         stopGemMove({ gemId: entityId });
     }
-    else if (type === EngineEvents.GEM_MINE && data.amount && data.name) {
+    else if (type === EngineEvents.GEM_MINE && (data.amount !== undefined) && data.name) {
         progressQuestMine({ amount: data.amount, name: data.name });
     }
     else if (type === GameEvents.GEM_MINE_REQUEST && entityId) {
@@ -87,8 +100,10 @@ export const onEvent = ({
     else if (type === EngineEvents.GEM_MINE_CANCEL && entityId) {
         stopGemMine({ gemId: entityId });
     }
-    else if (type === EngineEvents.GEM_CARRY && data.amount) {
+    else if (type === EngineEvents.GEM_CARRY && (data.amount !== undefined)) {
         progressQuestCarry({ amount: data.amount });
+
+        emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_STORAGE });
     }
     else if (type === GameEvents.GEM_CARRY_REQUEST && entityId) {
         setState({ key: 'requestGemCarryStart', value: true });
@@ -107,6 +122,18 @@ export const onEvent = ({
     else if (type === EngineEvents.GEM_CARRY_CANCEL && entityId) {
         stopGemCarry({ gemId: entityId });
     }
+    else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
+        requestGemTunnel({ gemId: entityId });
+    }
+    else if (type === EngineEvents.GEM_TUNNEL_CANCEL && entityId) {
+        stopGemTunnel({ gemId: entityId });
+    }
+    else if (type === GameEvents.GEM_LIFT_REQUEST && entityId) {
+        requestGemLift({ gemId: entityId });
+    }
+    else if (type === EngineEvents.GEM_LIFT_CANCEL && entityId) {
+        stopGemLift({ gemId: entityId });
+    }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
         setGemStore({ gemId: entityId, store: false });
     }
@@ -119,7 +146,7 @@ export const onEvent = ({
     }
     /* TILEMAP */
     else if (type === EngineEvents.TILE_SELECT && entityId) {
-        selectTile({ tileId: entityId });
+        selectTile({ selectedTileId: entityId });
     }
     /* CRAFT */
     else if (type === EngineEvents.CRAFT_REQUEST && data) {

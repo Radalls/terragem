@@ -1,10 +1,13 @@
 import { Item } from '@/engine/components';
 
+export type Gem = Carry | Lift | Mine | Tunnel;
+
 export type Mine = {
     _: 'Mine';
+    _digAmount: number;
+    _digSpeed: number;
+    _digStrength: number;
     _itemCapacity: number;
-    _mineSpeed: number;
-    _mineStrength: number;
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
@@ -13,21 +16,51 @@ export type Mine = {
 
 export type Carry = {
     _: 'Carry';
-    _carryPickSpeed: number;
-    _carrySpeed: number;
-    _carryStartX?: number;
-    _carryStartY?: number;
-    _carryTargetX?: number;
-    _carryTargetY?: number;
-    _carryTo?: 'start' | 'target';
+    _itemAmount: number;
     _itemCapacity: number;
+    _itemRange: number;
+    _itemSpeed: number;
     _moveSpeed: number;
+    _moveStartX?: number;
+    _moveStartY?: number;
+    _moveTargetX?: number;
+    _moveTargetY?: number;
+    _moveTo?: 'start' | 'target';
     _moveX?: number;
     _moveY?: number;
     items: Item[];
 }
 
+export type Lift = {
+    _: 'Lift';
+    _itemAmount: number;
+    _itemCapacity: number;
+    _itemSpeed: number;
+    _moveSpeed: number;
+    _moveStartX?: number;
+    _moveStartY?: number;
+    _moveTargetX?: number;
+    _moveTargetY?: number;
+    _moveTo?: 'start' | 'target';
+    _moveX?: number;
+    _moveY?: number;
+    items: Item[];
+}
+
+export type Tunnel = {
+    _: 'Tunnel';
+    _digOffset?: number;
+    _digRange: number;
+    _digSpeed: number;
+    _digStrength: number;
+    _moveSpeed: number;
+    _moveX?: number;
+    _moveY?: number;
+}
+
 export enum Gems {
     CARRY = 'Carry',
+    LIFT = 'Lift',
     MINE = 'Mine',
+    TUNNEL = 'Tunnel',
 }

@@ -1,4 +1,7 @@
+import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
+import { getComponent } from '@/engine/systems/entity';
+import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
 const spriteFiles: Record<string, { default: string }>
@@ -12,5 +15,16 @@ export const getSpritePath = ({ spriteName }: { spriteName: string }) => {
 
     return spriteFiles[spritePath].default
         ?? error({ message: `Sprite ${spriteName} not found`, where: getSpritePath.name });
+};
+
+export const updateSprite = ({ entityId, image }: {
+    entityId: string,
+    image: string,
+}) => {
+    const entitySprite = getComponent({ componentId: 'Sprite', entityId });
+
+    entitySprite._image = getSpritePath({ spriteName: image });
+
+    emit({ entityId, target: 'render', type: RenderEvents.SPRITE_UPDATE });
 };
 //#endregion

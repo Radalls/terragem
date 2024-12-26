@@ -23,7 +23,12 @@
 }
 
 .tilemap .tile.destroy {
-    opacity: 0.5;
+    background-size: contain;
+    pointer-events: none;
+}
+
+.tilemap .tile.ground {
+    opacity: 0;
     pointer-events: none;
 }
 
