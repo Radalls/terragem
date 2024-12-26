@@ -12,6 +12,7 @@ type ElementData =
         css?: string;
         entityId?: never;
         id: string;
+        image?: string;
         parent?: string;
         sprite?: boolean;
         text?: string;
@@ -21,6 +22,7 @@ type ElementData =
         css?: string;
         entityId: string;
         id?: never;
+        image?: never;
         parent?: string;
         sprite?: boolean;
         text?: string;
@@ -38,6 +40,7 @@ export const createElement = ({
     parent,
     css,
     id,
+    image,
     sprite = false,
     text,
 }: ElementData) => {
@@ -66,8 +69,16 @@ export const createElement = ({
 
     parentEl.appendChild(el);
 
-    if (text) el.innerText = text;
-    if (sprite) createSprite({ elId });
+    if (text) {
+        el.innerText = text;
+    }
+
+    if (image) {
+        el.style.backgroundImage = `url(${image})`;
+    }
+    else if (sprite) {
+        createSprite({ elId });
+    }
 
     return el;
 };

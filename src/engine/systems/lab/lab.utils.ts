@@ -1,3 +1,4 @@
+import { Admin } from '@/engine/components';
 import { getAdmin } from '@/engine/systems/entity';
 
 //#region CONSTANTS
@@ -13,5 +14,11 @@ export const searchLab = ({ name }: { name: string }) => {
     );
 
     return lab;
+};
+
+export const getLabDataStat = ({ name }: { name: string }) => {
+    const statName = '_' + name.toLowerCase().replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+
+    return statName as keyof Admin['stats'];
 };
 //#endregion

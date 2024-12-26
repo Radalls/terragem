@@ -77,13 +77,20 @@
     color: rgb(255, 255, 255);
     display: flex;
     flex-direction: column;
-    gap: 12px;
     padding: 32px;
     width: 100%;
 }
 
 /* STORAGE */
-.admin .content .item {
+.admin .content .storage {
+    display: none;
+    flex-direction: row;
+    gap: 12px;
+    height: 100%;
+    width: 100%;
+}
+
+.storage .item {
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
@@ -106,48 +113,170 @@
 }
 
 /* GEMS */
-.admin .content .gem {
+.admin .content .gems {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.gems .page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.gems .actions {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.gems .actions .action {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+.gems .page .gem {
     align-items: center;
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
     display: flex;
     justify-content: space-between;
-    height: 15%;
-    padding: 0 24px;
-    width: calc(100% - 64px);
+    padding: 12px 24px;
 }
 
-.gem .deploy {
+.gems .gem .sprite {
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px 20px 0 0;
+    height: 32px;
+    width: 32px;
+}
+
+.gems .gem .data {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    width: 66%;
+}
+
+.gems .gem .infos {
+    align-items: center;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.gems .gem .infos .info {}
+
+.gems .gem .stats {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.gem .stats .stat {
+    width: 33%;
+}
+
+.gems .gem .actions {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: center;
+    width: 15%;
+}
+
+.gem .actions .view {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    display: none;
+    padding: 8px;
+    width: 100%;
+}
+
+.gem .actions .deploy {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
     padding: 8px;
+    width: 100%;
 }
 
 /* WORKSHOP */
-.admin .content .recipe {
+.admin .content .workshop {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.workshop .page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.workshop .actions {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.workshop .actions .action {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+.workshop .page .craft {
     align-items: center;
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
     display: flex;
-    height: 15%;
+    height: 20%;
     justify-content: space-between;
-    padding: 0 24px;
-    width: calc(100% - 64px);
+    padding: 24px;
 }
 
-.admin .content .recipe .items {
+.craft .data {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.craft .data .info {
     display: flex;
     gap: 16px;
 }
 
-.admin .content .recipe .item {
+.craft .data .info .name {}
+
+.craft .data .info .text {}
+
+.craft .components {
+    display: flex;
+    gap: 16px;
+}
+
+.craft .comp {
     width: 100px;
 }
 
-.admin .content .recipe .craft {
+.craft .run {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
@@ -155,19 +284,61 @@
 }
 
 /* LAB */
-.admin .content .lab {
+.admin .content .labs {
+    display: none;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.labs .stats {
+    display: flex;
+    gap: 12px;
+}
+
+.labs .page {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.labs .actions {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.labs .actions .action {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+.labs .page .lab {
     align-items: center;
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
-    display: flex;
-    height: 15%;
+    display: none;
+    height: 20%;
     justify-content: space-between;
     padding: 0 24px;
-    width: calc(100% - 64px);
 }
 
-.admin .content .lab .run {
+.lab .text {}
+
+.lab .cost {}
+
+.lab .done {
+    display: none;
+}
+
+.lab .run {}
+
+.lab .start {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;

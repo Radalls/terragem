@@ -6,7 +6,8 @@ import { error } from '@/engine/services/error';
 export type CraftData = {
     components: { amount: number, name: Items }[],
     name: Items,
-}
+    text: string,
+};
 //#endregion
 
 //#region DATA

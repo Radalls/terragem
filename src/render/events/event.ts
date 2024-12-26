@@ -4,10 +4,10 @@ import { run } from '@/render/main';
 import {
     createAdminMenu,
     createGem,
+    createSprite,
     createTile,
     createTileMap,
     destroyGem,
-    destroyTile,
     destroyTileMap,
     displayInfo,
     displayLoading,
@@ -16,8 +16,13 @@ import {
     setGemMode,
     setTileMode,
     setUIMode,
+    updateGemInfo,
+    updateGems,
+    updateLabs,
     updateQuests,
+    updateStorage,
     updateTileEntity,
+    updateWorkshop,
 } from '@/render/templates';
 
 //#region TYPES
@@ -30,12 +35,19 @@ export type RenderEvent = {
 export enum RenderEvents {
     /* ADMIN */
     ADMIN_CREATE = 'ADMIN_CREATE',
+    ADMIN_UPDATE_GEMS = 'ADMIN_UPDATE_GEMS',
+    ADMIN_UPDATE_LABS = 'ADMIN_UPDATE_LABS',
+    ADMIN_UPDATE_STORAGE = 'ADMIN_UPDATE_STORAGE',
+    ADMIN_UPDATE_WORKSHOP = 'ADMIN_UPDATE_WORKSHOP',
     /* GEM */
     GEM_CARRY_STOP = 'GEM_CARRY_STOP',
     GEM_CREATE = 'GEM_CREATE',
     GEM_DESTROY = 'GEM_DESTROY',
+    GEM_LIFT_STOP = 'GEM_LIFT_STOP',
     GEM_MINE_STOP = 'GEM_MINE_STOP',
     GEM_MOVE_STOP = 'GEM_MOVE_STOP',
+    GEM_TUNNEL_STOP = 'GEM_TUNNEL_STOP',
+    GEM_UPDATE = 'GEM_UPDATE',
     /* INFO */
     INFO = 'INFO',
     INFO_ALERT = 'INFO_ALERT',
@@ -48,11 +60,14 @@ export enum RenderEvents {
     QUEST_CREATE = 'QUEST_CREATE',
     QUEST_END = 'QUEST_END',
     QUEST_UPDATE = 'QUEST_UPDATE',
+    /* SPRITE */
+    SPRITE_UPDATE = 'SPRITE_UPDATE',
     /* TILEMAP */
     TILEMAP_CREATE = 'TILEMAP_CREATE',
     TILEMAP_DESTROY = 'TILEMAP_DESTROY',
     TILE_CREATE = 'TILE_CREATE',
     TILE_DESTROY = 'TILE_DESTROY',
+    TILE_GROUND = 'TILE_GROUND',
 }
 //#endregion
 
@@ -77,16 +92,29 @@ export const onEvent = ({
     else if (type === RenderEvents.ADMIN_CREATE && entityId) {
         createAdminMenu();
     }
+    else if (type === RenderEvents.ADMIN_UPDATE_GEMS) {
+        updateGems();
+    }
+    else if (type === RenderEvents.ADMIN_UPDATE_LABS) {
+        updateLabs();
+    }
+    else if (type === RenderEvents.ADMIN_UPDATE_STORAGE) {
+        updateStorage();
+    }
+    else if (type === RenderEvents.ADMIN_UPDATE_WORKSHOP) {
+        updateWorkshop();
+    }
     /* GEM */
     else if (type === RenderEvents.GEM_CREATE && entityId) {
         createGem({ gemId: entityId });
+    }
+    else if (type === RenderEvents.GEM_UPDATE && entityId) {
+        updateGemInfo({ gemId: entityId });
     }
     else if (type === RenderEvents.GEM_DESTROY && entityId) {
         destroyGem({ gemId: entityId });
     }
     else if (type === GameEvents.GEM_MOVE_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'request' });
-
         emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
     }
     else if (type === RenderEvents.GEM_MOVE_STOP && entityId) {
@@ -104,6 +132,18 @@ export const onEvent = ({
         emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
     }
     else if (type === RenderEvents.GEM_CARRY_STOP && entityId) {
+        setGemMode({ gemId: entityId, mode: 'base' });
+    }
+    else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'mine' });
+    }
+    else if (type === RenderEvents.GEM_TUNNEL_STOP && entityId) {
+        setGemMode({ gemId: entityId, mode: 'base' });
+    }
+    else if (type === GameEvents.GEM_LIFT_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'carry' });
+    }
+    else if (type === RenderEvents.GEM_LIFT_STOP && entityId) {
         setGemMode({ gemId: entityId, mode: 'base' });
     }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
@@ -145,6 +185,10 @@ export const onEvent = ({
     else if (type === RenderEvents.QUEST_UPDATE) {
         updateQuests();
     }
+    /* SPRITE */
+    else if (type === RenderEvents.SPRITE_UPDATE && entityId) {
+        createSprite({ elId: entityId });
+    }
     /* TILEMAP */
     else if (type === RenderEvents.TILEMAP_CREATE && entityId) {
         createTileMap({ tileMapId: entityId });
@@ -156,7 +200,10 @@ export const onEvent = ({
         createTile({ tileId: entityId });
     }
     else if (type === RenderEvents.TILE_DESTROY && entityId) {
-        destroyTile({ tileId: entityId });
+        setTileMode({ mode: 'destroy', tileId: entityId });
+    }
+    else if (type === RenderEvents.TILE_GROUND && entityId) {
+        setTileMode({ mode: 'ground', tileId: entityId });
     }
     else error({
         message: `Unknown event type: ${type} ${entityId} ${data}`,

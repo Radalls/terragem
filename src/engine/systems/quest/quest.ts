@@ -81,16 +81,22 @@ const endQuest = ({ name, type }: {
 
     for (const reward of quest.data.reward) {
         if (reward.type === 'lab') {
-            admin._labPoints += reward.amount;
+            admin.stats._labPoints += reward.amount;
+
+            emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
         }
         else if (reward.type === 'item') {
             addAdminItem({ amount: reward.amount, name: reward.name });
+
+            emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_STORAGE });
         }
     }
 
     for (const unlock of quest.data.unlock) {
         if (unlock.type === 'lab') {
             createLab({ name: unlock.name });
+
+            emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
         }
         else if (unlock.type === 'quest') {
             createQuest({ questName: unlock.name });

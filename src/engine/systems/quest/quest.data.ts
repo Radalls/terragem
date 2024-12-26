@@ -24,7 +24,9 @@ export type QuestData =
 
 //#region DATA
 export const getQuestData = ({ questName }: { questName: string }) => {
-    const questData = quests.find((data) => data.name === questName) ?? error({
+    const questz = quests.filter((data) => !(data['@']));
+
+    const questData = questz.find((data) => data.name === questName) ?? error({
         message: `CraftData for ${questName} not found`,
         where: getQuestData.name,
     });

@@ -1,50 +1,201 @@
 [
+    { "@": "MINE_IRON" },
     {
         "name": "QUEST_MINE_IRON_1",
         "type": "mine",
         "text": "Mine 50 Iron",
         "mine": { "name": "IRON", "amount": 50 },
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": [{ "type": "lab", "name": "LAB1" }, { "type": "quest", "name": "QUEST_MINE_IRON_2" }]
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 3 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_CARRY" },
+            { "type": "lab", "name": "LAB_GEM_MAX_1" },
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_1" },
+            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_1" },
+            { "type": "quest", "name": "QUEST_MINE_IRON_2" }
+        ]
     },
     {
         "name": "QUEST_MINE_IRON_2",
         "type": "mine",
         "text": "Mine 250 Iron",
         "mine": { "name": "IRON", "amount": 250 },
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": []
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_4" },  
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_2" },
+            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_2" },          
+            { "type": "quest", "name": "QUEST_MINE_IRON_3" }
+        ]
     },
+    {
+        "name": "QUEST_MINE_IRON_3",
+        "type": "mine",
+        "text": "Mine 500 Iron",
+        "mine": { "name": "IRON", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_7" },
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_3" },
+            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_3" },
+            { "type": "quest", "name": "QUEST_MINE_IRON_4" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_IRON_4",
+        "type": "mine",
+        "text": "Mine 1500 Iron",
+        "mine": { "name": "IRON", "amount": 1500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_10" },
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_4" },
+            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_4" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_STRENGHT_2" }
+        ]
+    },
+    { "@": "MINE_COPPER" },
     {
         "name": "QUEST_MINE_COPPER_1",
         "type": "mine",
         "text": "Mine 50 Copper",
         "mine": { "name": "COPPER", "amount": 50 },
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": [{ "type": "lab", "name": "LAB2" }, { "type": "quest", "name": "QUEST_MINE_COPPER_2" }]
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 3 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_2" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_1" },
+            { "type": "quest", "name": "QUEST_MINE_COPPER_2" }
+        ]
     },
     {
         "name": "QUEST_MINE_COPPER_2",
         "type": "mine",
         "text": "Mine 250 Copper",
         "mine": { "name": "COPPER", "amount": 250 },
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": []
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_5" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_2" },
+            { "type": "quest", "name": "QUEST_MINE_COPPER_3" }
+        ]
     },
+    {
+        "name": "QUEST_MINE_COPPER_3",
+        "type": "mine",
+        "text": "Mine 500 Copper",
+        "mine": { "name": "COPPER", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_6" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_3" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_STRENGHT_1" },
+            { "type": "quest", "name": "QUEST_MINE_COPPER_4" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_COPPER_4",
+        "type": "mine",
+        "text": "Mine 1500 Copper",
+        "mine": { "name": "COPPER", "amount": 1500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_7" },
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_4" }
+        ]
+    },
+    { "@": "CARRY" },
     {
         "name": "QUEST_CARRY_1",
         "type": "carry",
-        "text": "Carry 500 items to the base",
-        "carry": 500,
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": [{ "type": "lab", "name": "LAB3" }, { "type": "quest", "name": "QUEST_CARRY_2" }]
+        "text": "Carry 150 items to the base",
+        "carry": 150,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 3 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_TUNNEL" },
+            { "type": "lab", "name": "LAB_GEM_MAX_3" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_1" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_MOVE_SPEED_1" },
+            { "type": "quest", "name": "QUEST_CARRY_2" }
+        ]
     },
     {
         "name": "QUEST_CARRY_2",
         "type": "carry",
-        "text": "Carry 1500 items to the base",
-        "carry": 1500,
-        "reward": [{ "type": "item", "name": "LUMYN", "amount": 1 }, { "type": "lab", "amount": 1 }],
-        "unlock": []
+        "text": "Carry 300 items to the base",
+        "carry": 300,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 6 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_LIFT" },
+            { "type": "lab", "name": "LAB_GEM_MAX_6" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_2" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_MOVE_SPEED_2" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_1" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_1" },
+            { "type": "quest", "name": "QUEST_CARRY_3" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_3",
+        "type": "carry",
+        "text": "Carry 600 items to the base",
+        "carry": 600,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_9" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_3" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_MOVE_SPEED_3" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_2" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_2" },
+            { "type": "quest", "name": "QUEST_CARRY_4" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_4",
+        "type": "carry",
+        "text": "Carry 1000 items to the base",
+        "carry": 1000,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 12 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_12" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_4" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_MOVE_SPEED_4" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_3" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_3" }
+        ]
     }
 ]

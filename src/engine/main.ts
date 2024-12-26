@@ -1,4 +1,4 @@
-import { Admin, Gems, Items } from '@/engine/components';
+import { Gems } from '@/engine/components';
 import { createAssetManager, AssetManager } from '@/engine/services/asset';
 import { startCycle } from '@/engine/services/cycle';
 import { emit, GameEvents } from '@/engine/services/emit';
@@ -10,35 +10,6 @@ import { createQuest } from '@/engine/systems/quest';
 
 //#region CONSTANTS
 export let asset: AssetManager;
-
-const testAdmin: Admin = {
-    _: 'Admin',
-    _gemMax: 3,
-    _labPoints: 0,
-    crafts: ['GEM_MINE'],
-    gems: [],
-    items: [
-        {
-            _amount: 25,
-            _name: Items.STONE,
-        },
-        {
-            _amount: 25,
-            _name: Items.IRON,
-        },
-        {
-            _amount: 25,
-            _name: Items.COPPER,
-        },
-        {
-            _amount: 1,
-            _name: Items.LUMYN,
-        },
-    ],
-    labs: [],
-    quests: [],
-    requests: [],
-};
 //#endregion
 
 export const main = () => {
@@ -51,7 +22,7 @@ export const main = () => {
 const launch = () => {
     setState({ key: 'gameLaunch', value: true });
 
-    createEntityAdmin({ saveAdmin: testAdmin });
+    createEntityAdmin({});
 
     startCycle();
 };

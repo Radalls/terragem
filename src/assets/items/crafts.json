@@ -1,4 +1,6 @@
 [
-    { "name": "GEM_MINE", "components": [{ "name": "IRON", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] },
-    { "name": "GEM_CARRY", "components": [{ "name": "COPPER", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] }
+    { "name": "GEM_MINE", "text": "Dig vertically to harvest resources from the planet", "components": [{ "name": "IRON", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] },
+    { "name": "GEM_CARRY", "text": "Travel horizontally to transport resources", "components": [{ "name": "COPPER", "amount": 10 }, { "name": "STONE", "amount": 25 }, { "name": "LUMYN", "amount": 1 }] },
+    { "name": "GEM_TUNNEL", "text": "Dig horizontally to create a tunnel", "components": [{ "name": "IRON", "amount": 50 }, { "name": "STONE", "amount": 150 }, { "name": "LUMYN", "amount": 2 }] },
+    { "name": "GEM_LIFT", "text": "Travel vertically to transport resources", "components": [{ "name": "IRON", "amount": 50 }, { "name": "COPPER", "amount": 50 }, { "name": "LUMYN", "amount": 3 }] }
 ]

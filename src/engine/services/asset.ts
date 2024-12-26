@@ -1,4 +1,5 @@
 import { emit, GameEvents } from '@/engine/services/emit';
+import { error } from '@/engine/services/error';
 
 const spriteFiles = import.meta.glob('/src/assets/sprites/**/*.{png,gif}', { eager: true });
 const audioFiles = import.meta.glob('/src/assets/audio/**/*.{mp3,wav,ogg}', { eager: true });
@@ -47,23 +48,22 @@ export const createAssetManager = () => {
 };
 
 const preloadAssets = async (): Promise<boolean> => {
-    try {
-        const [spritesLoaded, audioLoaded, fontsLoaded] = await Promise.all([
-            loadSprites(),
-            loadAudio(),
-            loadFonts(),
-        ]);
+    const [spritesLoaded, audioLoaded, fontsLoaded] = await Promise.all([
+        loadSprites(),
+        loadAudio(),
+        loadFonts(),
+    ]);
 
-        const allLoaded = spritesLoaded && audioLoaded && fontsLoaded;
+    const allLoaded = spritesLoaded && audioLoaded && fontsLoaded;
 
-        if (allLoaded) {
-            return true;
-        } else {
-            console.error('Some assets failed to load');
-            return false;
-        }
-    } catch (error) {
-        console.error('Error loading assets:', error);
+    if (allLoaded) {
+        return true;
+    } else {
+        error({
+            message: 'Some assets failed to load',
+            where: preloadAssets.name,
+        });
+
         return false;
     }
 };
@@ -75,7 +75,11 @@ const loadSprites = async (): Promise<boolean> => {
         return new Promise<boolean>((resolve) => {
             img.onload = () => resolve(true);
             img.onerror = () => {
-                console.error(`Failed to load sprite: ${path}`);
+                error({
+                    message: `Failed to load sprite: ${path}`,
+                    where: loadSprites.name,
+                });
+
                 resolve(false);
             };
             img.src = (module as { default: string }).default;
@@ -94,7 +98,11 @@ const loadAudio = async (): Promise<boolean> => {
             audio.oncanplaythrough = () => resolve(true);
 
             audio.onerror = () => {
-                console.error(`Failed to load audio: ${path}`);
+                error({
+                    message: `Failed to load audio: ${path}`,
+                    where: loadAudio.name,
+                });
+
                 resolve(false);
             };
 
@@ -122,7 +130,11 @@ const loadFonts = async (): Promise<boolean> => {
                     resolve(true);
                 })
                 .catch(error => {
-                    console.error(`Failed to load font: ${path}`, error);
+                    error({
+                        message: `Failed to load font: ${path}`,
+                        where: loadFonts.name,
+                    });
+
                     resolve(false);
                 });
         });

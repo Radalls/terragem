@@ -1,10 +1,6 @@
 import labs from '@/assets/labs/labs.json';
 import { error } from '@/engine/services/error';
 
-//#region CONSTANTS
-export const LAB_DATA_ADMIN_GEM_MAX = 'GEM_MAX';
-//#endregion
-
 //#region TYPES
 export type LabData = {
     cost: number
@@ -17,7 +13,9 @@ export type LabData = {
 
 //#region DATA
 export const getLabData = ({ name }: { name: string }) => {
-    const questData = labs.find((data) => data.name === name) ?? error({
+    const labz = labs.filter((data) => !(data['@']));
+
+    const questData = labz.find((data) => data.name === name) ?? error({
         message: `LabData for ${name} not found`,
         where: getLabData.name,
     });
