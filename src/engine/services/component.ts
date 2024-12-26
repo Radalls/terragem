@@ -52,23 +52,19 @@ export const addAdmin = ({ adminId, saveAdmin }: {
         gems: [],
         items: [
             {
-                // _amount: 50,
-                _amount: 999,
+                _amount: 50,
                 _name: Items.STONE,
             },
             {
-                // _amount: 25,
-                _amount: 999,
+                _amount: 25,
                 _name: Items.IRON,
             },
             {
-                // _amount: 25,
-                _amount: 999,
+                _amount: 25,
                 _name: Items.COPPER,
             },
             {
-                // _amount: 1,
-                _amount: 999,
+                _amount: 1,
                 _name: Items.LUMYN,
             },
         ],
