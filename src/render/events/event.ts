@@ -101,6 +101,7 @@ export const onEvent = ({
     }
     else if (type === RenderEvents.ADMIN_UPDATE_STORAGE) {
         updateStorage();
+        updateWorkshop();
     }
     else if (type === RenderEvents.ADMIN_UPDATE_WORKSHOP) {
         updateWorkshop();

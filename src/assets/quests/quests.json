@@ -61,8 +61,7 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_10" },
             { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_4" },
-            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_4" },
-            { "type": "lab", "name": "LAB_GEM_MINE_DIG_STRENGHT_2" }
+            { "type": "lab", "name": "LAB_GEM_MINE_MOVE_SPEED_4" }
         ]
     },
     { "@": "MINE_COPPER" },
@@ -108,7 +107,6 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_6" },
             { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_3" },
-            { "type": "lab", "name": "LAB_GEM_MINE_DIG_STRENGHT_1" },
             { "type": "quest", "name": "QUEST_MINE_COPPER_4" }
         ]
     },

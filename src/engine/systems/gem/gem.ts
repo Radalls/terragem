@@ -385,12 +385,7 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
         }
     }
     else {
-        emit({
-            data: `${gemId} has not found a target to drop items`,
-            entityId: gemId,
-            target: 'render',
-            type: RenderEvents.INFO_ALERT,
-        });
+        updateSprite({ entityId: gemId, image: 'gem_carry_error' });
 
         return false;
     }
