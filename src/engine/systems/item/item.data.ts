@@ -5,6 +5,7 @@ import { error } from '@/engine/services/error';
 //#region TYPES
 export type CraftData = {
     components: { amount: number, name: Items }[],
+    image: string,
     name: Items,
     text: string,
 };

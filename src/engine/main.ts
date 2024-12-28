@@ -39,7 +39,11 @@ export const run = () => {
 
     createEntityTileMap({ tileMapName: 'map1' });
     createEntityGem({ type: Gems.MINE });
+    createEntityGem({ type: Gems.MINE });
     createEntityGem({ type: Gems.CARRY });
+    createEntityGem({ type: Gems.CARRY });
+    createEntityGem({ type: Gems.TUNNEL });
+    createEntityGem({ type: Gems.LIFT });
     createQuest({ questName: 'QUEST_MINE_IRON_1' });
     createQuest({ questName: 'QUEST_MINE_COPPER_1' });
     createQuest({ questName: 'QUEST_CARRY_1' });

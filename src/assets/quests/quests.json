@@ -3,11 +3,11 @@
     {
         "name": "QUEST_MINE_IRON_1",
         "type": "mine",
-        "text": "Mine 50 Iron",
-        "mine": { "name": "IRON", "amount": 50 },
+        "text": "Mine 25 Iron",
+        "mine": { "name": "IRON", "amount": 1 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 3 }
+            { "type": "lab", "amount": 5 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_CRAFT_GEM_CARRY" },
@@ -20,8 +20,8 @@
     {
         "name": "QUEST_MINE_IRON_2",
         "type": "mine",
-        "text": "Mine 250 Iron",
-        "mine": { "name": "IRON", "amount": 250 },
+        "text": "Mine 50 Iron",
+        "mine": { "name": "IRON", "amount": 50 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 2 },
             { "type": "lab", "amount": 5 }
@@ -36,11 +36,11 @@
     {
         "name": "QUEST_MINE_IRON_3",
         "type": "mine",
-        "text": "Mine 500 Iron",
-        "mine": { "name": "IRON", "amount": 500 },
+        "text": "Mine 100 Iron",
+        "mine": { "name": "IRON", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 2 },
-            { "type": "lab", "amount": 7 }
+            { "type": "lab", "amount": 5 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_7" },
@@ -52,11 +52,11 @@
     {
         "name": "QUEST_MINE_IRON_4",
         "type": "mine",
-        "text": "Mine 1500 Iron",
-        "mine": { "name": "IRON", "amount": 1500 },
+        "text": "Mine 200 Iron",
+        "mine": { "name": "IRON", "amount": 200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 3 },
-            { "type": "lab", "amount": 9 }
+            { "type": "lab", "amount": 7 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_10" },
@@ -69,8 +69,8 @@
     {
         "name": "QUEST_MINE_COPPER_1",
         "type": "mine",
-        "text": "Mine 50 Copper",
-        "mine": { "name": "COPPER", "amount": 50 },
+        "text": "Mine 25 Copper",
+        "mine": { "name": "COPPER", "amount": 25 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 3 }
@@ -84,11 +84,11 @@
     {
         "name": "QUEST_MINE_COPPER_2",
         "type": "mine",
-        "text": "Mine 250 Copper",
-        "mine": { "name": "COPPER", "amount": 250 },
+        "text": "Mine 50 Copper",
+        "mine": { "name": "COPPER", "amount": 50 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 2 },
-            { "type": "lab", "amount": 5 }
+            { "type": "lab", "amount": 3 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_5" },
@@ -99,11 +99,11 @@
     {
         "name": "QUEST_MINE_COPPER_3",
         "type": "mine",
-        "text": "Mine 500 Copper",
-        "mine": { "name": "COPPER", "amount": 500 },
+        "text": "Mine 100 Copper",
+        "mine": { "name": "COPPER", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 2 },
-            { "type": "lab", "amount": 7 }
+            { "type": "lab", "amount": 3 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_6" },
@@ -115,11 +115,11 @@
     {
         "name": "QUEST_MINE_COPPER_4",
         "type": "mine",
-        "text": "Mine 1500 Copper",
-        "mine": { "name": "COPPER", "amount": 1500 },
+        "text": "Mine 200 Copper",
+        "mine": { "name": "COPPER", "amount": 200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 3 },
-            { "type": "lab", "amount": 9 }
+            { "type": "lab", "amount": 5 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_7" },
@@ -130,11 +130,11 @@
     {
         "name": "QUEST_CARRY_1",
         "type": "carry",
-        "text": "Carry 150 items to the base",
-        "carry": 150,
+        "text": "Carry 100 items to the base",
+        "carry": 1,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 3 }
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 6 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_CRAFT_GEM_TUNNEL" },
@@ -147,11 +147,11 @@
     {
         "name": "QUEST_CARRY_2",
         "type": "carry",
-        "text": "Carry 300 items to the base",
-        "carry": 300,
+        "text": "Carry 200 items to the base",
+        "carry": 1,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
-            { "type": "lab", "amount": 6 }
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 8 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_CRAFT_GEM_LIFT" },
@@ -166,11 +166,11 @@
     {
         "name": "QUEST_CARRY_3",
         "type": "carry",
-        "text": "Carry 600 items to the base",
-        "carry": 600,
+        "text": "Carry 400 items to the base",
+        "carry": 400,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
-            { "type": "lab", "amount": 9 }
+            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "lab", "amount": 8 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_9" },
@@ -184,11 +184,11 @@
     {
         "name": "QUEST_CARRY_4",
         "type": "carry",
-        "text": "Carry 1000 items to the base",
-        "carry": 1000,
+        "text": "Carry 800 items to the base",
+        "carry": 800,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
-            { "type": "lab", "amount": 12 }
+            { "type": "item", "name": "LUMYN", "amount": 4 },
+            { "type": "lab", "amount": 10 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_12" },

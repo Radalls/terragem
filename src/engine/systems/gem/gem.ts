@@ -16,7 +16,8 @@ import {
 } from '@/engine/systems/gem';
 import { addAdminItem, addGemItem, removeGemItem } from '@/engine/systems/item';
 import { getGemsAtPosition, getTileAtPosition, moveToTarget } from '@/engine/systems/position';
-import { digTile } from '@/engine/systems/tilemap';
+import { updateSprite } from '@/engine/systems/sprite';
+import { digTile, lockTile } from '@/engine/systems/tilemap';
 import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
@@ -231,16 +232,6 @@ export const stopGemCarry = ({ gemId }: { gemId: string }) => {
 export const runGemCarry = ({ gemId }: { gemId: string }) => {
     const gemCarry = getComponent({ componentId: 'Carry', entityId: gemId });
 
-    if (
-        (gemCarry._moveStartX === undefined)
-        || (gemCarry._moveStartY === undefined)
-        || (gemCarry._moveTargetX === undefined)
-        || (gemCarry._moveTargetY === undefined)
-    ) throw error({
-        message: `${gemId} has invalid carry target`,
-        where: runGemCarry.name,
-    });
-
     if (isGemAt({ at: 'start', gemId })) {
         if (!(isGemAtCapacity({ gemId }))) {
             const pick = runGemCarryPick({ gemId });
@@ -258,15 +249,7 @@ export const runGemCarry = ({ gemId }: { gemId: string }) => {
         }
     }
 
-    const switchCarry = moveToTarget({
-        entityId: gemId,
-        targetX: (gemCarry._moveTo === 'start')
-            ? gemCarry._moveStartX
-            : gemCarry._moveTargetX,
-        targetY: (gemCarry._moveTo === 'start')
-            ? gemCarry._moveStartY
-            : gemCarry._moveTargetY,
-    });
+    const switchCarry = carryTo({ gemId });
 
     if (switchCarry) {
         gemCarry._moveTo = (gemCarry._moveTo === 'start')
@@ -296,6 +279,9 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
 
             if (item) {
                 addGemItem({ amount: item.amount, gemId, name: item.name });
+
+                updateSprite({ entityId: gemId, image: 'gem_carry' });
+
                 return true;
             }
             else {
@@ -304,6 +290,8 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
         }
     }
     else {
+        updateSprite({ entityId: gemId, image: 'gem_carry_error' });
+
         return false;
     }
 
@@ -438,11 +426,81 @@ const findGemCarryDrops = ({ gemId }: { gemId: string }) => {
 
     return dropGems;
 };
+
+const carryTo = ({ gemId }: { gemId: string }) => {
+    const gemCarry = getComponent({ componentId: 'Carry', entityId: gemId });
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+    if (!(gemCarry._moveTo)) throw error({
+        message: `${gemId} is not moving to a target`,
+        where: carryTo.name,
+    });
+
+    if (
+        (gemCarry._moveStartX === undefined)
+        || (gemCarry._moveStartY === undefined)
+        || (gemCarry._moveTargetX === undefined)
+        || (gemCarry._moveTargetY === undefined)
+    ) throw error({
+        message: `${gemId} has invalid carry target`,
+        where: carryTo.name,
+    });
+
+    const gemCarryTarget = (gemCarry._moveTo === 'start')
+        ? { x: gemCarry._moveStartX, y: gemCarry._moveStartY }
+        : { x: gemCarry._moveTargetX, y: gemCarry._moveTargetY };
+
+    const xDiff = gemCarryTarget.x - gemPosition._x;
+    const yDiff = gemCarryTarget.y - gemPosition._y;
+
+    if (Math.abs(yDiff) > 0) {
+        stopGemCarry({ gemId });
+
+        emit({
+            data: `${gemId} cannot carry to target`,
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO_ALERT,
+        });
+
+        return false;
+    }
+
+    const gemMoveTarget = {
+        x: (xDiff > 0)
+            ? gemPosition._x + 1
+            : gemPosition._x - 1,
+        y: gemPosition._y,
+    };
+
+    const gemMoveTargetTileId = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
+    const gemMoveTargetTile = getComponent({ componentId: 'Tile', entityId: gemMoveTargetTileId });
+
+    if (!(gemMoveTargetTile._destroy)) {
+        stopGemCarry({ gemId });
+
+        emit({
+            data: `${gemId} cannot carry to target`,
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO_ALERT,
+        });
+
+        return false;
+    }
+
+    gemPosition._x = gemMoveTarget.x;
+    gemPosition._y = gemMoveTarget.y;
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.POSITION_UPDATE });
+
+    return (isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId }));
+};
 //#endregion
 
 //#region TUNNEL
 //#region CONSTANTS
-const GEM_TUNNEL_DISTANCE_FROM_GROUND = 3;
+const GEM_TUNNEL_DISTANCE_FROM_GROUND = 4;
 //#endregion
 
 export const requestGemTunnel = ({ gemId }: { gemId: string }) => {
@@ -516,7 +574,7 @@ export const runGemTunnel = ({ gemId }: { gemId: string }) => {
 
 //#region LIFT
 //#region CONSTANTS
-const GEM_LIFT_DISTANCE_FROM_GROUND = 3;
+const GEM_LIFT_DISTANCE_FROM_GROUND = 4;
 //#endregion
 
 export const requestGemLift = ({ gemId }: { gemId: string }) => {
@@ -527,9 +585,10 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
     gemLift._moveStartX = gemPosition._x;
     gemLift._moveStartY = gemPosition._y;
 
-    const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
-    const gemTile = getComponent({ componentId: 'Tile', entityId: gemTileId });
-    gemTile._lock = true;
+    if (gemLift._moveStartY >= GEM_LIFT_DISTANCE_FROM_GROUND) {
+        const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
+        lockTile({ tileId: gemTileId, value: true });
+    }
 
     setGemLiftTarget({ gemId });
 
@@ -540,14 +599,18 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
 export const stopGemLift = ({ gemId }: { gemId: string }) => {
     const gemLift = getComponent({ componentId: 'Lift', entityId: gemId });
 
-    if (!(gemLift._moveStartX) || !(gemLift._moveStartY)) throw error({
+    if (
+        gemLift._moveStartX === undefined
+        || gemLift._moveStartY === undefined
+    ) throw error({
         message: `${gemId} has no lift start position`,
         where: stopGemLift.name,
     });
 
-    const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
-    const gemTile = getComponent({ componentId: 'Tile', entityId: gemTileId });
-    gemTile._lock = false;
+    if (gemLift._moveStartY >= GEM_LIFT_DISTANCE_FROM_GROUND) {
+        const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
+        lockTile({ tileId: gemTileId, value: false });
+    }
 
     gemLift._moveTo = undefined;
     gemLift._moveStartX = undefined;
@@ -597,15 +660,7 @@ export const runGemLift = ({ gemId }: { gemId: string }) => {
         }
     }
 
-    const switchCarry = moveToTarget({
-        entityId: gemId,
-        targetX: (gemLift._moveTo === 'start')
-            ? gemLift._moveStartX
-            : gemLift._moveTargetX,
-        targetY: (gemLift._moveTo === 'start')
-            ? gemLift._moveStartY
-            : gemLift._moveTargetY,
-    });
+    const switchCarry = liftTo({ gemId });
 
     if (switchCarry) {
         gemLift._moveTo = (gemLift._moveTo === 'start')
@@ -639,6 +694,76 @@ const setGemLiftTarget = ({ gemId }: { gemId: string }) => {
             liftTargetFound = true;
         }
     }
+};
+
+const liftTo = ({ gemId }: { gemId: string }) => {
+    const gemLift = getComponent({ componentId: 'Lift', entityId: gemId });
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+    if (!(gemLift._moveTo)) throw error({
+        message: `${gemId} is not moving to a target`,
+        where: liftTo.name,
+    });
+
+    if (
+        (gemLift._moveStartX === undefined)
+        || (gemLift._moveStartY === undefined)
+        || (gemLift._moveTargetX === undefined)
+        || (gemLift._moveTargetY === undefined)
+    ) throw error({
+        message: `${gemId} has invalid lift target`,
+        where: liftTo.name,
+    });
+
+    const gemLiftTarget = (gemLift._moveTo === 'start')
+        ? { x: gemLift._moveStartX, y: gemLift._moveStartY }
+        : { x: gemLift._moveTargetX, y: gemLift._moveTargetY };
+
+    const xDiff = gemLiftTarget.x - gemPosition._x;
+    const yDiff = gemLiftTarget.y - gemPosition._y;
+
+    if (Math.abs(xDiff) > 0) {
+        stopGemLift({ gemId });
+
+        emit({
+            data: `${gemId} cannot lift to target`,
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO_ALERT,
+        });
+
+        return false;
+    }
+
+    const gemMoveTarget = {
+        x: gemPosition._x,
+        y: (yDiff > 0)
+            ? gemPosition._y + 1
+            : gemPosition._y - 1,
+    };
+
+    const gemMoveTargetTileId = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
+    const gemMoveTargetTile = getComponent({ componentId: 'Tile', entityId: gemMoveTargetTileId });
+
+    if (!(gemMoveTargetTile._destroy)) {
+        stopGemLift({ gemId });
+
+        emit({
+            data: `${gemId} cannot lift to target`,
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO_ALERT,
+        });
+
+        return false;
+    }
+
+    gemPosition._x = gemMoveTarget.x;
+    gemPosition._y = gemMoveTarget.y;
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.POSITION_UPDATE });
+
+    return (isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId }));
 };
 //#endregion
 //#endregion

@@ -120,45 +120,49 @@
     height: 100%;
 }
 
-.gems .page {
+.admin .content .gems .page {
     display: flex;
     flex-direction: column;
     gap: 12px;
     height: 100%;
 }
 
-.gems .actions {
+.admin .content .gems .actions {
     align-items: center;
     display: flex;
     gap: 12px;
     justify-content: center;
 }
 
-.gems .actions .action {
+.admin .content .gems .actions .action {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
     padding: 8px 16px;
 }
 
-.gems .page .gem {
+.admin .content .gems .actions .index {
+    bottom: 0;
+    right: 0;
+}
+
+.admin .content .gems .page .gem {
     align-items: center;
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
     display: flex;
+    height: 20%;
     justify-content: space-between;
     padding: 12px 24px;
 }
 
-.gems .gem .sprite {
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px 20px 0 0;
-    height: 32px;
-    width: 32px;
+.admin .content .gems .page .gem .sprite {
+    height: 64px;
+    width: 64px;
 }
 
-.gems .gem .data {
+.admin .content .gems .page .gem .data {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -167,26 +171,26 @@
     width: 66%;
 }
 
-.gems .gem .infos {
+.admin .content .gems .page .gem .infos {
     align-items: center;
     display: flex;
     justify-content: space-between;
     width: 100%;
 }
 
-.gems .gem .infos .info {}
+.admin .content .gems .page .gem .infos .info {}
 
-.gems .gem .stats {
+.admin .content .gems .page .gem .stats {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
 }
 
-.gem .stats .stat {
+.admin .content .gems .page .gem .stats .stat {
     width: 33%;
 }
 
-.gems .gem .actions {
+.admin .content .gems .page .gem .actions {
     align-items: center;
     display: flex;
     flex-direction: column;
@@ -195,7 +199,7 @@
     width: 15%;
 }
 
-.gem .actions .view {
+.admin .content .gems .page .gem .actions .view {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
@@ -204,7 +208,7 @@
     width: 100%;
 }
 
-.gem .actions .deploy {
+.admin .content .gems .page .gem .actions .deploy {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
@@ -241,6 +245,11 @@
     padding: 8px 16px;
 }
 
+.workshop .actions .index {
+    bottom: 0;
+    right: 0;
+}
+
 .workshop .page .craft {
     align-items: center;
     background-color: rgb(94, 81, 243);
@@ -249,7 +258,13 @@
     display: flex;
     height: 20%;
     justify-content: space-between;
-    padding: 24px;
+    padding: 12px 24px;
+}
+
+.craft .image {
+    background-size: contain;
+    height: 64px;
+    width: 64px;
 }
 
 .craft .data {
@@ -315,6 +330,20 @@
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
     padding: 8px 16px;
+}
+
+.labs .actions .done {
+    background-color: rgb(94, 81, 243);
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    bottom: 0;
+    left: 0;
+    padding: 8px 16px;
+}
+
+.labs .actions .index {
+    bottom: 0;
+    right: 0;
 }
 
 .labs .page .lab {

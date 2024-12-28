@@ -23,7 +23,12 @@ export const updateSprite = ({ entityId, image }: {
 }) => {
     const entitySprite = getComponent({ componentId: 'Sprite', entityId });
 
-    entitySprite._image = getSpritePath({ spriteName: image });
+    const newImage = getSpritePath({ spriteName: image });
+    if (entitySprite._image === newImage) {
+        return;
+    }
+
+    entitySprite._image = newImage;
 
     emit({ entityId, target: 'render', type: RenderEvents.SPRITE_UPDATE });
 };

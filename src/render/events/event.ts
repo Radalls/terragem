@@ -17,12 +17,13 @@ import {
     setTileMode,
     setUIMode,
     updateGemInfo,
-    updateGems,
+    updateAdminGems,
     updateLabs,
     updateQuests,
     updateStorage,
     updateTileEntity,
     updateWorkshop,
+    updateGems,
 } from '@/render/templates';
 
 //#region TYPES
@@ -93,7 +94,7 @@ export const onEvent = ({
         createAdminMenu();
     }
     else if (type === RenderEvents.ADMIN_UPDATE_GEMS) {
-        updateGems();
+        updateAdminGems();
     }
     else if (type === RenderEvents.ADMIN_UPDATE_LABS) {
         updateLabs();
@@ -147,9 +148,13 @@ export const onEvent = ({
         setGemMode({ gemId: entityId, mode: 'base' });
     }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
+        updateGems();
+
         emit({ entityId, target: 'render', type: RenderEvents.GEM_CREATE });
     }
     else if (type === GameEvents.GEM_STORE && entityId) {
+        updateGems();
+
         emit({ entityId, target: 'render', type: RenderEvents.GEM_DESTROY });
     }
     /* INFO */

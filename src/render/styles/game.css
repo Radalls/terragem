@@ -28,19 +28,23 @@
 }
 
 .tilemap .tile.ground {
-    opacity: 0;
+    background-image: none !important;
+    background-size: contain;
     pointer-events: none;
+}
+
+.tilemap .tile.move {
+    border: solid 2px rgb(255, 231, 94)
 }
 
 /* ADMIN */
 .tilemap .admin {
-    background-color: rgb(180, 165, 213);
-    border-radius: 20px 20px 0 0;
+    background-size: cover;
     box-sizing: border-box;
 }
 
 .tilemap .admin:hover {
-    border: solid 2px rgb(255, 231, 94)
+    border: solid 2px rgb(255, 255, 255);
 }
 
 .tilemap .admin.disable {
@@ -49,17 +53,22 @@
 
 /* GEM */
 .tilemap .gem {
-    border-radius: 20px 20px 0 0;
+    background-size: contain;
+    border-radius: 10px;
     box-sizing: border-box;
 }
 
 .tilemap .gem:hover {
-    border: solid 2px rgb(255, 231, 94);
+    border: solid 2px rgb(255, 255, 255);
 }
 
 .tilemap .gem.request {
     border: solid 2px rgb(255, 231, 94);
     pointer-events: none;
+}
+
+.tilemap .gem.hover {
+    border: solid 2px rgb(255, 255, 255);
 }
 
 .tilemap .gem.disable {

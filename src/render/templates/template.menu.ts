@@ -5,12 +5,13 @@ import { EngineEvents } from '@/engine/services/event';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType } from '@/engine/systems/gem';
 import { getCraftData } from '@/engine/systems/item';
+import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 import {
     checkElement,
     createButton,
     createElement,
-    displayGemUI,
+    displayGemView,
     getElement,
     searchElementsByClassName,
 } from '@/render/templates';
@@ -99,12 +100,12 @@ export const displaySettings = ({ display }: { display: boolean }) => {
 //#region ADMIN
 //#region CONSTANTS
 enum AdminTabs {
-    STORAGE = 'Storage',
+    STORAGE = 'AdminTabStorage',
     // eslint-disable-next-line typescript-sort-keys/string-enum
-    GEMS = 'Gems',
-    WORKSHOP = 'Workshop',
+    GEMS = 'AdminTabGems',
+    WORKSHOP = 'AdminTabWorkshop',
     // eslint-disable-next-line typescript-sort-keys/string-enum
-    LAB = 'Lab',
+    LAB = 'AdminTabLab',
 }
 
 const ADMIN_TAB_BORDER = 'solid 5px rgb(255, 255, 255)';
@@ -148,7 +149,7 @@ export const createAdminMenu = () => {
             css: 'tab',
             id: tab,
             parent: 'AdminTabs',
-            text: tab,
+            text: tab.replace('AdminTab', ''),
         });
     }
 
@@ -175,8 +176,8 @@ export const displayAdminMenu = ({ display }: { display: boolean }) => {
     }
 };
 
-const selectAdminTab = ({ tab }: { tab?: string }) => {
-    const adminTabsEls = searchElementsByClassName({ className: 'tab', parent: 'Admin' });
+const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
+    const adminTabsEls = searchElementsByClassName({ className: 'tab', parent: 'AdminTabs' });
 
     adminTabsEls.forEach((adminTabEl) => adminTabEl.style.border = ADMIN_TAB_BORDER);
 
@@ -202,7 +203,7 @@ const updateAdminContent = ({ tab, page }: {
         displayStorage({ display: true });
     }
     else if (tab === AdminTabs.GEMS) {
-        updateGems();
+        updateAdminGems();
         displayGems({ display: true, page });
     }
     else if (tab === AdminTabs.WORKSHOP) {
@@ -220,7 +221,7 @@ const createStorage = () => {
     createElement({
         absolute: false,
         css: 'storage',
-        id: 'ContentStorage',
+        id: 'AdminStorage',
         parent: 'AdminContent',
     });
 };
@@ -250,7 +251,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
         absolute: false,
         css: 'item',
         id: `Item${itemName}`,
-        parent: 'ContentStorage',
+        parent: 'AdminStorage',
     });
 
     createElement({
@@ -270,7 +271,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
 };
 
 export const displayStorage = ({ display }: { display: boolean }) => {
-    const storageEl = getElement({ elId: 'ContentStorage' });
+    const storageEl = getElement({ elId: 'AdminStorage' });
 
     storageEl.style.display = (display)
         ? 'flex'
@@ -284,39 +285,39 @@ let GEMS_PAGE_INDEX = 0;
 const GEMS_AMOUNT_PER_PAGE = 4;
 //#endregion
 
+//#region CREATE
 const createGems = () => {
     createElement({
         absolute: false,
         css: 'gems',
-        id: 'ContentGems',
+        id: 'AdminGems',
         parent: 'AdminContent',
     });
 
     createElement({
         absolute: false,
         css: 'page',
-        id: 'GemsPage',
-        parent: 'ContentGems',
+        id: 'AdminGemsPage',
+        parent: 'AdminGems',
     });
 
     createGemsActions();
 };
 
-//#region CREATE
 const createGemsActions = () => {
     createElement({
         absolute: false,
         css: 'actions',
-        id: 'GemsActions',
-        parent: 'ContentGems',
+        id: 'AdminGemsActions',
+        parent: 'AdminGems',
     });
 
     createButton({
         absolute: false,
         click: () => onClickGemsPage({ action: 'previous' }),
         css: 'action',
-        id: 'GemsPagePrevious',
-        parent: 'GemsActions',
+        id: 'AdminGemsPagePrevious',
+        parent: 'AdminGemsActions',
         text: '<',
     });
 
@@ -324,9 +325,16 @@ const createGemsActions = () => {
         absolute: false,
         click: () => onClickGemsPage({ action: 'next' }),
         css: 'action',
-        id: 'GemsPageNext',
-        parent: 'GemsActions',
+        id: 'AdminGemsPageNext',
+        parent: 'AdminGemsActions',
         text: '>',
+    });
+
+    createElement({
+        css: 'index',
+        id: 'AdminGemsPageIndex',
+        parent: 'AdminGemsActions',
+        text: '0/0',
     });
 };
 
@@ -338,16 +346,16 @@ const createGem = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
         css: 'gem',
-        id: `Gem${gemId}`,
-        parent: 'GemsPage',
+        id: `AdminGem${gemId}`,
+        parent: 'AdminGemsPage',
     });
 
     createElement({
         absolute: false,
         css: 'sprite',
-        id: `GemSprite${gemId}`,
+        id: `AdminGemSprite${gemId}`,
         image: gemSprite._image,
-        parent: `Gem${gemId}`,
+        parent: `AdminGem${gemId}`,
     });
 
     createGemData({ gemAction: gemState._action, gemId, gemType });
@@ -382,45 +390,45 @@ const createGemData = ({ gemId, gemType, gemAction }: {
     createElement({
         absolute: false,
         css: 'data',
-        id: `GemData${gemId}`,
-        parent: `Gem${gemId}`,
+        id: `AdminGemData${gemId}`,
+        parent: `AdminGem${gemId}`,
     });
 
     createElement({
         absolute: false,
         css: 'infos',
-        id: `GemInfo${gemId}`,
-        parent: `GemData${gemId}`,
+        id: `AdminGemInfo${gemId}`,
+        parent: `AdminGemData${gemId}`,
     });
 
     createElement({
         absolute: false,
         css: 'stats',
-        id: `GemStats${gemId}`,
-        parent: `GemData${gemId}`,
+        id: `AdminGemStats${gemId}`,
+        parent: `AdminGemData${gemId}`,
     });
 
     createElement({
         absolute: false,
         css: 'info',
-        id: `GemLabel${gemId}`,
-        parent: `GemInfo${gemId}`,
+        id: `AdminGemLabel${gemId}`,
+        parent: `AdminGemInfo${gemId}`,
         text: gemId,
     });
 
     createElement({
         absolute: false,
         css: 'info',
-        id: `GemType${gemId}`,
-        parent: `GemInfo${gemId}`,
+        id: `AdminGemType${gemId}`,
+        parent: `AdminGemInfo${gemId}`,
         text: `Type: ${gemType}`,
     });
 
     createElement({
         absolute: false,
         css: 'info',
-        id: `GemState${gemId}`,
-        parent: `GemInfo${gemId}`,
+        id: `AdminGemState${gemId}`,
+        parent: `AdminGemInfo${gemId}`,
         text: `State: ${gemAction}`,
     });
 
@@ -429,7 +437,7 @@ const createGemData = ({ gemId, gemType, gemAction }: {
             absolute: false,
             css: 'stat',
             id: `ItemCapacity${gemId}`,
-            parent: `GemStats${gemId}`,
+            parent: `AdminGemStats${gemId}`,
             text: `Item Capacity: ${getGemStat({ gemId, gemType, stat: '_itemCapacity' })}`,
         });
     }
@@ -438,7 +446,7 @@ const createGemData = ({ gemId, gemType, gemAction }: {
         absolute: false,
         css: 'stat',
         id: `MoveSpeed${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Move Speed: ${getGemStat({ gemId, gemType, stat: '_moveSpeed' })}`,
     });
 };
@@ -448,7 +456,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `MineSpeed${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`,
     });
 
@@ -456,7 +464,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `MineStrength${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`,
     });
 
@@ -464,7 +472,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `MineAmount${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`,
     });
 };
@@ -474,7 +482,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `ItemSpeed${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemSpeed' })}`,
     });
 
@@ -482,7 +490,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `ItemAmount${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemAmount' })}`,
     });
 
@@ -490,7 +498,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `ItemRange${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Item Range: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemRange' })}`,
     });
 };
@@ -500,7 +508,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `TunnelSpeed${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Tunnel Speed: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digSpeed' })}`,
     });
 
@@ -508,7 +516,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `TunnelStrength${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Tunnel Strength: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digStrength' })}`,
     });
 
@@ -516,7 +524,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `TunnelRange${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Tunnel Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`,
     });
 };
@@ -526,7 +534,7 @@ const createGemLift = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `ItemSpeed${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`,
     });
 
@@ -534,7 +542,7 @@ const createGemLift = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'stat',
         id: `ItemAmount${gemId}`,
-        parent: `GemStats${gemId}`,
+        parent: `AdminGemStats${gemId}`,
         text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`,
     });
 };
@@ -543,16 +551,16 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
         css: 'actions',
-        id: `GemActions${gemId}`,
-        parent: `Gem${gemId}`,
+        id: `AdminGemActions${gemId}`,
+        parent: `AdminGem${gemId}`,
     });
 
     createButton({
         absolute: false,
         click: () => onClickGemView({ gemId }),
         css: 'view',
-        id: `GemView${gemId}`,
-        parent: `GemActions${gemId}`,
+        id: `AdminGemView${gemId}`,
+        parent: `AdminGemActions${gemId}`,
         text: 'View',
     });
 
@@ -560,38 +568,19 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
         absolute: false,
         click: () => onClickGemDeploy({ gemId }),
         css: 'deploy',
-        id: `GemDeploy${gemId}`,
-        parent: `GemActions${gemId}`,
+        id: `AdminGemDeploy${gemId}`,
+        parent: `AdminGemActions${gemId}`,
         text: 'Deploy',
     });
-};
-
-const onClickGemView = ({ gemId }: { gemId: string }) => {
-    displayAdminMenu({ display: false });
-    displayMenus({ display: false });
-
-    displayGemUI({ display: true, gemId });
-};
-
-const onClickGemDeploy = ({ gemId }: { gemId: string }) => {
-    const gemState = getComponent({ componentId: 'State', entityId: gemId });
-
-    emit({
-        entityId: gemId, target: 'all', type: (gemState._store)
-            ? GameEvents.GEM_STORE_DEPLOY
-            : GameEvents.GEM_STORE,
-    });
-
-    updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
 };
 //#endregion
 
 //#region UPDATE
-export const updateGems = () => {
+export const updateAdminGems = () => {
     const admin = getAdmin();
 
     for (const gem of admin.gems) {
-        const gemEl = checkElement({ id: `Gem${gem}` });
+        const gemEl = checkElement({ id: `AdminGem${gem}` });
 
         if (gemEl) {
             updateGem({ gemId: gem });
@@ -602,9 +591,15 @@ export const updateGems = () => {
     }
 };
 
-const updateGemsPage = () => {
+const updateAdminGemsPage = () => {
     const admin = getAdmin();
-    const gemsPageEl = getElement({ elId: 'GemsPage' });
+    const gemsPagesCount = Math.ceil(admin.gems.length / GEMS_AMOUNT_PER_PAGE);
+
+    const gemsPageEl = getElement({ elId: 'AdminGemsPage' });
+    const gemsPageIndexEl = getElement({ elId: 'AdminGemsPageIndex' });
+    gemsPageIndexEl.innerText = `${GEMS_PAGE_INDEX + 1}/${gemsPagesCount || 1}`;
+
+    if (!(admin.gems.length)) return;
 
     for (let i = 0; i < gemsPageEl.children.length; i++) {
         const gemEl = gemsPageEl.children[i] as HTMLElement;
@@ -616,9 +611,9 @@ const updateGemsPage = () => {
     for (let j = gemStartIndex; j < gemEndIndex; j++) {
         if (j >= admin.gems.length) break;
 
-        const craftEl = gemsPageEl.children[j] as HTMLElement;
+        const gemEl = gemsPageEl.children[j] as HTMLElement;
 
-        craftEl.style.display = 'flex';
+        gemEl.style.display = 'flex';
     }
 };
 
@@ -655,7 +650,7 @@ const updateGemData = ({ gemId, gemType, gemAction }: {
 }) => {
     const gem = getGem({ gemId });
 
-    const gemStateEl = getElement({ elId: `GemState${gemId}` });
+    const gemStateEl = getElement({ elId: `AdminGemState${gemId}` });
     gemStateEl.innerText = `State: ${gemAction}`;
 
     if (gemHasItems(gem)) {
@@ -725,21 +720,43 @@ const updateGemActions = ({ gemId, gemStore }: {
     gemId: string,
     gemStore: State['_store'],
 }) => {
-    const gemViewEl = getElement({ elId: `GemView${gemId}` });
+    const gemViewEl = getElement({ elId: `AdminGemView${gemId}` });
     gemViewEl.style.display = (gemStore)
         ? 'none'
         : 'block';
 
-    const gemStoreEl = getElement({ elId: `GemDeploy${gemId}` });
+    const gemStoreEl = getElement({ elId: `AdminGemDeploy${gemId}` });
     gemStoreEl.innerText = (gemStore)
         ? 'Deploy'
         : 'Store';
 };
 //#endregion
 
+//#region ACTIONS
+const onClickGemView = ({ gemId }: { gemId: string }) => {
+    displayAdminMenu({ display: false });
+    displayMenus({ display: false });
+
+    displayGemView({ display: true, gemId });
+};
+
+const onClickGemDeploy = ({ gemId }: { gemId: string }) => {
+    const gemState = getComponent({ componentId: 'State', entityId: gemId });
+
+    emit({
+        entityId: gemId, target: 'all', type: (gemState._store)
+            ? GameEvents.GEM_STORE_DEPLOY
+            : GameEvents.GEM_STORE,
+    });
+
+    updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+};
+
 const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
     const admin = getAdmin();
     const gemsPagesCount = Math.ceil(admin.gems.length / GEMS_AMOUNT_PER_PAGE);
+
+    if (!(admin.gems.length)) return;
 
     if (action === 'previous') {
         GEMS_PAGE_INDEX = Math.max(0, GEMS_PAGE_INDEX - 1);
@@ -748,14 +765,15 @@ const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
         GEMS_PAGE_INDEX = Math.min(GEMS_PAGE_INDEX + 1, gemsPagesCount - 1);
     }
 
-    updateGemsPage();
+    updateAdminGemsPage();
 };
+//#endregion
 
 export const displayGems = ({ display, page }: {
     display: boolean,
     page?: number,
 }) => {
-    const gemsEl = getElement({ elId: 'ContentGems' });
+    const gemsEl = getElement({ elId: 'AdminGems' });
 
     gemsEl.style.display = (display)
         ? 'flex'
@@ -764,7 +782,7 @@ export const displayGems = ({ display, page }: {
     if (display) {
         GEMS_PAGE_INDEX = page ?? 0;
 
-        updateGemsPage();
+        updateAdminGemsPage();
     }
 };
 //#endregion
@@ -780,7 +798,7 @@ const createWorkshop = () => {
     createElement({
         absolute: false,
         css: 'workshop',
-        id: 'ContentWorkshop',
+        id: 'AdminWorkshop',
         parent: 'AdminContent',
     });
 
@@ -788,7 +806,7 @@ const createWorkshop = () => {
         absolute: false,
         css: 'page',
         id: 'WorkshopPage',
-        parent: 'ContentWorkshop',
+        parent: 'AdminWorkshop',
     });
 
     createWorkshopActions();
@@ -799,7 +817,7 @@ const createWorkshopActions = () => {
         absolute: false,
         css: 'actions',
         id: 'WorkshopActions',
-        parent: 'ContentWorkshop',
+        parent: 'AdminWorkshop',
     });
 
     createButton({
@@ -819,6 +837,13 @@ const createWorkshopActions = () => {
         parent: 'WorkshopActions',
         text: '>',
     });
+
+    createElement({
+        css: 'index',
+        id: 'WorkshopPageIndex',
+        parent: 'WorkshopActions',
+        text: '0/0',
+    });
 };
 
 const createWorkshopCraft = ({ craft }: { craft: string }) => {
@@ -829,6 +854,14 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
         css: 'craft',
         id: `Craft${craft}`,
         parent: 'WorkshopPage',
+    });
+
+    createElement({
+        absolute: false,
+        css: 'image',
+        id: `CraftImage${craft}`,
+        image: getSpritePath({ spriteName: craftData.image }),
+        parent: `Craft${craft}`,
     });
 
     createElement({
@@ -908,7 +941,13 @@ export const updateWorkshop = () => {
 
 const updateWorkshopPage = () => {
     const admin = getAdmin();
+    const workshopPagesCount = Math.ceil(admin.crafts.length / WORKSHOP_AMOUNT_PER_PAGE);
+
     const workshopPageEl = getElement({ elId: 'WorkshopPage' });
+    const workshopPageIndexEl = getElement({ elId: 'WorkshopPageIndex' });
+    workshopPageIndexEl.innerText = `${WORKSHOP_PAGE_INDEX + 1}/${workshopPagesCount || 1}`;
+
+    if (!(admin.crafts.length)) return;
 
     for (let i = 0; i < workshopPageEl.children.length; i++) {
         const craftEl = workshopPageEl.children[i] as HTMLElement;
@@ -931,6 +970,8 @@ const onClickWorkshopPage = ({ action }: { action: 'previous' | 'next' }) => {
     const admin = getAdmin();
     const workshopPagesCount = Math.ceil(admin.crafts.length / WORKSHOP_AMOUNT_PER_PAGE);
 
+    if (!(admin.crafts.length)) return;
+
     if (action === 'previous') {
         WORKSHOP_PAGE_INDEX = Math.max(0, WORKSHOP_PAGE_INDEX - 1);
     }
@@ -945,7 +986,7 @@ export const displayWorkshop = ({ display, page }: {
     display: boolean,
     page?: number,
 }) => {
-    const workshopEl = getElement({ elId: 'ContentWorkshop' });
+    const workshopEl = getElement({ elId: 'AdminWorkshop' });
 
     workshopEl.style.display = (display)
         ? 'flex'
@@ -962,6 +1003,7 @@ export const displayWorkshop = ({ display, page }: {
 //#region LAB
 //#region CONSTANTS
 let LAB_PAGE_INDEX = 0;
+let LAB_DISPLAY_DONE = true;
 const LAB_AMOUNT_PER_PAGE = 5;
 //#endregion
 
@@ -970,7 +1012,7 @@ const createLabs = () => {
     createElement({
         absolute: false,
         css: 'labs',
-        id: 'ContentLabs',
+        id: 'AdminLabs',
         parent: 'AdminContent',
     });
 
@@ -980,7 +1022,7 @@ const createLabs = () => {
         absolute: false,
         css: 'page',
         id: 'LabPage',
-        parent: 'ContentLabs',
+        parent: 'AdminLabs',
     });
 
     createLabActions();
@@ -993,7 +1035,7 @@ const createLabStats = () => {
         absolute: false,
         css: 'stats',
         id: 'LabStats',
-        parent: 'ContentLabs',
+        parent: 'AdminLabs',
     });
 
     createElement({
@@ -1016,7 +1058,17 @@ const createLabActions = () => {
         absolute: false,
         css: 'actions',
         id: 'LabActions',
-        parent: 'ContentLabs',
+        parent: 'AdminLabs',
+    });
+
+    createButton({
+        click: () => onClickLabDisplayDone(),
+        css: 'done',
+        id: 'LabDisplayDone',
+        parent: 'LabActions',
+        text: (LAB_DISPLAY_DONE)
+            ? 'Hide Done'
+            : 'Show Done',
     });
 
     createButton({
@@ -1035,6 +1087,13 @@ const createLabActions = () => {
         id: 'LabPageNext',
         parent: 'LabActions',
         text: '>',
+    });
+
+    createElement({
+        css: 'index',
+        id: 'LabPageIndex',
+        parent: 'LabActions',
+        text: '0/0',
     });
 };
 
@@ -1122,11 +1181,22 @@ export const updateLabs = () => {
 
                 const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
                 labRunEl.style.display = 'none';
-            }
 
-            if (lab._run) {
+                const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+                labStartEl.style.display = 'none';
+            }
+            else if (lab._run) {
+                const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
+                labDoneEl.style.display = 'none';
+
+                const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
+                labCostEl.style.display = 'none';
+
                 const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
                 labRunEl.innerText = `Running: ${lab._progress}/${lab.data.time}`;
+
+                const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+                labStartEl.style.display = 'none';
             }
         }
         else {
@@ -1143,44 +1213,88 @@ export const updateLabs = () => {
 
 const updateLabPage = () => {
     const admin = getAdmin();
+    const labPagesCount = getLabPagesCount();
+
     const labPageEl = getElement({ elId: 'LabPage' });
+    const labPageIndexEl = getElement({ elId: 'LabPageIndex' });
+    labPageIndexEl.innerText = `${LAB_PAGE_INDEX + 1}/${labPagesCount || 1}`;
+
+    if (!(admin.labs.length)) return;
+
+    const labEls = Array.from(labPageEl.children) as HTMLElement[];
 
     for (let i = 0; i < labPageEl.children.length; i++) {
-        const labEl = labPageEl.children[i] as HTMLElement;
+        const labEl = labEls[i];
         labEl.style.display = 'none';
     }
+
+    const labElsToDisplay = (LAB_DISPLAY_DONE)
+        ? labEls
+        : labEls.filter((labEl) => {
+            const adminLab = admin.labs.find((lab) => labEl.id.includes(lab.data.name));
+            if (!(adminLab)) return false;
+
+            return !(adminLab._done);
+        });
 
     const labStartIndex = LAB_PAGE_INDEX * LAB_AMOUNT_PER_PAGE;
     const labEndIndex = labStartIndex + LAB_AMOUNT_PER_PAGE;
     for (let j = labStartIndex; j < labEndIndex; j++) {
         if (j >= admin.labs.length) break;
 
-        const labEl = labPageEl.children[j] as HTMLElement;
+        const labEl = labElsToDisplay[j] as HTMLElement;
 
         labEl.style.display = 'flex';
     }
 };
 //#endregion
 
+//#region ACTIONS
 const onClickLabPage = ({ action }: { action: 'previous' | 'next' }) => {
     const admin = getAdmin();
-    const labTabsCount = Math.ceil(admin.labs.length / LAB_AMOUNT_PER_PAGE);
+    const labPagesCount = getLabPagesCount();
+
+    if (!(admin.labs.length)) return;
 
     if (action === 'previous') {
         LAB_PAGE_INDEX = Math.max(0, LAB_PAGE_INDEX - 1);
     }
     else if (action === 'next') {
-        LAB_PAGE_INDEX = Math.min(LAB_PAGE_INDEX + 1, labTabsCount - 1);
+        LAB_PAGE_INDEX = Math.min(LAB_PAGE_INDEX + 1, labPagesCount - 1);
     }
 
     updateLabPage();
 };
 
+const onClickLabDisplayDone = () => {
+    const labDisplayDoneEl = getElement({ elId: 'LabDisplayDone' });
+
+    LAB_DISPLAY_DONE = !(LAB_DISPLAY_DONE);
+
+    labDisplayDoneEl.innerText = (LAB_DISPLAY_DONE)
+        ? 'Hide Done'
+        : 'Show Done';
+
+    updateLabPage();
+};
+
+const getLabPagesCount = () => {
+    const admin = getAdmin();
+    const adminLabsCount = (LAB_DISPLAY_DONE)
+        ? admin.labs.length
+        : admin.labs.filter((lab) => !(lab._done)).length;
+
+    const labPagesCount = Math.ceil(adminLabsCount / LAB_AMOUNT_PER_PAGE);
+
+    return labPagesCount;
+};
+//#endregion
+
 export const displayLabs = ({ display, page }: {
     display: boolean,
     page?: number,
 }) => {
-    const labEl = getElement({ elId: 'ContentLabs' });
+    const labEl = getElement({ elId: 'AdminLabs' });
 
     labEl.style.display = (display)
         ? 'flex'
