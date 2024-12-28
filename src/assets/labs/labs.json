@@ -11,14 +11,14 @@
         "name": "LAB_CRAFT_GEM_TUNNEL",
         "text": "Unlock crafting Tunnel Gems",
         "cost": 1,
-        "time": 15,
+        "time": 60,
         "unlock": [{ "type": "craft", "name": "GEM_TUNNEL" }]
     },
     {
         "name": "LAB_CRAFT_GEM_LIFT",
         "text": "Unlock crafting Lift Gems",
         "cost": 1,
-        "time": 15,
+        "time": 120,
         "unlock": [{ "type": "craft", "name": "GEM_LIFT" }]
     },
     { "@": "GEM_MAX" },

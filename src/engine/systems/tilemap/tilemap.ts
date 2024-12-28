@@ -18,13 +18,14 @@ import {
 import { addGemItem } from '@/engine/systems/item';
 import { getTileAtPosition, moveToTarget } from '@/engine/systems/position';
 import { updateSprite } from '@/engine/systems/sprite';
-import { loadTileMapData } from '@/engine/systems/tilemap';
+import { destroyTile, loadTileMapData, lockTile } from '@/engine/systems/tilemap';
 import { RenderEvents } from '@/render/events';
 
 //#region SYSTEMS
 //#region TILEMAP
 //#region CONSTANTS
 const TILEMAP_LAYER_DROP_AMOUNT = 20;
+const TILEMAP_BASE_TILES_LOCKED = 10;
 //#endregion
 
 export const generateTileMap = ({ tileMapId }: { tileMapId?: string | null }) => {
@@ -73,6 +74,11 @@ const generateTileMapLayers = ({ tileMapId }: { tileMapId?: string | null }) => 
         }
 
         generatedHeight += layer.height;
+    }
+
+    for (let k = 0; k < TILEMAP_BASE_TILES_LOCKED; k++) {
+        const tileId = getTileAtPosition({ x: k, y: 1 });
+        lockTile({ tileId });
     }
 };
 //#endregion
@@ -146,6 +152,8 @@ export const digTile = ({ tileId, gemId }: {
 
     if (gemHasItems(gem)) {
         if (isGemAtCapacity({ gemId })) {
+            updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}_error` });
+
             return { stop: false };
         }
     }
@@ -162,11 +170,7 @@ export const digTile = ({ tileId, gemId }: {
     }
 
     if (tile._dropAmount <= 0) {
-        tile._destroy = true;
-
-        updateSprite({ entityId: tileId, image: `tile_tile${tile._density}_destroy` });
-
-        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_DESTROY });
+        destroyTile({ tileId });
 
         return { stop: false };
     }
@@ -182,6 +186,8 @@ export const digTile = ({ tileId, gemId }: {
                     gemId,
                     name: drop,
                 });
+
+                updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
 
                 return { drop, stop: false };
             }

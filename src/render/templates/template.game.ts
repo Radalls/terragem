@@ -3,12 +3,13 @@ import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
 import { getStore } from '@/engine/services/store';
 import { getComponent } from '@/engine/systems/entity';
+import { getSpritePath } from '@/engine/systems/sprite';
 import {
     createButton,
     createElement,
     destroyElement,
     displayAdminMenu,
-    displayGemUI,
+    displayGemView,
     getElement,
     searchElementsByClassName,
 } from '@/render/templates';
@@ -54,13 +55,22 @@ export const createTile = ({ tileId }: { tileId: string }) => {
     tileEl.style.left = `${tilePosition._x * TILE_SIZE}px`;
 };
 
-export const setTileMode = ({ tileId, mode }: {
-    mode: 'base' | 'request' | 'destroy' | 'ground',
+export const setTileMode = ({ tileId, mode, remove }: {
+    mode: 'base' | 'request' | 'destroy' | 'ground' | 'move',
+    remove?: boolean,
     tileId?: string,
 }) => {
-    const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
+    if (remove) {
+        if (!(tileId)) return;
+
+        const tileEl = getElement({ elId: tileId });
+        tileEl.classList.remove(mode);
+        return;
+    }
 
     if (mode === 'base') {
+        const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
+
         tileEls.forEach((tileEl) => {
             if (!(tileEl.classList.contains('destroy'))) {
                 tileEl.classList.remove('request');
@@ -77,6 +87,8 @@ export const setTileMode = ({ tileId, mode }: {
         }
     }
     else if (mode === 'request') {
+        const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
+
         tileEls.forEach((tileEl) => {
             if (!(tileEl.classList.contains('destroy'))) {
                 tileEl.classList.add('request');
@@ -92,19 +104,12 @@ export const setTileMode = ({ tileId, mode }: {
             setAllOtherGemsMode({ gemId, mode: 'disable' });
         }
     }
-    else if (mode === 'destroy') {
+    else {
         if (!(tileId)) return;
 
         const tileEl = getElement({ elId: tileId });
 
-        tileEl.classList.add('destroy');
-    }
-    else if (mode === 'ground') {
-        if (!(tileId)) return;
-
-        const tileEl = getElement({ elId: tileId });
-
-        tileEl.classList.add('ground');
+        tileEl.classList.add(mode);
     }
 };
 
@@ -148,10 +153,11 @@ const createAdmin = () => {
         click: () => displayAdminMenu({ display: true }),
         css: 'admin',
         id: 'AdminEntity',
+        image: getSpritePath({ spriteName: 'ui_admin' }),
         parent: tileMapElId,
     });
 
-    placeTileEntity({ elId: 'AdminEntity', height: 2, left: 1, width: 3 });
+    placeTileEntity({ elId: 'AdminEntity', height: 2, left: 3, width: 4 });
 };
 
 export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
@@ -174,7 +180,7 @@ export const createGem = ({ gemId }: { gemId: string }) => {
     createButton({
         click: () => {
             setGemMode({ gemId, mode: 'request' });
-            displayGemUI({ display: true, gemId });
+            displayGemView({ display: true, gemId });
         },
         entityId: gemId,
         parent: tileMapElId,
@@ -195,7 +201,7 @@ export const destroyGem = ({ gemId }: { gemId: string }) => {
 
 export const setGemMode = ({ gemId, mode, remove }: {
     gemId: string,
-    mode: 'base' | 'request' | 'disable' | 'mine' | 'carry'
+    mode: 'base' | 'request' | 'hover' | 'disable' | 'mine' | 'carry'
     remove?: boolean,
 }) => {
     const gemEl = getElement({ elId: gemId });
@@ -207,6 +213,7 @@ export const setGemMode = ({ gemId, mode, remove }: {
 
     if (mode === 'base') {
         gemEl.classList.remove('request');
+        gemEl.classList.remove('hover');
         gemEl.classList.remove('disable');
         gemEl.classList.remove('mine');
         gemEl.classList.remove('carry');
