@@ -287,9 +287,7 @@
     gap: 16px;
 }
 
-.craft .comp {
-    width: 100px;
-}
+.craft .comp {}
 
 .craft .run {
     background-color: rgb(94, 81, 243);

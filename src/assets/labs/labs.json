@@ -33,77 +33,77 @@
         "name": "LAB_GEM_MAX_2",
         "text": "Increase maximum gem amount by 1",
         "cost": 1,
-        "time": 60,
+        "time": 40,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_3",
         "text": "Increase maximum gem amount by 1",
         "cost": 1,
-        "time": 180,
+        "time": 80,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_4",
         "text": "Increase maximum gem amount by 1",
         "cost": 1,
-        "time": 540,
+        "time": 160,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_5",
         "text": "Increase maximum gem amount by 1",
         "cost": 2,
-        "time": 1620,
+        "time": 320,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_6",
         "text": "Increase maximum gem amount by 1",
         "cost": 2,
-        "time": 4860,
+        "time": 640,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_7",
         "text": "Increase maximum gem amount by 1",
         "cost": 3,
-        "time": 14580,
+        "time": 1280,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_8",
         "text": "Increase maximum gem amount by 1",
         "cost": 3,
-        "time": 43740,
+        "time": 2560,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_9",
         "text": "Increase maximum gem amount by 1",
         "cost": 4,
-        "time": 131220,
+        "time": 5120,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_10",
         "text": "Increase maximum gem amount by 1",
         "cost": 4,
-        "time": 393660,
+        "time": 10240,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_11",
         "text": "Increase maximum gem amount by 1",
         "cost": 5,
-        "time": 1179600,
+        "time": 20480,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     {
         "name": "LAB_GEM_MAX_12",
         "text": "Increase maximum gem amount by 1",
         "cost": 5,
-        "time": 3539200,
+        "time": 40960,
         "unlock": [{ "type": "stat", "name": "GEM_MAX", "amount": 1 }]
     },
     { "@": "GEM_MINE_MOVE_SPEED" },

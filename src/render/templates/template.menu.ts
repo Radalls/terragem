@@ -847,6 +847,7 @@ const createWorkshopActions = () => {
 };
 
 const createWorkshopCraft = ({ craft }: { craft: string }) => {
+    const admin = getAdmin();
     const craftData = getCraftData({ itemName: craft });
 
     createElement({
@@ -902,12 +903,14 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
     });
 
     for (const comp of craftData.components) {
+        const adminItem = admin.items.find((item) => item._name === comp.name);
+
         createElement({
             absolute: false,
             css: 'comp',
             id: `CraftComp${craft}${comp.name}`,
             parent: `CraftComponents${craft}`,
-            text: `${comp.name} x${comp.amount}`,
+            text: `${comp.name} x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : ''),
         });
     }
 
@@ -936,6 +939,21 @@ export const updateWorkshop = () => {
         if (!(craftEl)) {
             createWorkshopCraft({ craft });
         }
+        else {
+            updateWorkshopCraft({ craft });
+        }
+    }
+};
+
+const updateWorkshopCraft = ({ craft }: { craft: string }) => {
+    const admin = getAdmin();
+    const craftData = getCraftData({ itemName: craft });
+
+    for (const comp of craftData.components) {
+        const adminItem = admin.items.find((item) => item._name === comp.name);
+        const craftCompEl = getElement({ elId: `CraftComp${craft}${comp.name}` });
+
+        craftCompEl.innerText = `${comp.name} x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : '');
     }
 };
 
