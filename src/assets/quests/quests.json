@@ -4,7 +4,7 @@
         "name": "QUEST_MINE_IRON_1",
         "type": "mine",
         "text": "Mine 25 Iron",
-        "mine": { "name": "IRON", "amount": 1 },
+        "mine": { "name": "IRON", "amount": 25 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
@@ -131,7 +131,7 @@
         "name": "QUEST_CARRY_1",
         "type": "carry",
         "text": "Carry 100 items to the base",
-        "carry": 1,
+        "carry": 100,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 3 },
             { "type": "lab", "amount": 6 }
@@ -148,7 +148,7 @@
         "name": "QUEST_CARRY_2",
         "type": "carry",
         "text": "Carry 200 items to the base",
-        "carry": 1,
+        "carry": 200,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 3 },
             { "type": "lab", "amount": 8 }
