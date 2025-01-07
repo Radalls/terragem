@@ -7,9 +7,11 @@ export type Admin = {
     gems: string[];
     items: Item[];
     labs: Lab[];
+    mechs: string[];
     quests: Quest[];
     requests: string[];
-    stats: Stat;
+    settings: Settings;
+    stats: Stats;
 };
 
 export type Item = {
@@ -26,6 +28,7 @@ export enum Items {
     IRON = 'IRON',
     LEAD = 'LEAD',
     LUMYN = 'LUMYN',
+    MK1_MINE = 'MK1_MINE',
     STONE = 'STONE',
 }
 
@@ -42,7 +45,7 @@ export type Lab = {
     data: LabData,
 };
 
-export type Stat = {
+export type Stats = {
     _gemCarryItemAmount: number;
     _gemCarryItemCapacity: number;
     _gemCarryItemRange: number;
@@ -63,4 +66,9 @@ export type Stat = {
     _gemTunnelDigStrength: number;
     _gemTunnelMoveSpeed: number;
     _labPoints: number;
+};
+
+export type Settings = {
+    _audioActive: boolean;
+    _audioVolume: number;
 };

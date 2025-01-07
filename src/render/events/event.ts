@@ -1,6 +1,6 @@
 import { emit, GameEvents } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
-import { run } from '@/render/main';
+import { launch, run } from '@/render/main';
 import {
     createAdminMenu,
     createGem,
@@ -24,6 +24,7 @@ import {
     updateTileEntity,
     updateWorkshop,
     updateGems,
+    updateScroll,
 } from '@/render/templates';
 
 //#region TYPES
@@ -51,7 +52,6 @@ export enum RenderEvents {
     GEM_UPDATE = 'GEM_UPDATE',
     /* INFO */
     INFO = 'INFO',
-    INFO_ALERT = 'INFO_ALERT',
     /* MODE */
     MODE_BASE = 'MODE_BASE',
     MODE_REQUEST = 'MODE_REQUEST',
@@ -61,6 +61,8 @@ export enum RenderEvents {
     QUEST_CREATE = 'QUEST_CREATE',
     QUEST_END = 'QUEST_END',
     QUEST_UPDATE = 'QUEST_UPDATE',
+    /* SCROLL */
+    SCROLL_UPDATE = 'SCROLL_UPDATE',
     /* SPRITE */
     SPRITE_UPDATE = 'SPRITE_UPDATE',
     /* TILEMAP */
@@ -79,7 +81,10 @@ export const onEvent = ({
     type,
 }: RenderEvent) => {
     /* GAME */
-    if (
+    if (type === GameEvents.GAME_LAUNCH) {
+        launch();
+    }
+    else if (
         type === GameEvents.GAME_LOADING_ERROR
         || type === GameEvents.GAME_LOADING_OFF
         || type === GameEvents.GAME_LOADING_ON
@@ -159,11 +164,8 @@ export const onEvent = ({
         emit({ entityId, target: 'render', type: RenderEvents.GEM_DESTROY });
     }
     /* INFO */
-    else if (type === RenderEvents.INFO && data) {
-        displayInfo({ alert: false, text: data });
-    }
-    else if (type === RenderEvents.INFO_ALERT && data) {
-        displayInfo({ alert: true, text: data });
+    else if (type === RenderEvents.INFO && data.text) {
+        displayInfo({ alert: data.alert, text: data.text, type: data.type });
     }
     /* MODE */
     else if (type === RenderEvents.MODE_BASE) {
@@ -190,6 +192,10 @@ export const onEvent = ({
     }
     else if (type === RenderEvents.QUEST_UPDATE) {
         updateQuests();
+    }
+    /* SCROLL */
+    else if (type === RenderEvents.SCROLL_UPDATE) {
+        updateScroll();
     }
     /* SPRITE */
     else if (type === RenderEvents.SPRITE_UPDATE && entityId) {

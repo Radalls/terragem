@@ -12,6 +12,7 @@ import {
     createButton,
     createElement,
     destroyElement,
+    displayAdminMenu,
     getElement,
     setAdminMode,
     setAllOtherGemsMode,
@@ -25,6 +26,7 @@ export const createUI = () => {
     createInfo();
     createGemView();
     createGems();
+    createAdminUI();
     createQuests();
 };
 
@@ -62,10 +64,17 @@ export const displayLoading = ({ load }: { load: boolean }) => {
 };
 //#endregion
 
-//#region MESSAGE
+//#region INFO
 //#region CONSTANTS
-const INFO_TIMEOUT = 3000;
-const MAX_INFO_COUNT = 3;
+const INFO_CONFIRM_TIMEOUT = 3000;
+const INFO_WARNING_TIMEOUT = 3000;
+const INFO_ERROR_TIMEOUT = 5000;
+const INFO_SUCCESS_TIMEOUT = 5000;
+const MAX_INFO_COUNT = 5;
+const INFO_CONFIRM_BORDER = '5px solid rgb(255, 255, 255)';
+const INFO_WARNING_BORDER = '5px solid rgb(255, 231, 94)';
+const INFO_ERROR_BORDER = '5px solid rgb(255, 44, 44)';
+const INFO_SUCCESS_BORDER = '5px solid rgb(65, 255, 65)';
 //#endregion
 
 const createInfo = () => {
@@ -76,19 +85,41 @@ const createInfo = () => {
     });
 };
 
-const addInfo = ({ text, alert }: {
-    alert?: boolean
-    text: string
+const addInfo = ({ text, type, alert }: {
+    alert?: boolean,
+    text: string,
+    type: string,
 }) => {
-    createElement({
+    const infoEl = createElement({
         absolute: false,
         css: 'alert',
-        id: `Info-${text}`,
+        id: 'Info',
         parent: 'Infos',
         text: (alert)
             ? `⚠ ${text} ⚠`
             : text,
     });
+
+    if (type === 'confirm') {
+        infoEl.style.border = INFO_CONFIRM_BORDER;
+
+        emit({ data: { audioName: 'main_confirm' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
+    else if (type === 'success') {
+        infoEl.style.border = INFO_SUCCESS_BORDER;
+
+        emit({ data: { audioName: 'main_success' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
+    else if (type === 'warning') {
+        infoEl.style.border = INFO_WARNING_BORDER;
+
+        emit({ data: { audioName: 'main_warning' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
+    else if (type === 'error') {
+        infoEl.style.border = INFO_ERROR_BORDER;
+
+        emit({ data: { audioName: 'main_error' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
 };
 
 const removeInfo = () => {
@@ -99,18 +130,37 @@ const removeInfo = () => {
     infosEl.removeChild(infosEl.children[0]);
 };
 
-export const displayInfo = ({ text, alert }: {
-    alert: boolean
-    text: string
+export const displayInfo = ({ text, type, alert }: {
+    alert?: boolean,
+    text: string,
+    type: string,
 }) => {
     const infosEl = getElement({ elId: 'Infos' });
     if (infosEl.children.length >= MAX_INFO_COUNT) {
         removeInfo();
     }
 
-    addInfo({ alert, text });
+    addInfo({ alert, text, type });
 
-    setTimeout(() => removeInfo(), INFO_TIMEOUT);
+    let timeout = 0;
+
+    if (type === 'confirm') {
+        timeout = INFO_CONFIRM_TIMEOUT;
+    }
+    else if (type === 'success') {
+        timeout = INFO_SUCCESS_TIMEOUT;
+    }
+    else if (type === 'warning') {
+        timeout = INFO_WARNING_TIMEOUT;
+    }
+    else if (type === 'error') {
+        timeout = INFO_ERROR_TIMEOUT;
+    }
+
+    setTimeout(
+        () => removeInfo(),
+        timeout
+    );
 };
 //#endregion
 
@@ -185,14 +235,27 @@ const createGemInfo = () => {
     });
 
     if (gemHasItems(gem)) {
-        createElement({
-            absolute: false,
-            css: 'items',
-            id: 'GemItems',
-            parent: 'GemData',
-            text: `Items: ${gem.items.map((item) => `(${item._name} ${item._amount})`)}`,
-        });
+        createGemInventory();
     }
+};
+
+const createGemInventory = () => {
+    if (!(CURRENT_GEM_ID)) return;
+    const gemId = CURRENT_GEM_ID;
+
+    const gem = getGem({ gemId });
+
+    if (!(gemHasItems(gem))) return;
+
+    createElement({
+        absolute: false,
+        css: 'items',
+        id: 'GemItems',
+        parent: 'GemData',
+        text: 'Items: ',
+    });
+
+    updateGemInventory();
 };
 
 const createGemActions = () => {
@@ -281,12 +344,49 @@ export const updateGemInfo = ({ gemId }: { gemId?: string }) => {
     gemStateEl.innerText = `State: ${gemState._action}`;
 
     if (gemHasItems(gem)) {
-        const gemItemsEl = getElement({ elId: 'GemItems' });
-        gemItemsEl.innerText = `Items: ${gem.items.map((item) => `(${item._name} ${item._amount})`)}`;
+        updateGemInventory();
     }
 };
 
-export const updateGemActions = () => {
+const updateGemInventory = () => {
+    if (!(CURRENT_GEM_ID)) return;
+    const gemId = CURRENT_GEM_ID;
+
+    const gem = getGem({ gemId });
+
+    if (!(gemHasItems(gem))) return;
+
+    const gemItemsEl = getElement({ elId: 'GemItems' });
+    gemItemsEl.innerHTML = '';
+    gemItemsEl.innerText = 'Items: ';
+
+    for (const item of gem.items) {
+        createElement({
+            absolute: false,
+            css: 'item',
+            id: `GemItem${item._name}`,
+            parent: 'GemItems',
+        });
+
+        createElement({
+            absolute: false,
+            css: 'icon',
+            id: `GemItemIcon${item._name}`,
+            image: getSpritePath({ spriteName: `resource_${item._name.toLowerCase()}` }),
+            parent: `GemItem${item._name}`,
+        });
+
+        createElement({
+            absolute: false,
+            css: 'amount',
+            id: `GemItemAmount${item._name}`,
+            parent: `GemItem${item._name}`,
+            text: `x${item._amount}`,
+        });
+    }
+};
+
+const updateGemActions = () => {
     if (!(CURRENT_GEM_ID)) return;
     const gemId = CURRENT_GEM_ID;
 
@@ -354,10 +454,11 @@ const onClickGemStore = () => {
         displayGemView({ display: false, gemId });
 
         emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_STORE });
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
     else if (gemState._action === 'move') {
         emit({
-            data: `${gemId} is already moving`,
+            data: { text: `${gemId} is already moving`, type: 'warning' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -365,7 +466,7 @@ const onClickGemStore = () => {
     }
     else if (gemState._action === 'work') {
         emit({
-            data: `${gemId} is already working`,
+            data: { text: `${gemId} is already working`, type: 'warning' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -383,17 +484,20 @@ const onClickGemMove = () => {
         displayGemView({ display: false, gemId });
 
         emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MOVE_REQUEST });
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
     else if (gemState._action === 'move') {
         updateGemActions();
 
         emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MOVE_CANCEL });
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
     else if (gemState._action === 'work') {
         onClickGemCancel();
         displayGemView({ display: false, gemId });
 
         emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MOVE_REQUEST });
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
 };
 
@@ -406,12 +510,14 @@ const onClickGemWork = () => {
     if (gemState._action === 'idle') {
         updateGemActions();
         onClickGemIdle();
+
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
     else if (gemState._action === 'move') {
         updateGemActions();
 
         emit({
-            data: `${gemId} is already moving`,
+            data: { text: `${gemId} is already moving`, type: 'warning' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -548,6 +654,8 @@ export const displayGemView = ({ gemId, display }: {
 
         CURRENT_GEM_ID = null;
     }
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion
 
@@ -570,6 +678,14 @@ const createGems = () => {
         id: 'GemsPlaceholder',
         image: getSpritePath({ spriteName: 'ui_gems_placeholder' }),
         parent: 'UI',
+    });
+
+    createButton({
+        click: () => displayGemsUI({ display: false }),
+        css: 'close',
+        id: 'GemsClose',
+        image: getSpritePath({ spriteName: 'ui_close' }),
+        parent: 'Gems',
     });
 
     createElement({
@@ -615,21 +731,14 @@ const createGemsActions = () => {
         parent: 'GemsActions',
         text: '0/0',
     });
-
-    createButton({
-        click: () => displayGemsUI({ display: false }),
-        css: 'close',
-        id: 'GemsClose',
-        image: getSpritePath({ spriteName: 'ui_close' }),
-        parent: 'GemsActions',
-    });
 };
 
 const createGem = ({ gemId }: { gemId: string }) => {
     const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
 
-    createElement({
+    createButton({
         absolute: false,
+        click: () => onClickGems({ gemId }),
         css: 'gem',
         id: `Gem${gemId}`,
         parent: 'GemsPage',
@@ -639,7 +748,7 @@ const createGem = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'sprite',
         id: `GemSprite${gemId}`,
-        image: gemSprite._image,
+        image: gemSprite._image.replace('_error', ''),
         parent: `Gem${gemId}`,
     });
 
@@ -650,21 +759,14 @@ const createGem = ({ gemId }: { gemId: string }) => {
         parent: `Gem${gemId}`,
         text: gemId,
     });
-
-    createButton({
-        absolute: false,
-        click: () => onClickGems({ gemId }),
-        css: 'view',
-        id: `GemView${gemId}`,
-        parent: `Gem${gemId}`,
-        text: 'View',
-    });
 };
 //#endregion
 
 //#region UPDATE
 export const updateGems = () => {
     const admin = getAdmin();
+
+    GEMS_PAGE_INDEX = 0;
 
     for (const gem of admin.gems) {
         const gemElExist = checkElement({ id: `Gem${gem}` });
@@ -725,6 +827,8 @@ const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
     }
 
     updateGemsPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 const onClickGems = ({ gemId }: { gemId: string }) => {
@@ -743,7 +847,7 @@ const onHoverGems = () => {
     gemsPageEl.addEventListener('mouseenter', (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         if (target && target !== gemsPageEl) {
-            const gemId = target.id.replace('GemView', '');
+            const gemId = target.id.replace('Gem', '');
 
             setGemMode({
                 gemId,
@@ -757,9 +861,10 @@ const onHoverGems = () => {
     gemsPageEl.addEventListener('mouseleave', (e: MouseEvent) => {
         const target = e.target as HTMLElement;
         if (target && target !== gemsPageEl) {
-            const gemId = target.id.replace('GemView', '');
+            const gemId = target.id.replace('Gem', '');
 
             if (gemId === CURRENT_GEM_ID) return;
+
             setGemMode({ gemId, mode: 'hover', remove: true });
         }
     }, true);
@@ -782,6 +887,30 @@ export const displayGemsUI = ({ display }: { display: boolean }) => {
         updateGems();
         updateGemsPage();
     }
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+//#endregion
+
+//#region ADMIN
+const createAdminUI = () => {
+    createButton({
+        click: () => displayAdminMenu({ display: true }),
+        css: 'admin-placeholder',
+        id: 'AdminPlaceholder',
+        image: getSpritePath({ spriteName: 'ui_admin_placeholder' }),
+        parent: 'UI',
+    });
+};
+
+export const displayAdminUI = ({ display }: { display: boolean }) => {
+    const adminPlaceholderEl = getElement({ elId: 'AdminPlaceholder' });
+
+    adminPlaceholderEl.style.display = (display)
+        ? 'flex'
+        : 'none';
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion
 
@@ -790,6 +919,22 @@ const createQuests = () => {
     createElement({
         id: 'Quests',
         parent: 'UI',
+    });
+
+    createButton({
+        click: () => displayQuests({ display: true }),
+        css: 'quests-placeholder',
+        id: 'QuestsPlaceholder',
+        image: getSpritePath({ spriteName: 'ui_quests_placeholder' }),
+        parent: 'UI',
+    });
+
+    createButton({
+        click: () => displayQuests({ display: false }),
+        css: 'close',
+        id: 'QuestsClose',
+        image: getSpritePath({ spriteName: 'ui_close' }),
+        parent: 'Quests',
     });
 };
 
@@ -862,10 +1007,17 @@ export const updateQuests = () => {
 
 export const displayQuests = ({ display }: { display: boolean }) => {
     const questsEl = getElement({ elId: 'Quests' });
+    const questsPlaceholderEl = getElement({ elId: 'QuestsPlaceholder' });
 
     questsEl.style.display = (display)
         ? 'flex'
         : 'none';
+
+    questsPlaceholderEl.style.display = (display)
+        ? 'none'
+        : 'flex';
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion
 //#endregion

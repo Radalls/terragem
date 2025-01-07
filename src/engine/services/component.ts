@@ -18,7 +18,7 @@ import { loadTileMapData } from '@/engine/systems/tilemap';
 
 //#region CONSTANTS
 const ADMIN_INIT_LAB_POINTS = 0;
-const ADMIN_INIT_GEM_MAX = 3;
+const ADMIN_INIT_GEM_MAX = 5;
 const ADMIN_INIT_GEM_MINE_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_MINE_ITEM_CAPACITY = 10;
 const ADMIN_INIT_GEM_MINE_DIG_SPEED = 1;
@@ -26,7 +26,7 @@ const ADMIN_INIT_GEM_MINE_DIG_STRENGTH = 1;
 const ADMIN_INIT_GEM_MINE_DIG_AMOUNT = 1;
 const ADMIN_INIT_GEM_CARRY_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY = 10;
-const ADMIN_INIT_GEM_CARRY_ITEM_SPEED = 5;
+const ADMIN_INIT_GEM_CARRY_ITEM_SPEED = 2;
 const ADMIN_INIT_GEM_CARRY_ITEM_AMOUNT = 1;
 const ADMIN_INIT_GEM_CARRY_ITEM_RANGE = 4;
 const ADMIN_INIT_GEM_TUNNEL_MOVE_SPEED = 3;
@@ -35,46 +35,44 @@ const ADMIN_INIT_GEM_TUNNEL_DIG_STRENGTH = 1;
 const ADMIN_INIT_GEM_TUNNEL_DIG_RANGE = 3;
 const ADMIN_INIT_GEM_LIFT_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 10;
-const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 5;
+const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 2;
 const ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT = 1;
 //#endregion
 
 //#region SERVICES
-export const addAdmin = ({ adminId, saveAdmin }: {
-    adminId?: string | null,
-    saveAdmin?: Admin,
-}) => {
+export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
     if (!(adminId)) adminId = getStore({ key: 'adminId' });
 
-    const admin: Admin = (saveAdmin) ?? {
+    const admin: Admin = {
         _: 'Admin',
         crafts: ['GEM_MINE'],
         gems: [],
         items: [
             {
                 _amount: 50,
-                // _amount: 999,
                 _name: Items.STONE,
             },
             {
                 _amount: 25,
-                // _amount: 999,
                 _name: Items.IRON,
             },
             {
                 _amount: 25,
-                // _amount: 999,
                 _name: Items.COPPER,
             },
             {
                 _amount: 1,
-                // _amount: 999,
                 _name: Items.LUMYN,
             },
         ],
         labs: [],
+        mechs: [],
         quests: [],
         requests: [],
+        settings: {
+            _audioActive: true,
+            _audioVolume: 0.5,
+        },
         stats: {
             _gemCarryItemAmount: ADMIN_INIT_GEM_CARRY_ITEM_AMOUNT,
             _gemCarryItemCapacity: ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY,
@@ -104,11 +102,18 @@ export const addAdmin = ({ adminId, saveAdmin }: {
     return getComponent({ componentId: 'Admin', entityId: adminId });
 };
 
-export const addTileMap = ({ tileMapId, tileMapName }: {
+export const addTileMap = ({ tileMapId, tileMapName, saveTileMap }: {
+    saveTileMap?: TileMap,
     tileMapId?: string | null,
     tileMapName: string,
 }) => {
     if (!(tileMapId)) tileMapId = getStore({ key: 'tileMapId' });
+
+    if (saveTileMap) {
+        addComponent({ component: saveTileMap, entityId: tileMapId });
+
+        return getComponent({ componentId: 'TileMap', entityId: tileMapId });
+    }
 
     const tileMapData = loadTileMapData({ tileMapName });
 
@@ -188,6 +193,9 @@ export const addMine = ({ gemId }: { gemId: string }) => {
         _digStrength: 0,
         _itemCapacity: 0,
         _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
         items: [],
     };
 
@@ -204,6 +212,9 @@ export const addCarry = ({ gemId }: { gemId: string }) => {
         _itemRange: 0,
         _itemSpeed: 0,
         _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
         items: [],
     };
 
@@ -219,6 +230,9 @@ export const addLift = ({ gemId }: { gemId: string }) => {
         _itemCapacity: 0,
         _itemSpeed: 0,
         _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
         items: [],
     };
 
@@ -234,6 +248,9 @@ export const addTunnel = ({ gemId }: { gemId: string }) => {
         _digSpeed: 0,
         _digStrength: 0,
         _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
     };
 
     addComponent({ component: tunnel, entityId: gemId });

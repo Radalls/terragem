@@ -4,7 +4,7 @@ import { createEntityGem } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
 import { getAdmin } from '@/engine/systems/entity';
 import { isGemAtCapacity, getGem, gemHasItems } from '@/engine/systems/gem';
-import { getCraftData, isItemGem, itemToGem } from '@/engine/systems/item';
+import { getCraftData, isItemGem, isItemMech, itemToGem } from '@/engine/systems/item';
 import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
@@ -24,6 +24,10 @@ export const addAdminItem = ({ name, amount }: {
     }
     else {
         admin.items.push({ _amount: amount, _name: name });
+    }
+
+    if (isItemMech({ itemName: name })) {
+        admin.mechs.push(name);
     }
 };
 
@@ -55,9 +59,9 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
         if (isItemGem({ itemName })) {
             if (admin.gems.length >= admin.stats._gemMax) {
                 emit({
-                    data: 'Already at max gem capacity',
+                    data: { alert: true, text: 'Already have the current maximum number of gems', type: 'warning' },
                     target: 'render',
-                    type: RenderEvents.INFO_ALERT,
+                    type: RenderEvents.INFO,
                 });
 
                 return false;
@@ -66,35 +70,42 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
 
         const craftData = getCraftData({ itemName });
 
+        const itemsToRemove: { amount: number, name: Items }[] = [];
         for (const compItem of craftData.components) {
             const adminItem = admin.items.find((it) => it._name === compItem.name);
 
             if (!(adminItem)) {
                 emit({
-                    data: `Could not craft ${itemName}`,
+                    data: { alert: true, text: `Insufficient items to craft ${itemName}`, type: 'warning' },
                     target: 'render',
-                    type: RenderEvents.INFO_ALERT,
+                    type: RenderEvents.INFO,
                 });
 
                 return false;
             }
             else if (adminItem._amount < compItem.amount) {
                 emit({
-                    data: `Could not craft ${itemName}`,
+                    data: { alert: true, text: `Insufficient items to craft ${itemName}`, type: 'warning' },
                     target: 'render',
-                    type: RenderEvents.INFO_ALERT,
+                    type: RenderEvents.INFO,
                 });
 
                 return false;
             }
             else {
-                const remove = removeAdminItem({ amount: compItem.amount, name: adminItem._name });
+                itemsToRemove.push({ amount: compItem.amount, name: adminItem._name });
+            }
+        }
+
+        if (itemsToRemove.length) {
+            for (const item of itemsToRemove) {
+                const remove = removeAdminItem({ amount: item.amount, name: item.name });
 
                 if (!(remove)) {
                     emit({
-                        data: `Could not craft ${itemName}`,
+                        data: { alert: true, text: `Insufficient items to craft ${itemName}`, type: 'warning' },
                         target: 'render',
-                        type: RenderEvents.INFO_ALERT,
+                        type: RenderEvents.INFO,
                     });
 
                     return false;
@@ -113,7 +124,7 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
         }
 
         emit({
-            data: `Crafted ${1} ${itemName} !`,
+            data: { text: `Crafted ${1} ${itemName} !`, type: 'success' },
             target: 'render',
             type: RenderEvents.INFO,
         });
@@ -122,9 +133,9 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
     }
     else {
         emit({
-            data: `Could not craft ${itemName}`,
+            data: { alert: true, text: `Insufficient items to craft ${itemName}`, type: 'warning' },
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return false;

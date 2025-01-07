@@ -25,6 +25,7 @@ export type Emit =
 
 export enum GameEvents {
     /* GAME */
+    GAME_LAUNCH = 'GAME_LAUNCH',
     GAME_LOADING_ERROR = 'GAME_LOADING_ERROR',
     GAME_LOADING_OFF = 'GAME_LOADING_OFF',
     GAME_LOADING_ON = 'GAME_LOADING_ON',

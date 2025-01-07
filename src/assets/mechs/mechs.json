@@ -1,0 +1,11 @@
+[
+    { "@": "MINE" },
+    {
+        "name": "MK1_MINE",
+        "stats": {
+            "digSpeed": 5,
+            "digStrength": 1,
+            "itemCapacity": 10
+        }
+    }
+]

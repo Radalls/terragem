@@ -1,16 +1,19 @@
-import { Gems, State } from '@/engine/components';
+import { Gems, Items, State } from '@/engine/components';
 import { emit, GameEvents } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
+import { setState } from '@/engine/services/state';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType } from '@/engine/systems/gem';
-import { getCraftData } from '@/engine/systems/item';
+import { getCraftData, isItemMech } from '@/engine/systems/item';
+import { getProjectVersion } from '@/engine/systems/save';
 import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 import {
     checkElement,
     createButton,
     createElement,
+    displayAdminUI,
     displayGemView,
     getElement,
     searchElementsByClassName,
@@ -21,6 +24,7 @@ import {
 
 //#region TEMPLATES
 export const createMenus = () => {
+    createBoot();
     createLaunch();
     createSettings();
 };
@@ -31,7 +35,56 @@ export const displayMenus = ({ display }: { display: boolean }) => {
     menusEl.style.display = (display)
         ? 'flex'
         : 'none';
+
+    setState({ key: 'gamePause', value: display });
 };
+
+//#region BOOT
+export const createBoot = () => {
+    createElement({
+        css: 'menu boot',
+        id: 'Boot',
+        parent: 'Menus',
+    });
+
+    createElement({
+        css: 'title',
+        id: 'BootTitle',
+        parent: 'Boot',
+        text: 'TERRAGEM',
+    });
+
+    createButton({
+        click: () => onClickBoot(),
+        css: 'opt',
+        id: 'BootLaunch',
+        parent: 'Boot',
+        text: 'Boot',
+    });
+
+    createElement({
+        css: 'version',
+        id: 'BootVersion',
+        parent: 'Boot',
+        text: `v${getProjectVersion()}`,
+    });
+};
+
+const onClickBoot = () => {
+    emit({ target: 'all', type: GameEvents.GAME_LAUNCH });
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+export const displayBoot = ({ display }: { display: boolean }) => {
+    displayMenus({ display });
+
+    const bootEl = getElement({ elId: 'Boot' });
+
+    bootEl.style.display = (display)
+        ? 'flex'
+        : 'none';
+};
+//#endregion
 
 //#region LAUNCH
 export const createLaunch = () => {
@@ -41,9 +94,16 @@ export const createLaunch = () => {
         parent: 'Menus',
     });
 
+    createElement({
+        css: 'title',
+        id: 'LaunchTitle',
+        parent: 'Launch',
+        text: 'TERRAGEM',
+    });
+
     createButton({
         absolute: false,
-        click: () => emit({ target: 'all', type: GameEvents.GAME_RUN }),
+        click: () => onClickStart(),
         css: 'opt',
         id: 'LaunchStart',
         parent: 'Launch',
@@ -52,17 +112,33 @@ export const createLaunch = () => {
 
     createButton({
         absolute: false,
-        click: () => {
-            emit({
-                data: 'Settings is WIP',
-                target: 'render',
-                type: RenderEvents.INFO_ALERT,
-            });
-        },
+        click: () => onClickSettings(),
         css: 'opt',
         id: 'LaunchSettings',
         parent: 'Launch',
         text: 'Settings',
+    });
+
+    createElement({
+        css: 'version',
+        id: 'LaunchVersion',
+        parent: 'Launch',
+        text: `v${getProjectVersion()}`,
+    });
+};
+
+const onClickStart = () => {
+    emit({ target: 'all', type: GameEvents.GAME_RUN });
+    emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
+    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickSettings = () => {
+    emit({
+        data: { text: 'Settings is WIP', type: 'warning' },
+        target: 'render',
+        type: RenderEvents.INFO,
     });
 };
 
@@ -74,6 +150,10 @@ export const displayLaunch = ({ display }: { display: boolean }) => {
     launchEl.style.display = (display)
         ? 'flex'
         : 'none';
+
+    if (display) {
+        emit({ data: { audioName: 'bgm_menu1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
 };
 //#endregion
 
@@ -170,9 +250,11 @@ export const displayAdminMenu = ({ display }: { display: boolean }) => {
 
     if (display) {
         selectAdminTab({ tab: AdminTabs.STORAGE });
+        displayAdminUI({ display: false });
     }
     else {
         selectAdminTab({});
+        displayAdminUI({ display: true });
     }
 };
 
@@ -186,6 +268,8 @@ const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
         tabEl.style.border = ADMIN_TAB_BORDER_SELECT;
 
         updateAdminContent({ tab });
+
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
 };
 
@@ -245,7 +329,7 @@ export const updateStorage = () => {
 
 const createStorageItem = ({ itemName, itemAmount }: {
     itemAmount: number;
-    itemName: string;
+    itemName: Items;
 }) => {
     createElement({
         absolute: false,
@@ -255,7 +339,15 @@ const createStorageItem = ({ itemName, itemAmount }: {
     });
 
     createElement({
-        absolute: false,
+        css: 'icon',
+        id: `ItemIcon${itemName}`,
+        image: (isItemMech({ itemName }))
+            ? getSpritePath({ spriteName: `mech_${itemName.toLowerCase()}` })
+            : getSpritePath({ spriteName: `resource_${itemName.toLowerCase()}` }),
+        parent: `Item${itemName}`,
+    });
+
+    createElement({
         css: 'label',
         id: `ItemLabel${itemName}`,
         parent: `Item${itemName}`,
@@ -354,7 +446,7 @@ const createGem = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'sprite',
         id: `AdminGemSprite${gemId}`,
-        image: gemSprite._image,
+        image: gemSprite._image.replace('_error', ''),
         parent: `AdminGem${gemId}`,
     });
 
@@ -430,6 +522,14 @@ const createGemData = ({ gemId, gemType, gemAction }: {
         id: `AdminGemState${gemId}`,
         parent: `AdminGemInfo${gemId}`,
         text: `State: ${gemAction}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'info',
+        id: `AdminGemLvl${gemId}`,
+        parent: `AdminGemInfo${gemId}`,
+        text: `Lvl: ${gem._xpLvl}`,
     });
 
     if (gemHasItems(gem)) {
@@ -557,6 +657,15 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
 
     createButton({
         absolute: false,
+        click: () => onClickGemEquip({ gemId }),
+        css: 'equip',
+        id: `AdminGemEquip${gemId}`,
+        parent: `AdminGemActions${gemId}`,
+        text: 'Equip',
+    });
+
+    createButton({
+        absolute: false,
         click: () => onClickGemView({ gemId }),
         css: 'view',
         id: `AdminGemView${gemId}`,
@@ -620,6 +729,10 @@ const updateAdminGemsPage = () => {
 const updateGem = ({ gemId }: { gemId: string }) => {
     const gemType = getGemType({ gemId });
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
+    const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
+
+    const gemSpriteEl = getElement({ elId: `AdminGemSprite${gemId}` });
+    gemSpriteEl.style.backgroundImage = `url("${gemSprite._image.replace('_error', '')}")`;
 
     updateGemData({ gemAction: gemState._action, gemId, gemType });
 
@@ -652,6 +765,9 @@ const updateGemData = ({ gemId, gemType, gemAction }: {
 
     const gemStateEl = getElement({ elId: `AdminGemState${gemId}` });
     gemStateEl.innerText = `State: ${gemAction}`;
+
+    const gemLvlEl = getElement({ elId: `AdminGemLvl${gemId}` });
+    gemLvlEl.innerText = `Lvl: ${gem._xpLvl}`;
 
     if (gemHasItems(gem)) {
         const gemItemCapacityEl = getElement({ elId: `ItemCapacity${gemId}` });
@@ -720,6 +836,20 @@ const updateGemActions = ({ gemId, gemStore }: {
     gemId: string,
     gemStore: State['_store'],
 }) => {
+    const admin = getAdmin();
+    const gem = getGem({ gemId });
+
+    const gemEquipEl = getElement({ elId: `AdminGemEquip${gemId}` });
+    gemEquipEl.innerText = (gem._mech)
+        ? 'Unequip'
+        : 'Equip';
+
+    gemEquipEl.style.display = (gemStore)
+        ? 'none'
+        : (admin.mechs.length)
+            ? 'block'
+            : 'none';
+
     const gemViewEl = getElement({ elId: `AdminGemView${gemId}` });
     gemViewEl.style.display = (gemStore)
         ? 'none'
@@ -750,6 +880,16 @@ const onClickGemDeploy = ({ gemId }: { gemId: string }) => {
     });
 
     updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+
+    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickGemEquip = ({ gemId }: { gemId: string }) => {
+    emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_EQUIP });
+
+    updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+
+    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
@@ -766,6 +906,8 @@ const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
     }
 
     updateAdminGemsPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion
 
@@ -884,7 +1026,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
         css: 'name',
         id: `CraftName${craft}`,
         parent: `CraftInfo${craft}`,
-        text: craftData.name,
+        text: craftData.name.split('_').join(' '),
     });
 
     createElement({
@@ -910,17 +1052,28 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
             css: 'comp',
             id: `CraftComp${craft}${comp.name}`,
             parent: `CraftComponents${craft}`,
-            text: `${comp.name} x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : ''),
+        });
+
+        createElement({
+            absolute: false,
+            css: 'icon',
+            id: `CraftCompIcon${craft}${comp.name}`,
+            image: getSpritePath({ spriteName: `resource_${comp.name.toLowerCase()}` }),
+            parent: `CraftComp${craft}${comp.name}`,
+        });
+
+        createElement({
+            absolute: false,
+            css: 'amount',
+            id: `CraftCompAmount${craft}${comp.name}`,
+            parent: `CraftComp${craft}${comp.name}`,
+            text: `x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : ''),
         });
     }
 
     createButton({
         absolute: false,
-        click: () => {
-            emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
-
-            updateAdminContent({ page: WORKSHOP_PAGE_INDEX, tab: AdminTabs.WORKSHOP });
-        },
+        click: () => onClickWorkshopCraft({ craft }),
         css: 'run',
         id: `CraftRun${craft}`,
         parent: `Craft${craft}`,
@@ -951,9 +1104,9 @@ const updateWorkshopCraft = ({ craft }: { craft: string }) => {
 
     for (const comp of craftData.components) {
         const adminItem = admin.items.find((item) => item._name === comp.name);
-        const craftCompEl = getElement({ elId: `CraftComp${craft}${comp.name}` });
+        const craftCompAmountEl = getElement({ elId: `CraftCompAmount${craft}${comp.name}` });
 
-        craftCompEl.innerText = `${comp.name} x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : '');
+        craftCompAmountEl.innerText = `x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : '');
     }
 };
 
@@ -998,6 +1151,15 @@ const onClickWorkshopPage = ({ action }: { action: 'previous' | 'next' }) => {
     }
 
     updateWorkshopPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickWorkshopCraft = ({ craft }: { craft: string }) => {
+    updateAdminContent({ page: WORKSHOP_PAGE_INDEX, tab: AdminTabs.WORKSHOP });
+
+    emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
+    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 export const displayWorkshop = ({ display, page }: {
@@ -1058,6 +1220,7 @@ const createLabStats = () => {
 
     createElement({
         absolute: false,
+        css: 'stat',
         id: 'LabPoints',
         parent: 'LabStats',
         text: `Lab Points: ${admin.stats._labPoints}`,
@@ -1065,6 +1228,7 @@ const createLabStats = () => {
 
     createElement({
         absolute: false,
+        css: 'stat',
         id: 'GemMax',
         parent: 'LabStats',
         text: `Max Gem: ${admin.stats._gemMax}`,
@@ -1115,8 +1279,9 @@ const createLabActions = () => {
     });
 };
 
-const createLab = ({ labName, labText, labCost, labProgress, labTime }: {
+const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }: {
     labCost: number,
+    labImage: string,
     labName: string,
     labProgress: number,
     labText: string,
@@ -1127,6 +1292,14 @@ const createLab = ({ labName, labText, labCost, labProgress, labTime }: {
         css: 'lab',
         id: `Lab${labName}`,
         parent: 'LabPage',
+    });
+
+    createElement({
+        absolute: false,
+        css: 'image',
+        id: `LabImage${labName}`,
+        image: getSpritePath({ spriteName: labImage }),
+        parent: `Lab${labName}`,
     });
 
     createElement({
@@ -1163,11 +1336,7 @@ const createLab = ({ labName, labText, labCost, labProgress, labTime }: {
 
     createButton({
         absolute: false,
-        click: () => {
-            emit({ data: labName, target: 'engine', type: EngineEvents.LAB_RUN });
-
-            updateAdminContent({ page: LAB_PAGE_INDEX, tab: AdminTabs.LAB });
-        },
+        click: () => onClickLabStart({ labName }),
         css: 'start',
         id: `LabStart${labName}`,
         parent: `Lab${labName}`,
@@ -1220,6 +1389,7 @@ export const updateLabs = () => {
         else {
             createLab({
                 labCost: lab.data.cost,
+                labImage: lab.data.image,
                 labName: lab.data.name,
                 labProgress: lab._progress,
                 labText: lab.data.text,
@@ -1258,7 +1428,7 @@ const updateLabPage = () => {
     const labStartIndex = LAB_PAGE_INDEX * LAB_AMOUNT_PER_PAGE;
     const labEndIndex = labStartIndex + LAB_AMOUNT_PER_PAGE;
     for (let j = labStartIndex; j < labEndIndex; j++) {
-        if (j >= admin.labs.length) break;
+        if (j >= labElsToDisplay.length) break;
 
         const labEl = labElsToDisplay[j] as HTMLElement;
 
@@ -1282,18 +1452,30 @@ const onClickLabPage = ({ action }: { action: 'previous' | 'next' }) => {
     }
 
     updateLabPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 const onClickLabDisplayDone = () => {
     const labDisplayDoneEl = getElement({ elId: 'LabDisplayDone' });
 
     LAB_DISPLAY_DONE = !(LAB_DISPLAY_DONE);
+    LAB_PAGE_INDEX = 0;
 
     labDisplayDoneEl.innerText = (LAB_DISPLAY_DONE)
         ? 'Hide Done'
         : 'Show Done';
 
     updateLabPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickLabStart = ({ labName }: { labName: string }) => {
+    updateAdminContent({ page: LAB_PAGE_INDEX, tab: AdminTabs.LAB });
+
+    emit({ data: labName, target: 'engine', type: EngineEvents.LAB_RUN });
+    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 const getLabPagesCount = () => {

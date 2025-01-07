@@ -53,6 +53,7 @@
     display: flex;
     flex-direction: column;
     font-size: 16px;
+    gap: 4px;
     justify-content: center;
     padding: 8px 16px;
     pointer-events: none;
@@ -65,6 +66,7 @@
     border: 5px solid rgb(89, 28, 219);
     border-radius: 10px;
     color: rgb(255, 255, 255);
+    font-size: 18px;
     padding: 8px 16px;
     text-align: center;
 }
@@ -89,7 +91,7 @@
 
 .ui .gem-view-placeholder {
     background-size: contain;
-    border: 5px solid rgb(255, 255, 255);
+    border: 5px solid rgb(166, 166, 166);
     border-radius: 10px 20px;
     bottom: 8px;
     height: 64px;
@@ -139,6 +141,32 @@
     padding: 4px;
 }
 
+.ui .gem-view .items {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    height: 24px;
+}
+
+.ui .gem-view .items .item {
+    align-items: center;
+    background-color: rgb(94, 81, 243);
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    padding: 2px 4px;
+}
+
+.ui .gem-view .items .item .icon {
+    background-size: contain;
+    height: 24px;
+    width: 24px;
+}
+
+.ui .gem-view .items .item .amount {
+    font-size: 12px;
+}
+
 /* GEMS */
 .ui .gems {
     background-color: rgb(89, 28, 219);
@@ -170,11 +198,23 @@
     z-index: 1000;
 }
 
+.ui .gems .close {
+    background-size: contain;
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    top: 2px;
+    height: 24px;
+    left: 2px;
+    padding: 4px;
+    width: 24px;
+}
+
 .ui .gems .page {
     display: flex;
     flex-direction: column;
     gap: 4px;
     height: 100%;
+    padding-top: 32px;
     pointer-events: none;
 }
 
@@ -197,42 +237,41 @@
     right: 0;
 }
 
-.ui .gems .actions .close {
-    background-size: contain;
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    bottom: 0;
-    height: 24px;
-    left: 0;
-    padding: 4px;
-    width: 24px;
-}
-
 .ui .gems .page .gem {
     align-items: center;
     background-color: rgb(94, 81, 243);
     border-radius: 20px;
     color: rgb(255, 255, 255);
     display: flex;
-    justify-content: space-between;
+    gap: 32px;
+    justify-content: center;
     padding: 12px 24px;
+    pointer-events: all;
 }
 
 .ui .gems .page .gem .sprite {
     background-size: contain;
     height: 32px;
+    pointer-events: none;
     width: 32px;
 }
 
-.ui .gems .page .gem .label {}
+.ui .gems .page .gem .label {
+    pointer-events: none;
+}
 
-.ui .gems .page .gem .view {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px;
+/* ADMIN */
+
+.ui .admin-placeholder {
+    background-size: contain;
+    border: 5px solid rgb(255, 255, 255);
+    border-radius: 20px 10px;
+    height: 64px;
+    left: 8px;
     pointer-events: all;
+    top: 8px;
+    width: 64px;
+    z-index: 1000;
 }
 
 /* QUEST */
@@ -246,6 +285,7 @@
     font-size: 10px;
     gap: 16px;
     padding: 8px;
+    padding-bottom: 48px;
     pointer-events: all;
     right: 8px;
     top: 8px;
@@ -253,9 +293,33 @@
     z-index: 100;
 }
 
-.quests .quest {
+.ui .quests-placeholder {
+    background-size: contain;
+    border: 5px solid rgb(255, 255, 255);
+    border-radius: 10px 20px;
+    height: 64px;
+    pointer-events: all;
+    right: 8px;
+    top: 8px;
+    width: 64px;
+    z-index: 1000;
+}
+
+.ui .quests .close {
+    background-size: contain;
+    border: solid 2px rgb(255, 255, 255);
+    border-radius: 20px;
+    bottom: 2px;
+    height: 24px;
+    left: 2px;
+    padding: 4px;
+    width: 24px;
+}
+
+.ui .quests .quest {
     background-color: rgb(94, 81, 243);
     border: solid 2px rgb(255, 255, 255);
     border-radius: 20px;
+    font-size: 16px;
     padding: 8px;
 }

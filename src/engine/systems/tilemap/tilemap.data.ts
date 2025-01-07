@@ -1,4 +1,4 @@
-import { Items } from '@/engine/components';
+import { Drop, Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
 const tileMapFiles: Record<string, { default: TileMapData }>
@@ -8,14 +8,48 @@ const tileMapFiles: Record<string, { default: TileMapData }>
 export type TileMapData = {
     height: number,
     layers: {
-        drops: {
-            name: Items,
-            rate: number,
-        }[],
+        ground: {
+            dropAmount: { max: number, min: number },
+            drops: {
+                name: Items,
+                rate: number,
+            }[],
+            name: string,
+        }
         height: number,
+        resources: {
+            dropAmount: { max: number, min: number },
+            drops: {
+                name: Items,
+                rate: number,
+            }[],
+            name: string,
+            spawns: {
+                points: {
+                    width: number,
+                    x: number,
+                    y: number,
+                }[],
+                startY: number,
+            }[],
+        }[],
     }[],
     name: string,
     width: number
+};
+
+export type TileData =
+    | { tileId: string } & Record<keyof TileParams, never>
+    | (TileParams & { tileId?: never })
+
+type TileParams = {
+    density: number;
+    destroy?: boolean;
+    dropAmount: number;
+    drops: Drop[];
+    sprite: string;
+    x: number;
+    y: number;
 };
 //#endregion
 

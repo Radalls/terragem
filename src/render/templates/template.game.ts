@@ -19,11 +19,25 @@ export const TILE_SIZE = 32;
 export const TILEMAP_GROUND_LEVEL = 5;
 
 let tileMapElId: string;
+
+const SCROLL_SPEED = 5;
+const SCROLL_EDGE_TRIGGER = 10;
+let cursorX = 0;
+let cursorY = 0;
+let scrollMaxX = 0;
+let scrollMaxY = 0;
+let scrollViewportX = 0;
+let scrollViewportY = 0;
 //#endregion
 
 //#region TEMPLATES
 //#region TILEMAP
 export const createTileMap = ({ tileMapId }: { tileMapId: string }) => {
+    const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapId });
+
+    scrollMaxX = (tileMap._width * TILE_SIZE) / 2;
+    scrollMaxY = (tileMap._height * TILE_SIZE) / 2;
+
     tileMapElId = tileMapId;
 
     createElement({
@@ -36,6 +50,9 @@ export const createTileMap = ({ tileMapId }: { tileMapId: string }) => {
 };
 
 export const destroyTileMap = ({ tileMapId }: { tileMapId: string }) => {
+    scrollMaxX = 0;
+    scrollMaxY = 0;
+
     destroyElement({ elId: tileMapId });
 };
 //#endregion
@@ -117,6 +134,35 @@ const selectTile = ({ tileId }: { tileId: string }) => {
     if (getState({ key: 'requestTile' })) {
         emit({ entityId: tileId, target: 'engine', type: EngineEvents.TILE_SELECT });
     }
+};
+//#endregion
+
+//#region SCROLL
+export const initScroll = () => {
+    window.addEventListener('mousemove', (e: MouseEvent) => {
+        cursorX = e.clientX;
+        cursorY = e.clientY;
+    });
+};
+
+export const updateScroll = () => {
+    const { innerWidth, innerHeight } = window;
+    const tileMapEl = getElement({ elId: tileMapElId });
+
+    if (cursorX > innerWidth - SCROLL_EDGE_TRIGGER) {
+        scrollViewportX = Math.min(scrollViewportX + SCROLL_SPEED, scrollMaxX);
+    }
+    if (cursorX < SCROLL_EDGE_TRIGGER) {
+        scrollViewportX = Math.max(scrollViewportX - SCROLL_SPEED, 0);
+    }
+    if (cursorY > innerHeight - SCROLL_EDGE_TRIGGER) {
+        scrollViewportY = Math.min(scrollViewportY + SCROLL_SPEED, scrollMaxY);
+    }
+    if (cursorY < SCROLL_EDGE_TRIGGER) {
+        scrollViewportY = Math.max(scrollViewportY - SCROLL_SPEED, 0);
+    }
+
+    tileMapEl.style.transform = `translate3d(${-scrollViewportX}px, ${-scrollViewportY}px, 0)`;
 };
 //#endregion
 

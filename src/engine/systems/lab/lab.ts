@@ -37,11 +37,19 @@ export const runLab = ({ name }: { name: string }) => {
 
         lab._run = true;
 
-        emit({ data: `Starting ${name}`, target: 'render', type: RenderEvents.INFO });
+        emit({
+            data: { text: `Starting ${name}`, type: 'confirm' },
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
         emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
     }
     else {
-        emit({ data: `Not enough Lab Points to run ${name}`, target: 'render', type: RenderEvents.INFO_ALERT });
+        emit({
+            data: { alert: true, text: `Not enough Lab Points to run ${name}`, type: 'warning' },
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
     }
 };
 
@@ -93,6 +101,6 @@ export const endLab = ({ name }: { name: string }) => {
     }
 
     emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
-    emit({ data: `${name} done !`, target: 'render', type: RenderEvents.INFO });
+    emit({ data: { text: `${name} complete !`, type: 'success' }, target: 'render', type: RenderEvents.INFO });
 };
 //#endregion
