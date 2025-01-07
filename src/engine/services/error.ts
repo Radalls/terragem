@@ -16,11 +16,13 @@ export const error = ({ message, where, emit = false }: {
 }) => {
     const errorData = { message, where } as ErrorData;
 
-    if (emit) emitEvent({
-        data: message,
-        target: 'render',
-        type: RenderEvents.INFO_ALERT,
-    });
+    if (emit) {
+        emitEvent({
+            data: { alert: true, text: message, type: 'error' },
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+    }
 
     throw errorData;
 };

@@ -3,7 +3,7 @@ import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
-import { checkComponent, getComponent } from '@/engine/systems/entity';
+import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entity';
 import {
     isGemAtCapacity,
     isGemAt,
@@ -84,13 +84,55 @@ export const runGemMove = ({ gemId }: { gemId: string }) => {
 
     if (stopMove) {
         emit({
-            data: `${gemId} is at destination`,
+            data: { text: `${gemId} is at destination`, type: 'confirm' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
         });
 
         stopGemMove({ gemId });
+    }
+};
+//#endregion
+
+//#region EQUIP
+export const equipGem = ({ gemId }: { gemId: string }) => {
+    const admin = getAdmin();
+
+    const gemType = getGemType({ gemId });
+    const gem = getGem({ gemId });
+
+    if (gem._mech) {
+        admin.mechs.push(gem._mech.slice());
+        gem._mech = undefined;
+
+        updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
+
+        return;
+    }
+
+    const mech = admin.mechs.find(mech => mech.includes(gemType.toUpperCase()));
+
+    if (mech) {
+        gem._mech = mech;
+        admin.mechs.splice(admin.mechs.indexOf(mech), 1);
+
+        updateSprite({ entityId: gemId, image: `mech_${gem._mech.toLowerCase()}` });
+
+        emit({
+            data: { text: `Equipped ${gemId} with ${gem._mech}`, type: 'confirm' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+    }
+    else {
+        emit({
+            data: { alert: true, text: `No mech found for ${gemId}`, type: 'warning' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
     }
 };
 //#endregion
@@ -117,10 +159,10 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
 
     if (gemPosition._x < GEM_MINE_DISTANCE_FROM_BASE && gemPosition._y === 0) {
         emit({
-            data: `${gemId} is too close to the base to start mining`,
+            data: { alert: true, text: `${gemId} is too close to the base to start mining`, type: 'warning' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         stopGemMine({ gemId });
@@ -129,28 +171,13 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
 
     const mineTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
     const mineTile = getComponent({ componentId: 'Tile', entityId: mineTileId });
-    const leftMineTileId = getTileAtPosition({ x: gemPosition._x - 1, y: gemPosition._y + 1 });
-    const leftMineTile = getComponent({ componentId: 'Tile', entityId: leftMineTileId });
-    const rightMineTileId = getTileAtPosition({ x: gemPosition._x + 1, y: gemPosition._y + 1 });
-    const rightMineTile = getComponent({ componentId: 'Tile', entityId: rightMineTileId });
 
     if (mineTile._lock) {
         emit({
-            data: `${gemId} cannot mine a locked tile`,
+            data: { alert: true, text: `${gemId} cannot mine a locked tile`, type: 'warning' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
-        });
-
-        stopGemMine({ gemId });
-        return;
-    }
-    else if (leftMineTile._destroy || rightMineTile._destroy) {
-        emit({
-            data: `${gemId} is too close to an existing mine`,
-            entityId: gemId,
-            target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         stopGemMine({ gemId });
@@ -160,6 +187,8 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
     const { drop, stop } = digTile({ gemId, tileId: mineTileId });
 
     if (drop) {
+        xpGemMine({ gemId });
+
         emit({
             data: { amount: 1, name: drop },
             entityId: gemId,
@@ -170,6 +199,30 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
 
     if (stop) {
         stopGemMine({ gemId });
+    }
+};
+
+const xpGemMine = ({ gemId }: { gemId: string }) => {
+    const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
+
+    gemMine._xp += 1;
+
+    if (gemMine._xp >= gemMine._xpToNext) {
+        gemMine._xp = 0;
+        gemMine._xpLvl += 1;
+        gemMine._xpToNext = gemMine._xpToNext * 1.5;
+
+        gemMine._digSpeed += 0.5;
+
+        if (gemMine._xpLvl % 10 === 0) {
+            gemMine._itemCapacity += 1;
+        }
+        else if (gemMine._xpLvl % 50 === 0) {
+            gemMine._digStrength += 1;
+        }
+        else if (gemMine._xpLvl % 100 === 0) {
+            gemMine._digAmount += 1;
+        }
     }
 };
 //#endregion
@@ -192,7 +245,7 @@ export const requestGemCarry = ({ gemId, x, y }: {
         gemCarry._moveStartY = y;
 
         emit({
-            data: `${gemId} carry start set`,
+            data: { text: `${gemId} carry start set`, type: 'confirm' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -206,7 +259,7 @@ export const requestGemCarry = ({ gemId, x, y }: {
         setGemAction({ action: 'work', gemId });
 
         emit({
-            data: `${gemId} carry target set`,
+            data: { text: `${gemId} carry target set`, type: 'confirm' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -245,6 +298,7 @@ export const runGemCarry = ({ gemId }: { gemId: string }) => {
         const drop = runGemCarryDrop({ gemId });
 
         if (drop) {
+            xpGemCarry({ gemId });
             return;
         }
     }
@@ -397,25 +451,17 @@ const findGemCarryDrops = ({ gemId }: { gemId: string }) => {
     const dropGems: { gemId: string, priority: number }[] = [];
     const gemsAtPosition = getGemsAtPosition({ gemId, x: gemPosition._x, y: gemPosition._y });
     for (const g of gemsAtPosition) {
+        const gemType = getGemType({ gemId: g });
+
+        if (gemType === Gems.CARRY) continue;
+
         const gem = getGem({ gemId: g });
 
-        if (!(gemHasItems(gem))) {
-            continue;
-        }
-
-        if (isGemAtCapacity({ gemId: g })) {
-            continue;
-        }
+        if (!(gemHasItems(gem))) continue;
+        if (isGemAtCapacity({ gemId: g })) continue;
 
         if (checkComponent({ componentId: Gems.LIFT, entityId: g })) {
             dropGems.push({ gemId: g, priority: 1 });
-        }
-        else if (checkComponent({ componentId: Gems.CARRY, entityId: g })) {
-            if (gemPosition._y === 0) {
-                continue;
-            }
-
-            dropGems.push({ gemId: g, priority: 0 });
         }
     }
 
@@ -452,10 +498,10 @@ const carryTo = ({ gemId }: { gemId: string }) => {
         stopGemCarry({ gemId });
 
         emit({
-            data: `${gemId} cannot carry to target`,
+            data: { alert: true, text: `${gemId} cannot carry to target`, type: 'error' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return false;
@@ -475,10 +521,10 @@ const carryTo = ({ gemId }: { gemId: string }) => {
         stopGemCarry({ gemId });
 
         emit({
-            data: `${gemId} cannot carry to target`,
+            data: { alert: true, text: `${gemId} cannot carry to target`, type: 'error' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return false;
@@ -490,6 +536,30 @@ const carryTo = ({ gemId }: { gemId: string }) => {
     emit({ entityId: gemId, target: 'render', type: RenderEvents.POSITION_UPDATE });
 
     return (isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId }));
+};
+
+const xpGemCarry = ({ gemId }: { gemId: string }) => {
+    const gemCarry = getComponent({ componentId: 'Carry', entityId: gemId });
+
+    gemCarry._xp += 1;
+
+    if (gemCarry._xp >= gemCarry._xpToNext) {
+        gemCarry._xp = 0;
+        gemCarry._xpLvl += 1;
+        gemCarry._xpToNext = gemCarry._xpToNext * 1.5;
+
+        gemCarry._itemSpeed += 0.5;
+
+        if (gemCarry._xpLvl % 10 === 0) {
+            gemCarry._itemCapacity += 1;
+        }
+        else if (gemCarry._xpLvl % 50 === 0) {
+            gemCarry._itemAmount += 1;
+        }
+        else if (gemCarry._xpLvl % 100 === 0) {
+            gemCarry._itemRange += 1;
+        }
+    }
 };
 //#endregion
 
@@ -524,10 +594,10 @@ export const runGemTunnel = ({ gemId }: { gemId: string }) => {
 
     if (gemPosition._y < GEM_TUNNEL_DISTANCE_FROM_GROUND) {
         emit({
-            data: `${gemId} is too close to the surface to dig a tunnel`,
+            data: { alert: true, text: `${gemId} is too close to the surface to dig a tunnel`, type: 'warning' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         stopGemTunnel({ gemId });
@@ -542,7 +612,7 @@ export const runGemTunnel = ({ gemId }: { gemId: string }) => {
     const digRange = getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' });
     if (gemTunnel._digOffset > digRange) {
         emit({
-            data: `${gemId} tunnel has reached maximum range`,
+            data: { text: `${gemId} tunnel has reached maximum range`, type: 'confirm' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
@@ -564,6 +634,30 @@ export const runGemTunnel = ({ gemId }: { gemId: string }) => {
     else if (destroyLeft && destroyRight) {
         gemTunnel._digOffset++;
     }
+    else {
+        xpGemTunnel({ gemId });
+    }
+};
+
+const xpGemTunnel = ({ gemId }: { gemId: string }) => {
+    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+
+    gemTunnel._xp += 1;
+
+    if (gemTunnel._xp >= gemTunnel._xpToNext) {
+        gemTunnel._xp = 0;
+        gemTunnel._xpLvl += 1;
+        gemTunnel._xpToNext = gemTunnel._xpToNext * 1.5;
+
+        gemTunnel._digSpeed += 0.5;
+
+        if (gemTunnel._xpLvl % 10 === 0) {
+            gemTunnel._digRange += 1;
+        }
+        else if (gemTunnel._xpLvl % 50 === 0) {
+            gemTunnel._digStrength += 1;
+        }
+    }
 };
 //#endregion
 
@@ -582,6 +676,19 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
 
     if (gemLift._moveStartY >= GEM_LIFT_DISTANCE_FROM_GROUND) {
         const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
+        const gemTile = getComponent({ componentId: 'Tile', entityId: gemTileId });
+
+        if (gemTile._destroy) {
+            emit({
+                data: { alert: true, text: `${gemId} is not on solid ground`, type: 'error' },
+                entityId: gemId,
+                target: 'render',
+                type: RenderEvents.INFO,
+            });
+
+            return;
+        }
+
         lockTile({ tileId: gemTileId, value: true });
     }
 
@@ -634,10 +741,10 @@ export const runGemLift = ({ gemId }: { gemId: string }) => {
 
     if (gemLift._moveStartY < GEM_LIFT_DISTANCE_FROM_GROUND) {
         emit({
-            data: `${gemId} is too close to the surface to start a lift`,
+            data: { alert: true, text: `${gemId} is too close to the surface to start a lift`, type: 'warning' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         stopGemLift({ gemId });
@@ -661,6 +768,8 @@ export const runGemLift = ({ gemId }: { gemId: string }) => {
         gemLift._moveTo = (gemLift._moveTo === 'start')
             ? 'target'
             : 'start';
+
+        xpGemLift({ gemId });
     }
 };
 
@@ -721,10 +830,10 @@ const liftTo = ({ gemId }: { gemId: string }) => {
         stopGemLift({ gemId });
 
         emit({
-            data: `${gemId} cannot lift to target`,
+            data: { alert: true, text: `${gemId} cannot lift to target`, type: 'error' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return false;
@@ -744,10 +853,10 @@ const liftTo = ({ gemId }: { gemId: string }) => {
         stopGemLift({ gemId });
 
         emit({
-            data: `${gemId} cannot lift to target`,
+            data: { alert: true, text: `${gemId} cannot lift to target`, type: 'error' },
             entityId: gemId,
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return false;
@@ -759,6 +868,27 @@ const liftTo = ({ gemId }: { gemId: string }) => {
     emit({ entityId: gemId, target: 'render', type: RenderEvents.POSITION_UPDATE });
 
     return (isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId }));
+};
+
+const xpGemLift = ({ gemId }: { gemId: string }) => {
+    const gemLift = getComponent({ componentId: 'Lift', entityId: gemId });
+
+    gemLift._xpLvl += 1;
+
+    if (gemLift._xp >= gemLift._xpToNext) {
+        gemLift._xp = 0;
+        gemLift._xpLvl += 1;
+        gemLift._xpToNext = gemLift._xpToNext * 1.5;
+
+        gemLift._itemSpeed += 0.5;
+
+        if (gemLift._xpLvl % 10 === 0) {
+            gemLift._itemCapacity += 1;
+        }
+        else if (gemLift._xpLvl % 50 === 0) {
+            gemLift._itemAmount += 1;
+        }
+    }
 };
 //#endregion
 //#endregion

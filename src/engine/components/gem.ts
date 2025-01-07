@@ -8,9 +8,13 @@ export type Mine = {
     _digSpeed: number;
     _digStrength: number;
     _itemCapacity: number;
+    _mech?: string;
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
     items: Item[];
 };
 
@@ -20,6 +24,7 @@ export type Carry = {
     _itemCapacity: number;
     _itemRange: number;
     _itemSpeed: number;
+    _mech?: string;
     _moveSpeed: number;
     _moveStartX?: number;
     _moveStartY?: number;
@@ -28,6 +33,9 @@ export type Carry = {
     _moveTo?: 'start' | 'target';
     _moveX?: number;
     _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
     items: Item[];
 }
 
@@ -36,6 +44,7 @@ export type Lift = {
     _itemAmount: number;
     _itemCapacity: number;
     _itemSpeed: number;
+    _mech?: string;
     _moveSpeed: number;
     _moveStartX?: number;
     _moveStartY?: number;
@@ -44,6 +53,9 @@ export type Lift = {
     _moveTo?: 'start' | 'target';
     _moveX?: number;
     _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
     items: Item[];
 }
 
@@ -53,9 +65,13 @@ export type Tunnel = {
     _digRange: number;
     _digSpeed: number;
     _digStrength: number;
+    _mech?: string;
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
 }
 
 export enum Gems {

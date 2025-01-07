@@ -16,12 +16,12 @@ export const destroyTile = ({ tileId, value = true }: {
     tile._destroy = value;
 
     if (value) {
-        updateSprite({ entityId: tileId, image: `tile_tile${tile._density}_destroy` });
+        updateSprite({ entityId: tileId, image: `tile_ground${tile._density}_destroy` });
 
         emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_DESTROY });
     }
     else {
-        updateSprite({ entityId: tileId, image: `tile_tile${tile._density}` });
+        updateSprite({ entityId: tileId, image: `tile_ground${tile._density}` });
     }
 };
 
@@ -37,7 +37,7 @@ export const lockTile = ({ tileId, value = true }: {
         updateSprite({ entityId: tileId, image: 'tile_lock' });
     }
     else {
-        updateSprite({ entityId: tileId, image: `tile_tile${tile._density}` });
+        updateSprite({ entityId: tileId, image: `tile_ground${tile._density}` });
     }
 };
 //#endregion

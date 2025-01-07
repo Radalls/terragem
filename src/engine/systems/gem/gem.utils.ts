@@ -2,7 +2,9 @@ import { Gems, State, Mine, Carry, Tunnel, Lift, Item } from '@/engine/component
 import { Gem } from '@/engine/components/gem';
 import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
+import { EngineEvents } from '@/engine/services/event';
 import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entity';
+import { getMechData } from '@/engine/systems/item';
 import { RenderEvents } from '@/render/events';
 
 //#region TYPES
@@ -65,8 +67,16 @@ export const getGemStat = <T extends Gems>({ gemId, gemType, stat }: GemStatPara
         });
     }
 
-    const statName = stat.slice(1)[0].toUpperCase() + stat.slice(2);
-    const adminStatKey = `_gem${gemType}${statName}` as keyof typeof admin.stats;
+    const adminStatName = stat.slice(1)[0].toUpperCase() + stat.slice(2);
+    const adminStatKey = `_gem${gemType}${adminStatName}` as keyof typeof admin.stats;
+
+    if (gem._mech) {
+        const mechData = getMechData({ mechName: gem._mech });
+        const mechStatName = stat.slice(1);
+        const mechStat = mechData.stats[mechStatName] ?? 0;
+
+        return (gem[stat as keyof typeof gem] as number) + (admin.stats[adminStatKey] ?? 0) + mechStat;
+    }
 
     return (gem[stat as keyof typeof gem] as number) + (admin.stats[adminStatKey] ?? 0);
 };
@@ -85,7 +95,9 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
     else if (gemType === Gems.CARRY) {
         const gemActionSpeed = (gemState._action === 'move')
             ? getGemStat({ gemId, gemType, stat: '_moveSpeed' })
-            : getGemStat({ gemId, gemType, stat: '_itemSpeed' });
+            : isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId })
+                ? getGemStat({ gemId, gemType, stat: '_itemSpeed' })
+                : getGemStat({ gemId, gemType, stat: '_moveSpeed' });
 
         return gemActionSpeed;
     }
@@ -99,7 +111,9 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
     else if (gemType === Gems.LIFT) {
         const gemActionSpeed = (gemState._action === 'move')
             ? getGemStat({ gemId, gemType, stat: '_moveSpeed' })
-            : getGemStat({ gemId, gemType, stat: '_itemSpeed' });
+            : isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId })
+                ? getGemStat({ gemId, gemType, stat: '_itemSpeed' })
+                : getGemStat({ gemId, gemType, stat: '_moveSpeed' });
 
         return gemActionSpeed;
     }
@@ -150,10 +164,14 @@ export const setGemStore = ({ gemId, store }: {
         gem.items = [];
     }
 
+    if (gemState._store && gem._mech) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_EQUIP });
+    }
+
     emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
 
     emit({
-        data: `${gemId} ${store ? 'stored' : 'deployed'}`,
+        data: { text: `${gemId} ${store ? 'stored' : 'deployed'}`, type: 'confirm' },
         entityId: gemId,
         target: 'render',
         type: RenderEvents.INFO,

@@ -8,9 +8,11 @@
 .tilemap {
     height: 100%;
     width: 100%;
+    backface-visibility: hidden;
 }
 
 .tilemap .tile {
+    background-size: contain;
     box-sizing: border-box;
 }
 
@@ -23,13 +25,11 @@
 }
 
 .tilemap .tile.destroy {
-    background-size: contain;
     pointer-events: none;
 }
 
 .tilemap .tile.ground {
     background-image: none !important;
-    background-size: contain;
     pointer-events: none;
 }
 

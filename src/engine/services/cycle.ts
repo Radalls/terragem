@@ -1,8 +1,10 @@
+import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { getState } from '@/engine/services/state';
 import { getAdmin, getComponent, isGem } from '@/engine/systems/entity';
 import { getGemActionSpeed, runGemMove, runGemWork } from '@/engine/systems/gem';
 import { progressLab } from '@/engine/systems/lab';
+import { RenderEvents } from '@/render/events';
 
 //#region TYPES
 type RequestCycle = { id: string, progress: number };
@@ -108,6 +110,10 @@ const runCycle = () => {
                     progressLab({ name: lab.data.name });
                 }
             }
+        }
+
+        if (!(getState({ key: 'gamePause' }))) {
+            emit({ target: 'render', type: RenderEvents.SCROLL_UPDATE });
         }
     }
 };

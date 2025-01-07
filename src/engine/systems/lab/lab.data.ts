@@ -4,6 +4,7 @@ import { error } from '@/engine/services/error';
 //#region TYPES
 export type LabData = {
     cost: number
+    image: string
     name: string
     text: string
     time: number

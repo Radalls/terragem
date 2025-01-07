@@ -1,9 +1,11 @@
-import { run } from '@/engine/main';
+import { launch, run } from '@/engine/main';
+import { pauseAudio, playAudio, stopAudio } from '@/engine/services/audio';
 import { emit, GameEvents } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { setState } from '@/engine/services/state';
 import { clearStore, setStore } from '@/engine/services/store';
 import {
+    equipGem,
     requestGemLift,
     requestGemMine,
     requestGemTunnel,
@@ -28,6 +30,10 @@ export type EngineEvent = {
 };
 
 export enum EngineEvents {
+    /* AUDIO */
+    AUDIO_PAUSE = 'AUDIO_PAUSE',
+    AUDIO_PLAY = 'AUDIO_PLAY',
+    AUDIO_STOP = 'AUDIO_STOP',
     /* CRAFT */
     CRAFT_REQUEST = 'CRAFT_REQUEST',
     /* ENGINE */
@@ -37,6 +43,7 @@ export enum EngineEvents {
     GEM_CARRY_CANCEL = 'GEM_CARRY_CANCEL',
     GEM_CARRY_CONFIRM_START = 'GEM_CARRY_CONFIRM_START',
     GEM_CARRY_CONFIRM_TARGET = 'GEM_CARRY_CONFIRM_TARGET',
+    GEM_EQUIP = 'GEM_EQUIP',
     GEM_LIFT_CANCEL = 'GEM_LIFT_CANCEL',
     GEM_MINE = 'GEM_MINE',
     GEM_MINE_CANCEL = 'GEM_MINE_CANCEL',
@@ -57,7 +64,10 @@ export const onEvent = ({
     data,
 }: EngineEvent) => {
     /* GAME */
-    if (type === GameEvents.GAME_LOADING_ERROR) error({
+    if (type === GameEvents.GAME_LAUNCH) {
+        launch();
+    }
+    else if (type === GameEvents.GAME_LOADING_ERROR) error({
         message: 'Error loading game',
         where: onEvent.name,
     });
@@ -68,7 +78,7 @@ export const onEvent = ({
         setState({ key: 'gameLoad', value: true });
     }
     else if (type === GameEvents.GAME_RUN) {
-        run();
+        run({ saveData: data });
     }
     /* ENGINE */
     else if (type === EngineEvents.ENGINE_PLAY) {
@@ -76,6 +86,16 @@ export const onEvent = ({
         setState({ key: 'gamePlay', value: true });
 
         emit({ target: 'all', type: GameEvents.GAME_LOADING_OFF });
+    }
+    /* AUDIO */
+    else if (type === EngineEvents.AUDIO_PAUSE && data.audioName) {
+        pauseAudio({ audioName: data.audioName });
+    }
+    else if (type === EngineEvents.AUDIO_PLAY && data.audioName) {
+        playAudio({ audioName: data.audioName, loop: data.loop });
+    }
+    else if (type === EngineEvents.AUDIO_STOP && data.audioName) {
+        stopAudio({ audioName: data.audioName });
     }
     /* GEM */
     else if (type === GameEvents.GEM_MOVE_REQUEST && entityId) {
@@ -121,6 +141,9 @@ export const onEvent = ({
     }
     else if (type === EngineEvents.GEM_CARRY_CANCEL && entityId) {
         stopGemCarry({ gemId: entityId });
+    }
+    else if (type === EngineEvents.GEM_EQUIP && entityId) {
+        equipGem({ gemId: entityId });
     }
     else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
         requestGemTunnel({ gemId: entityId });

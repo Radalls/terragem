@@ -1,4 +1,4 @@
-import { Gems } from '@/engine/components';
+import { Gems, TileMap } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { createEntityTile } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
@@ -24,57 +24,132 @@ import { RenderEvents } from '@/render/events';
 //#region SYSTEMS
 //#region TILEMAP
 //#region CONSTANTS
-const TILEMAP_LAYER_DROP_AMOUNT = 20;
 const TILEMAP_BASE_TILES_LOCKED = 10;
+const TILEMAP_MIN_X_VARIATION = -2;
+const TILEMAP_MAX_X_VARIATION = 2;
+const TILEMAP_MIN_Y_VARIATION = -1;
+const TILEMAP_MAX_Y_VARIATION = 1;
+const TILEMAP_MIN_WIDTH_VARIATION = -1;
+const TILEMAP_MAX_WIDTH_VARIATION = 2;
 //#endregion
 
-export const generateTileMap = ({ tileMapId }: { tileMapId?: string | null }) => {
+export const generateTileMap = ({ tileMapId, saveTileMap }: {
+    saveTileMap?: TileMap,
+    tileMapId?: string | null,
+}) => {
     if ((!(tileMapId))) tileMapId = getStore({ key: 'tileMapId' });
 
-    generateTileMapLayers({ tileMapId });
+    if (saveTileMap) {
+        //TODO: handle save tiles
+
+        // for (const tileId of saveTileMap.tiles) {
+        //     createEntityTile({ tileId });
+        // }
+    }
+    else {
+        generateTileMapLayers({ tileMapId });
+    }
 };
 
 const generateTileMapLayers = ({ tileMapId }: { tileMapId?: string | null }) => {
-    if ((!(tileMapId))) tileMapId = getStore({ key: 'tileMapId' });
+    if (!tileMapId) tileMapId = getStore({ key: 'tileMapId' });
 
     const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapId });
-
     const tileMapData = loadTileMapData({ tileMapName: tileMap._name });
 
-    let generatedHeight = 0;
-    for (let j = 0; j < tileMapData.width; j++) {
+    let currentHeight = 0;
+    for (let x = 0; x < tileMapData.width; x++) {
         const tileId = createEntityTile({
             density: 0,
             destroy: true,
             dropAmount: 0,
             drops: [],
-            x: j,
-            y: generatedHeight,
+            sprite: 'tile_ground',
+            x,
+            y: currentHeight,
         });
-
         tileMap.tiles.push(tileId);
     }
-    generatedHeight++;
+    currentHeight++;
 
-    for (const layer of tileMapData.layers) {
-        for (let i = generatedHeight; i < generatedHeight + layer.height; i++) {
-            for (let j = 0; j < tileMapData.width; j++) {
-                const layerIndex = tileMapData.layers.indexOf(layer);
+    tileMapData.layers.forEach((layer, layerIndex) => {
+        const tileGrid: string[][] = Array(layer.height).fill(null)
+            .map(() => Array(tileMapData.width).fill(''));
+
+        if (layer.resources) {
+            layer.resources.forEach(res => {
+                res.spawns.forEach(spawn => {
+                    const baseY = spawn.startY;
+
+                    spawn.points.forEach((point) => {
+                        const varX = Math.floor(
+                            Math.random()
+                            * (TILEMAP_MAX_X_VARIATION - TILEMAP_MIN_X_VARIATION + 1)
+                        ) + TILEMAP_MIN_X_VARIATION;
+
+                        const varY = Math.floor(
+                            Math.random()
+                            * (TILEMAP_MAX_Y_VARIATION - TILEMAP_MIN_Y_VARIATION + 1)
+                        ) + TILEMAP_MIN_Y_VARIATION;
+
+                        const varWidth = Math.floor(
+                            Math.random()
+                            * (TILEMAP_MAX_WIDTH_VARIATION - TILEMAP_MIN_WIDTH_VARIATION + 1)
+                        ) + TILEMAP_MIN_WIDTH_VARIATION;
+
+                        const finalX = point.x + varX;
+                        const finalY = baseY + point.y + varY;
+                        const finalWidth = Math.max(1, point.width + varWidth);
+
+                        for (let w = 0; w < finalWidth; w++) {
+                            const tileX = finalX + w;
+                            const tileY = finalY;
+
+                            if (tileX >= 0 && tileX < tileMapData.width &&
+                                tileY >= 0 && tileY < layer.height) {
+                                tileGrid[tileY][tileX] = res.name;
+                            }
+                        }
+                    });
+                });
+            });
+        }
+
+        for (let y = 0; y < layer.height; y++) {
+            for (let x = 0; x < tileMapData.width; x++) {
+                let tileData = layer.ground;
+
+                const resourceType = tileGrid[y][x];
+                if (resourceType && layer.resources) {
+                    const resource = layer.resources.find(res => res.name === resourceType);
+
+                    if (resource) {
+                        tileData = resource;
+                    }
+                }
+
+                const dropAmount = Math.floor(Math.random()
+                    * (tileData.dropAmount.max - tileData.dropAmount.min + 1))
+                    + tileData.dropAmount.min;
 
                 const tileId = createEntityTile({
                     density: layerIndex,
-                    dropAmount: (layerIndex + 1) * TILEMAP_LAYER_DROP_AMOUNT,
-                    drops: layer.drops.map(({ rate, name }) => ({ _name: name, _rate: rate })),
-                    x: j,
-                    y: i,
+                    dropAmount,
+                    drops: tileData.drops.map(({ rate, name }) => ({
+                        _name: name,
+                        _rate: rate,
+                    })),
+                    sprite: tileData.name,
+                    x,
+                    y: y + currentHeight,
                 });
 
                 tileMap.tiles.push(tileId);
             }
         }
 
-        generatedHeight += layer.height;
-    }
+        currentHeight += layer.height;
+    });
 
     for (let k = 0; k < TILEMAP_BASE_TILES_LOCKED; k++) {
         const tileId = getTileAtPosition({ x: k, y: 1 });
@@ -142,6 +217,10 @@ export const digTile = ({ tileId, gemId }: {
     const gemType = getGemType({ gemId });
     const gem = getGem({ gemId });
 
+    if (tile._lock) {
+        return { stop: true };
+    }
+
     if (tile._destroy) {
         if (gemType === Gems.MINE) {
             moveToTarget({ entityId: gemId, targetX: gemPosition._x, targetY: gemPosition._y + 1 });
@@ -161,9 +240,9 @@ export const digTile = ({ tileId, gemId }: {
     const strength = getGemStat({ gemId, gemType, stat: '_digStrength' });
     if (strength < tile._density) {
         emit({
-            data: `${gemId} is not strong enough to mine`,
+            data: { alert: true, text: `${gemId} is not strong enough to mine`, type: 'warning' },
             target: 'render',
-            type: RenderEvents.INFO_ALERT,
+            type: RenderEvents.INFO,
         });
 
         return { stop: true };

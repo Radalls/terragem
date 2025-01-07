@@ -1,25 +1,91 @@
 {
     "name": "map1",
     "height": 100,
-    "width": 48,
+    "width": 64,
     "layers": [
         {
-            "drops": [
-                { "name": "STONE", "rate": 0.5 },
-                { "name": "IRON", "rate": 0.3 },
-                { "name": "COPPER", "rate": 0.2 }
-            ],
-            "height": 10
+            "height": 20,
+            "ground": {
+                "name": "tile_ground",
+                "dropAmount": { "min": 15, "max": 30 },
+                "drops": [
+                    { "name": "STONE", "rate": 0.8 },
+                    { "name": "IRON", "rate": 0.1 },
+                    { "name": "COPPER", "rate": 0.1 }
+                ]
+            },
+            "resources": [
+                {
+                    "name": "tile_iron",
+                    "dropAmount": { "min": 3000, "max": 4000 },
+                    "drops": [
+                        { "name": "IRON", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 2,
+                            "points": [
+                                { "x": 15, "y": 0, "width": 4 },
+                                { "x": 15, "y": 1, "width": 4 },
+                                { "x": 15, "y": 2, "width": 4 }
+                            ]
+                        },
+                        {
+                            "startY": 8,
+                            "points": [
+                                { "x": 35, "y": 0, "width": 3 },
+                                { "x": 35, "y": 1, "width": 4 },
+                                { "x": 36, "y": 2, "width": 5 },
+                                { "x": 36, "y": 3, "width": 5 },
+                                { "x": 36, "y": 4, "width": 5 }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "tile_copper",
+                    "dropAmount": { "min": 3000, "max": 4000 },
+                    "drops": [
+                        { "name": "COPPER", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 2,
+                            "points": [
+                                { "x": 40, "y": 0, "width": 4 },
+                                { "x": 40, "y": 1, "width": 4 },
+                                { "x": 40, "y": 2, "width": 4 }
+                            ]
+                        },
+                        {
+                            "startY": 8,
+                            "points": [
+                                { "x": 11, "y": 0, "width": 3 },
+                                { "x": 11, "y": 1, "width": 4 },
+                                { "x": 10, "y": 2, "width": 5 },
+                                { "x": 10, "y": 3, "width": 5 },
+                                { "x": 10, "y": 4, "width": 5 }
+                            ]
+                        }
+                    ]
+                }
+            ]
         },
         {
-            "drops": [
-                { "name": "STONE", "rate": 0.4 },
-                { "name": "IRON", "rate": 0.3 },
-                { "name": "COPPER", "rate": 0.2 },
-                { "name": "LEAD", "rate": 0.095 },
-                { "name": "LUMYN", "rate": 0.005 }
-            ],
-            "height": 20
+            "height": 30,
+            "ground": {
+                "name": "tile_ground",
+                "dropAmount": { "min": 30, "max": 50 },
+                "drops": [
+                    { "name": "STONE", "rate": 0.7 },
+                    { "name": "IRON", "rate": 0.05 },
+                    { "name": "COPPER", "rate": 0.05 },
+                    { "name": "LEAD", "rate": 0.05 },
+                    { "name": "LUMYN", "rate": 0.01 }
+                ]
+            }
         }
     ]
 }

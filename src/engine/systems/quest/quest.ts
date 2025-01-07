@@ -104,6 +104,6 @@ const endQuest = ({ name, type }: {
     }
 
     emit({ target: 'render', type: RenderEvents.QUEST_END });
-    emit({ data: `${name} complete !`, target: 'render', type: RenderEvents.INFO });
+    emit({ data: { text: `${name} complete !`, type: 'success' }, target: 'render', type: RenderEvents.INFO });
 };
 //#endregion

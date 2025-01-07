@@ -7,6 +7,8 @@ import { error } from '@/engine/services/error';
 //#region UTILS
 export const isItemGem = ({ itemName }: { itemName: Items }) => itemName.includes('GEM');
 
+export const isItemMech = ({ itemName }: { itemName: Items }) => itemName.includes('MK');
+
 export const itemToGem = ({ itemName }: { itemName: Items }) => {
     if (!(isItemGem({ itemName }))) error({
         message: `${itemName} is not a gem`,

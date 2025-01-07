@@ -1,4 +1,4 @@
-import { Admin, Drop, Gems } from '@/engine/components';
+import { Gems, TileMap } from '@/engine/components';
 import {
     addAdmin,
     addCarry,
@@ -12,6 +12,7 @@ import {
     addTunnel,
 } from '@/engine/services/component';
 import { emit } from '@/engine/services/emit';
+import { setStore } from '@/engine/services/store';
 import {
     ADMIN_ENTITY_NAME,
     createEntity,
@@ -21,61 +22,72 @@ import {
     TILEMAP_ENTITY_NAME,
 } from '@/engine/systems/entity';
 import { getSpritePath } from '@/engine/systems/sprite';
-import { generateTileMap } from '@/engine/systems/tilemap';
+import { generateTileMap, TileData } from '@/engine/systems/tilemap';
 import { RenderEvents } from '@/render/events';
 
 //#region SERVICES
-export const createEntityAdmin = ({ adminId, saveAdmin }: {
-    adminId?: string | null,
-    saveAdmin?: Admin,
-}) => {
-    if (!(adminId)) adminId = createEntity({ entityName: ADMIN_ENTITY_NAME });
+export const createEntityAdmin = ({ adminId }: { adminId?: string | null }) => {
+    if (!(adminId)) {
+        adminId = createEntity({ entityName: ADMIN_ENTITY_NAME });
 
-    addAdmin({ adminId, saveAdmin });
+        addAdmin({ adminId });
 
-    emit({ entityId: adminId, target: 'render', type: RenderEvents.ADMIN_CREATE });
+        emit({ entityId: adminId, target: 'render', type: RenderEvents.ADMIN_CREATE });
+    }
+    else {
+        setStore({ key: 'adminId', value: adminId });
+    }
 };
 
-export const createEntityTileMap = ({ tileMapName }: { tileMapName: string }) => {
-    const tileMapId = createEntity({ entityName: TILEMAP_ENTITY_NAME });
+export const createEntityTileMap = ({ tileMapId, tileMapName, saveTileMap }: {
+    saveTileMap?: TileMap,
+    tileMapId?: string | null,
+    tileMapName: string,
+}) => {
+    if (!(tileMapId)) {
+        tileMapId = createEntity({ entityName: TILEMAP_ENTITY_NAME });
 
-    const tileMap = addTileMap({ tileMapId, tileMapName });
-    addSprite({
-        entityId: tileMapId,
-        height: tileMap._height,
-        image: getSpritePath({ spriteName: `map_${tileMap._name}` }),
-        width: tileMap._width,
-    });
+        const tileMap = addTileMap({ saveTileMap, tileMapId, tileMapName });
+
+        addSprite({
+            entityId: tileMapId,
+            height: tileMap._height,
+            image: getSpritePath({ spriteName: `map_${tileMap._name}` }),
+            width: tileMap._width,
+        });
+    }
+    else {
+        setStore({ key: 'tileMapId', value: tileMapId });
+    }
 
     emit({ entityId: tileMapId, target: 'render', type: RenderEvents.TILEMAP_CREATE });
 
-    generateTileMap({});
+    generateTileMap({ saveTileMap, tileMapId });
 };
 
-export const createEntityTile = ({ density, drops, dropAmount, destroy = false, x, y }: {
-    density: number,
-    destroy?: boolean,
-    dropAmount: number,
-    drops: Drop[],
-    x: number,
-    y: number,
-}) => {
-    const tileId = createEntity({ entityName: TILE_ENTITY_NAME });
+export const createEntityTile = ({ tileId, density, drops, dropAmount, destroy = false, sprite, x, y }: TileData) => {
+    if (!(tileId)) {
+        tileId = createEntity({ entityName: TILE_ENTITY_NAME });
 
-    addTile({ density, destroy, dropAmount, drops, tileId });
-    addPosition({ entityId: tileId, x, y });
-    addSprite({
-        entityId: tileId,
-        image: getSpritePath({
-            spriteName: (destroy)
-                ? `tile_tile${density}_destroy`
-                : `tile_tile${density}`,
-        }),
-    });
+        addTile({ density, destroy, dropAmount, drops, tileId });
+        addPosition({ entityId: tileId, x, y });
+        addSprite({
+            entityId: tileId,
+            image: getSpritePath({
+                spriteName: (destroy)
+                    ? `${sprite}${density}_destroy`
+                    : `${sprite}${density}`,
+            }),
+        });
 
-    emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_CREATE });
-    if (destroy) {
-        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_GROUND });
+        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_CREATE });
+
+        if (destroy) {
+            emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_GROUND });
+        }
+    }
+    else {
+        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_CREATE });
     }
 
     return tileId;
