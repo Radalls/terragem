@@ -79,7 +79,7 @@ export const getGemStat = <T extends Gems>({ gemId, gemType, stat }: GemStatPara
         return (gem[stat as keyof typeof gem] as number) + (admin.stats[adminStatKey] ?? 0) + mechStat;
     }
 
-    return (gem[stat as keyof typeof gem] as number) + (admin.stats[adminStatKey] ?? 0);
+    return Math.round((gem[stat as keyof typeof gem] as number) + (admin.stats[adminStatKey] ?? 0));
 };
 
 export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {

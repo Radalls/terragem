@@ -21,7 +21,7 @@
         "mine": { "name": "IRON", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 2 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_4" },
@@ -35,7 +35,7 @@
         "mine": { "name": "IRON", "amount": 150 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 3 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_7" },
@@ -46,7 +46,7 @@
         "name": "QUEST_MINE_IRON_4",
         "type": "mine",
         "text": "Mine 200 Iron",
-        "mine": { "name": "IRON", "amount": 200 },
+        "mine": { "name": "IRON", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 4 }
@@ -61,9 +61,9 @@
         "name": "QUEST_MINE_IRON_5",
         "type": "mine",
         "text": "Mine 300 Iron",
-        "mine": { "name": "IRON", "amount": 300 },
+        "mine": { "name": "IRON", "amount": 100 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
@@ -77,7 +77,7 @@
         "text": "Mine 400 Iron",
         "mine": { "name": "IRON", "amount": 400 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
@@ -91,7 +91,7 @@
         "text": "Mine 500 Iron",
         "mine": { "name": "IRON", "amount": 500 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 7 }
         ],
         "unlock": [
@@ -105,7 +105,7 @@
         "text": "Mine 600 Iron",
         "mine": { "name": "IRON", "amount": 600 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 8 }
         ],
         "unlock": [
@@ -120,7 +120,7 @@
         "text": "Mine 800 Iron",
         "mine": { "name": "IRON", "amount": 800 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 9 }
         ],
         "unlock": [
@@ -134,7 +134,7 @@
         "text": "Mine 1000 Iron",
         "mine": { "name": "IRON", "amount": 1000 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
@@ -148,7 +148,7 @@
         "text": "Mine 1200 Iron",
         "mine": { "name": "IRON", "amount": 1200 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 11 }
         ],
         "unlock": [
@@ -162,7 +162,7 @@
         "text": "Mine 1500 Iron",
         "mine": { "name": "IRON", "amount": 1500 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 12 }
         ],
         "unlock": [
@@ -192,7 +192,7 @@
         "mine": { "name": "COPPER", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 2 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_5" },
@@ -206,7 +206,7 @@
         "mine": { "name": "COPPER", "amount": 150 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 3 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_8" },
@@ -217,7 +217,7 @@
         "name": "QUEST_MINE_COPPER_4",
         "type": "mine",
         "text": "Mine 200 Copper",
-        "mine": { "name": "COPPER", "amount": 200 },
+        "mine": { "name": "COPPER", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 4 }
@@ -232,9 +232,9 @@
         "name": "QUEST_MINE_COPPER_5",
         "type": "mine",
         "text": "Mine 300 Copper",
-        "mine": { "name": "COPPER", "amount": 300 },
+        "mine": { "name": "COPPER", "amount": 100 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
@@ -248,7 +248,7 @@
         "text": "Mine 400 Copper",
         "mine": { "name": "COPPER", "amount": 400 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
@@ -262,7 +262,7 @@
         "text": "Mine 500 Copper",
         "mine": { "name": "COPPER", "amount": 500 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 7 }
         ],
         "unlock": [
@@ -276,7 +276,7 @@
         "text": "Mine 600 Copper",
         "mine": { "name": "COPPER", "amount": 600 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 8 }
         ],
         "unlock": [
@@ -291,7 +291,7 @@
         "text": "Mine 800 Copper",
         "mine": { "name": "COPPER", "amount": 800 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 9 }
         ],
         "unlock": [
@@ -305,7 +305,7 @@
         "text": "Mine 1000 Copper",
         "mine": { "name": "COPPER", "amount": 1000 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
@@ -319,7 +319,7 @@
         "text": "Mine 1200 Copper",
         "mine": { "name": "COPPER", "amount": 1200 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 11 }
         ],
         "unlock": [
@@ -333,7 +333,7 @@
         "text": "Mine 1400 Copper",
         "mine": { "name": "COPPER", "amount": 1400 },
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 12 }
         ],
         "unlock": [
@@ -364,7 +364,7 @@
         "carry": 200,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 2 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             
@@ -379,7 +379,7 @@
         "carry": 300,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 3 }
+            { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             
@@ -411,7 +411,7 @@
         "text": "Carry 600 items",
         "carry": 600,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
@@ -425,7 +425,7 @@
         "text": "Carry 800 items",
         "carry": 800,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
@@ -440,7 +440,7 @@
         "text": "Carry 1000 items",
         "carry": 1000,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 7 }
         ],
         "unlock": [
@@ -454,7 +454,7 @@
         "text": "Carry 1200 items",
         "carry": 1200,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 2 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 8 }
         ],
         "unlock": [
@@ -471,7 +471,7 @@
         "text": "Carry 1500 items",
         "carry": 1500,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 9 }
         ],
         "unlock": [
@@ -485,10 +485,11 @@
         "text": "Carry 1800 items",
         "carry": 1800,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" },
             { "type": "lab", "name": "LAB_GEM_MAX_30" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_1" },
             { "type": "quest", "name": "QUEST_CARRY_11" }
@@ -500,7 +501,7 @@
         "text": "Carry 2100 items",
         "carry": 2100,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 11 }
         ],
         "unlock": [
@@ -514,12 +515,10 @@
         "text": "Carry 2400 items",
         "carry": 2400,
         "reward": [
-            { "type": "item", "name": "LUMYN", "amount": 3 },
+            { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 12 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" },
-            { "type": "lab", "name": "LAB_GEM_MAX_36" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_3" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_3" },
             { "type": "lab", "name": "LAB_GEM_MOVE_SPEED_3" }
