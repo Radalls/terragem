@@ -5,6 +5,7 @@ import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
 import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entity';
 import { getMechData } from '@/engine/systems/item';
+import { updateSprite } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 
 //#region TYPES
@@ -148,12 +149,15 @@ export const setGemStore = ({ gemId, store }: {
 }) => {
     const admin = getAdmin();
 
+    const gemType = getGemType({ gemId });
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
     const gem = getGem({ gemId });
 
     gemState._store = store;
     setGemAction({ action: 'idle', gemId });
+
+    updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
 
     admin.requests = admin.requests.filter(request => request !== gemId);
 

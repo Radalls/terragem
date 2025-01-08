@@ -446,7 +446,7 @@ const createGem = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'sprite',
         id: `AdminGemSprite${gemId}`,
-        image: gemSprite._image.replace('_error', ''),
+        image: gemSprite._image,
         parent: `AdminGem${gemId}`,
     });
 
@@ -732,7 +732,7 @@ const updateGem = ({ gemId }: { gemId: string }) => {
     const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
 
     const gemSpriteEl = getElement({ elId: `AdminGemSprite${gemId}` });
-    gemSpriteEl.style.backgroundImage = `url("${gemSprite._image.replace('_error', '')}")`;
+    gemSpriteEl.style.backgroundImage = `url("${gemSprite._image}")`;
 
     updateGemData({ gemAction: gemState._action, gemId, gemType });
 
@@ -1231,7 +1231,7 @@ const createLabStats = () => {
         css: 'stat',
         id: 'GemMax',
         parent: 'LabStats',
-        text: `Max Gem: ${admin.stats._gemMax}`,
+        text: `Max Gem: ${admin.stats._gemMax} (${admin.gems.length})`,
     });
 };
 
@@ -1349,11 +1349,7 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 export const updateLabs = () => {
     const admin = getAdmin();
 
-    const labPointsEl = getElement({ elId: 'LabPoints' });
-    labPointsEl.innerText = `Lab Points: ${admin.stats._labPoints}`;
-
-    const gemMaxEl = getElement({ elId: 'GemMax' });
-    gemMaxEl.innerText = `Max Gem: ${admin.stats._gemMax}`;
+    updateLabStats();
 
     for (const lab of admin.labs) {
         const labEl = checkElement({ id: `Lab${lab.data.name}` });
@@ -1397,6 +1393,16 @@ export const updateLabs = () => {
             });
         }
     }
+};
+
+const updateLabStats = () => {
+    const admin = getAdmin();
+
+    const labPointsEl = getElement({ elId: 'LabPoints' });
+    labPointsEl.innerText = `Lab Points: ${admin.stats._labPoints}`;
+
+    const gemMaxEl = getElement({ elId: 'GemMax' });
+    gemMaxEl.innerText = `Max Gem: ${admin.stats._gemMax} (${admin.gems.length})`;
 };
 
 const updateLabPage = () => {

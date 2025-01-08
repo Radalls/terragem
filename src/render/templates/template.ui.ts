@@ -748,7 +748,7 @@ const createGem = ({ gemId }: { gemId: string }) => {
         absolute: false,
         css: 'sprite',
         id: `GemSprite${gemId}`,
-        image: gemSprite._image.replace('_error', ''),
+        image: gemSprite._image,
         parent: `Gem${gemId}`,
     });
 
@@ -776,6 +776,9 @@ export const updateGems = () => {
             if (gemState._store) {
                 destroyElement({ elId: `Gem${gem}` });
             }
+            else {
+                updateGem({ gemId: gem });
+            }
         }
         else {
             if (!(gemState._store)) {
@@ -785,6 +788,13 @@ export const updateGems = () => {
     }
 
     updateGemsPage();
+};
+
+const updateGem = ({ gemId }: { gemId: string }) => {
+    const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
+    const gemSpriteEl = getElement({ elId: `GemSprite${gemId}` });
+
+    gemSpriteEl.style.backgroundImage = `url("${gemSprite._image}")`;
 };
 
 const updateGemsPage = () => {

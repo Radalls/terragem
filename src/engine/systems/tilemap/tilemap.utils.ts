@@ -7,6 +7,12 @@ import { RenderEvents } from '@/render/events';
 //#endregion
 
 //#region UTILS
+export const isGround = ({ tileId }: { tileId: string }) => {
+    const tileSprite = getComponent({ componentId: 'Sprite', entityId: tileId });
+
+    return tileSprite._image.includes('ground');
+};
+
 export const destroyTile = ({ tileId, value = true }: {
     tileId: string,
     value?: boolean

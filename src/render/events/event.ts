@@ -200,6 +200,8 @@ export const onEvent = ({
     /* SPRITE */
     else if (type === RenderEvents.SPRITE_UPDATE && entityId) {
         createSprite({ elId: entityId });
+        updateAdminGems();
+        updateGems();
     }
     /* TILEMAP */
     else if (type === RenderEvents.TILEMAP_CREATE && entityId) {

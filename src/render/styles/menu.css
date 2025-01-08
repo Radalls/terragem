@@ -336,9 +336,10 @@
 }
 
 .craft .data .info {
+    align-items: center;
     display: flex;
-    flex-direction: column;
     gap: 16px;
+    justify-content: center;
 }
 
 .craft .data .info .name {
