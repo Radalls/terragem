@@ -1407,39 +1407,34 @@ const updateLabStats = () => {
 
 const updateLabPage = () => {
     const admin = getAdmin();
-    const labPagesCount = getLabPagesCount();
-
     const labPageEl = getElement({ elId: 'LabPage' });
-    const labPageIndexEl = getElement({ elId: 'LabPageIndex' });
-    labPageIndexEl.innerText = `${LAB_PAGE_INDEX + 1}/${labPagesCount || 1}`;
-
-    if (!(admin.labs.length)) return;
-
     const labEls = Array.from(labPageEl.children) as HTMLElement[];
 
-    for (let i = 0; i < labPageEl.children.length; i++) {
-        const labEl = labEls[i];
-        labEl.style.display = 'none';
-    }
-
-    const labElsToDisplay = (LAB_DISPLAY_DONE)
-        ? labEls
-        : labEls.filter((labEl) => {
-            const adminLab = admin.labs.find((lab) => labEl.id.includes(lab.data.name));
-            if (!(adminLab)) return false;
-
-            return !(adminLab._done);
+    const labMapping = labEls.map(labEl => {
+        const adminLab = admin.labs.find(lab => {
+            const labId = `Lab_${lab.data.name}`;
+            return labEl.id === labId;
         });
 
-    const labStartIndex = LAB_PAGE_INDEX * LAB_AMOUNT_PER_PAGE;
-    const labEndIndex = labStartIndex + LAB_AMOUNT_PER_PAGE;
-    for (let j = labStartIndex; j < labEndIndex; j++) {
-        if (j >= labElsToDisplay.length) break;
+        return { data: adminLab, element: labEl };
+    }).filter(mapping => mapping.data);
 
-        const labEl = labElsToDisplay[j] as HTMLElement;
+    const displayableLabs = LAB_DISPLAY_DONE
+        ? labMapping
+        : labMapping.filter(mapping => !(mapping.data?._done));
 
-        labEl.style.display = 'flex';
-    }
+    labEls.forEach(el => el.style.display = 'none');
+
+    const startIndex = LAB_PAGE_INDEX * LAB_AMOUNT_PER_PAGE;
+    const endIndex = startIndex + LAB_AMOUNT_PER_PAGE;
+
+    displayableLabs
+        .slice(startIndex, endIndex)
+        .forEach(mapping => mapping.element.style.display = 'flex');
+
+    const totalPages = Math.ceil(displayableLabs.length / LAB_AMOUNT_PER_PAGE);
+    const labPageIndexEl = getElement({ elId: 'LabPageIndex' });
+    labPageIndexEl.innerText = `${LAB_PAGE_INDEX + 1}/${totalPages || 1}`;
 };
 //#endregion
 
@@ -1485,14 +1480,20 @@ const onClickLabStart = ({ labName }: { labName: string }) => {
 };
 
 const getLabPagesCount = () => {
+    const labPageEl = getElement({ elId: 'LabPage' });
+    const labEls = Array.from(labPageEl.children) as HTMLElement[];
     const admin = getAdmin();
-    const adminLabsCount = (LAB_DISPLAY_DONE)
-        ? admin.labs.length
-        : admin.labs.filter((lab) => !(lab._done)).length;
 
-    const labPagesCount = Math.ceil(adminLabsCount / LAB_AMOUNT_PER_PAGE);
+    const visibleLabsCount = labEls.filter(labEl => {
+        const adminLab = admin.labs.find(lab => {
+            const labId = `Lab_${lab.data.name}`;
+            return labEl.id === labId;
+        });
 
-    return labPagesCount;
+        return LAB_DISPLAY_DONE || (adminLab && !(adminLab._done));
+    }).length;
+
+    return Math.ceil(visibleLabsCount / LAB_AMOUNT_PER_PAGE);
 };
 //#endregion
 

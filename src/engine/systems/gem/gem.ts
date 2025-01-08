@@ -790,18 +790,18 @@ const setGemLiftTarget = ({ gemId }: { gemId: string }) => {
     gemLift._moveTargetX = gemLift._moveStartX;
     gemLift._moveTargetY = gemLift._moveStartY;
 
-    let liftTargetFound = false;
-    while (!(liftTargetFound)) {
-        if (gemLift._moveTargetY <= 0) break;
+    while (gemLift._moveTargetY > 0) {
+        gemLift._moveTargetY--;
 
         const targetTileId = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+
+        if (!targetTileId) continue;
+
         const targetTile = getComponent({ componentId: 'Tile', entityId: targetTileId });
 
-        if (targetTile._destroy) {
-            gemLift._moveTargetY--;
-        }
-        else {
-            liftTargetFound = true;
+        if (!targetTile._destroy) {
+            gemLift._moveTargetY++;
+            break;
         }
     }
 };

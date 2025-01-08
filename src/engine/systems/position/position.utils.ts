@@ -108,8 +108,10 @@ const getValidNeighbors = (x: number, y: number): Point[] => {
         .filter(pos => {
             try {
                 const tileId = getTileAtPosition({ x: pos.x, y: pos.y });
-                const tile = getComponent({ componentId: 'Tile', entityId: tileId });
 
+                if (!tileId) return true;
+
+                const tile = getComponent({ componentId: 'Tile', entityId: tileId });
                 return tile._destroy;
             } catch {
                 return false;

@@ -425,39 +425,39 @@
         "text": "Increase ALL MINE Gems Dig Speed by 0.2",
         "image": "lab_gem_mine_dig_speed",
         "cost": 1,
-        "time": 20,
+        "time": 50,
         "unlock": [{ "type": "stat", "name": "GEM_MINE_DIG_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_MINE_DIG_SPEED_2",
         "text": "Increase ALL MINE Gems Dig Speed by 0.2",
         "image": "lab_gem_mine_dig_speed",
-        "cost": 1,
-        "time": 40,
+        "cost": 2,
+        "time": 100,
         "unlock": [{ "type": "stat", "name": "GEM_MINE_DIG_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_MINE_DIG_SPEED_3",
         "text": "Increase ALL MINE Gems Dig Speed by 0.2",
         "image": "lab_gem_mine_dig_speed",
-        "cost": 1,
-        "time": 60,
+        "cost": 3,
+        "time": 150,
         "unlock": [{ "type": "stat", "name": "GEM_MINE_DIG_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_MINE_DIG_SPEED_4",
         "text": "Increase ALL MINE Gems Dig Speed by 0.2",
         "image": "lab_gem_mine_dig_speed",
-        "cost": 1,
-        "time": 80,
+        "cost": 4,
+        "time": 200,
         "unlock": [{ "type": "stat", "name": "GEM_MINE_DIG_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_MINE_DIG_SPEED_5",
         "text": "Increase ALL MINE Gems Dig Speed by 0.2",
         "image": "lab_gem_mine_dig_speed",
-        "cost": 1,
-        "time": 100,
+        "cost": 5,
+        "time": 250,
         "unlock": [{ "type": "stat", "name": "GEM_MINE_DIG_SPEED", "amount": 0.2 }]
     },
     { "@": "GEM_MINE_DIG_STRENGTH" },
@@ -483,40 +483,40 @@
         "name": "LAB_GEM_CARRY_ITEM_CAPACITY_1",
         "text": "Increase ALL CARRY Gems Item Capacity by 5",
         "image": "lab_gem_carry_item_capacity",
-        "cost": 1,
-        "time": 10,
+        "cost": 2,
+        "time": 100,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_CAPACITY", "amount": 5 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_CAPACITY_2",
         "text": "Increase ALL CARRY Gems Item Capacity by 5",
         "image": "lab_gem_carry_item_capacity",
-        "cost": 2,
-        "time": 20,
+        "cost": 4,
+        "time": 200,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_CAPACITY", "amount": 5 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_CAPACITY_3",
         "text": "Increase ALL CARRY Gems Item Capacity by 5",
         "image": "lab_gem_carry_item_capacity",
-        "cost": 3,
-        "time": 30,
+        "cost": 6,
+        "time": 300,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_CAPACITY", "amount": 5 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_CAPACITY_4",
         "text": "Increase ALL CARRY Gems Item Capacity by 5",
         "image": "lab_gem_carry_item_capacity",
-        "cost": 4,
-        "time": 40,
+        "cost": 8,
+        "time": 400,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_CAPACITY", "amount": 5 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_CAPACITY_5",
         "text": "Increase ALL CARRY Gems Item Capacity by 5",
         "image": "lab_gem_carry_item_capacity",
-        "cost": 5,
-        "time": 50,
+        "cost": 10,
+        "time": 500,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_CAPACITY", "amount": 5 }]
     },
     { "@": "GEM_CARRY_ITEM_SPEED" },
@@ -525,39 +525,39 @@
         "text": "Increase ALL CARRY Gems item speed by 0.2",
         "image": "lab_gem_carry_item_speed",
         "cost": 1,
-        "time": 20,
+        "time": 50,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_SPEED_2",
         "text": "Increase ALL CARRY Gems item speed by 0.2",
         "image": "lab_gem_carry_item_speed",
-        "cost": 1,
-        "time": 40,
+        "cost": 2,
+        "time": 100,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_SPEED_3",
         "text": "Increase ALL CARRY Gems item speed by 0.2",
         "image": "lab_gem_carry_item_speed",
-        "cost": 1,
-        "time": 60,
+        "cost": 3,
+        "time": 150,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_SPEED_4",
         "text": "Increase ALL CARRY Gems item speed by 0.2",
         "image": "lab_gem_carry_item_speed",
-        "cost": 1,
-        "time": 80,
+        "cost": 4,
+        "time": 200,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_SPEED", "amount": 0.2 }]
     },
     {
         "name": "LAB_GEM_CARRY_ITEM_SPEED_5",
         "text": "Increase ALL CARRY Gems item speed by 0.2",
         "image": "lab_gem_carry_item_speed",
-        "cost": 1,
-        "time": 100,
+        "cost": 5,
+        "time": 250,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_SPEED", "amount": 0.2 }]
     },
     { "@": "GEM_CARRY_ITEM_AMOUNT" },

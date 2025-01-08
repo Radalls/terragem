@@ -766,8 +766,6 @@ const createGem = ({ gemId }: { gemId: string }) => {
 export const updateGems = () => {
     const admin = getAdmin();
 
-    GEMS_PAGE_INDEX = 0;
-
     for (const gem of admin.gems) {
         const gemElExist = checkElement({ id: `Gem${gem}` });
         const gemState = getComponent({ componentId: 'State', entityId: gem });

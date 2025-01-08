@@ -36,10 +36,12 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
         });
 
         if (path.length === 0) {
-            throw error({
+            error({
                 message: `No valid path found for entity ${entityId} to (${targetX},${targetY})`,
                 where: moveToTarget.name,
             });
+
+            return false;
         }
 
         pathRequest = {
@@ -54,10 +56,9 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
 
     const nextPosition = pathRequest.path[0];
     if (!(nextPosition)) {
-        throw error({
-            message: `No valid path found for entity ${entityId} to (${targetX},${targetY})`,
-            where: moveToTarget.name,
-        });
+        activePathRequests.delete(entityId);
+
+        return false;
     }
 
     const tileId = getTileAtPosition({ x: nextPosition.x, y: nextPosition.y });
@@ -66,7 +67,7 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
     if (!(tile._destroy)) {
         activePathRequests.delete(entityId);
 
-        return moveToTarget({ entityId, targetX, targetY });
+        return false;
     }
 
     entityPosition._x = nextPosition.x;
