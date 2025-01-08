@@ -187,7 +187,7 @@ export const removeGemItem = ({ gemId, amount }: {
         return;
     }
 
-    const item = gem.items.pop();
+    const item = gem.items.shift();
     if (!(item)) {
         return;
     }

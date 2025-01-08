@@ -53,6 +53,12 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
     }
 
     const nextPosition = pathRequest.path[0];
+    if (!(nextPosition)) {
+        throw error({
+            message: `No valid path found for entity ${entityId} to (${targetX},${targetY})`,
+            where: moveToTarget.name,
+        });
+    }
 
     const tileId = getTileAtPosition({ x: nextPosition.x, y: nextPosition.y });
     const tile = getComponent({ componentId: 'Tile', entityId: tileId });

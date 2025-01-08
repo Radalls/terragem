@@ -17,7 +17,7 @@ import {
 import { addAdminItem, addGemItem, removeGemItem } from '@/engine/systems/item';
 import { getGemsAtPosition, getTileAtPosition, moveToTarget } from '@/engine/systems/position';
 import { updateSprite } from '@/engine/systems/sprite';
-import { digTile, lockTile } from '@/engine/systems/tilemap';
+import { digTile, isGround, lockTile } from '@/engine/systems/tilemap';
 import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
@@ -326,12 +326,18 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
     const pickGems = findGemCarryPicks({ gemId });
     if (pickGems.length) {
         for (const pickGemId of pickGems) {
+            const pickGemType = getGemType({ gemId: pickGemId });
+
             const item = removeGemItem({
                 amount: getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemAmount' }),
                 gemId: pickGemId,
             });
 
             if (item) {
+                if (pickGemType === Gems.LIFT) {
+                    xpGemLift({ gemId: pickGemId });
+                }
+
                 addGemItem({ amount: item.amount, gemId, name: item.name });
 
                 updateSprite({ entityId: gemId, image: 'gem_carry' });
@@ -678,13 +684,15 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
         const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
         const gemTile = getComponent({ componentId: 'Tile', entityId: gemTileId });
 
-        if (gemTile._destroy) {
+        if (gemTile._destroy || !(isGround({ tileId: gemTileId }))) {
             emit({
-                data: { alert: true, text: `${gemId} is not on solid ground`, type: 'error' },
+                data: { alert: true, text: `${gemId} is not on ground`, type: 'error' },
                 entityId: gemId,
                 target: 'render',
                 type: RenderEvents.INFO,
             });
+
+            emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_LIFT_STOP });
 
             return;
         }
@@ -768,8 +776,6 @@ export const runGemLift = ({ gemId }: { gemId: string }) => {
         gemLift._moveTo = (gemLift._moveTo === 'start')
             ? 'target'
             : 'start';
-
-        xpGemLift({ gemId });
     }
 };
 
