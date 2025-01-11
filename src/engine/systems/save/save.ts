@@ -1,4 +1,12 @@
-import { SaveData, loadGame, saveGame } from '@/engine/systems/save';
+import { Component, Gems } from '@/engine/components';
+import { emit, GameEvents } from '@/engine/services/emit';
+import { createEntityAdmin, createEntityGem, createEntityTileMap } from '@/engine/services/entity';
+import { error } from '@/engine/services/error';
+import { getStore } from '@/engine/services/store';
+import { addComponent, checkComponent, entities, Entity, getRawEntityId } from '@/engine/systems/entity';
+import { createQuest } from '@/engine/systems/quest';
+import { getProjectVersion, getSaveTileMap, loadSaveGem, SaveData } from '@/engine/systems/save';
+import { RenderEvents } from '@/render/events';
 
 //#region SYSTEMS
 export const exportSaveFile = () => {
@@ -16,7 +24,7 @@ export const exportSaveFile = () => {
     URL.revokeObjectURL(url);
 };
 
-export const importSaveFile = (file: File): Promise<void> => {
+export const importSaveFile = ({ saveFile }: { saveFile: File }): Promise<void> => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
@@ -25,13 +33,106 @@ export const importSaveFile = (file: File): Promise<void> => {
                 const saveData = JSON.parse(e.target?.result as string) as SaveData;
                 loadGame(saveData);
                 resolve();
-            } catch (error) {
-                reject(new Error('Failed to parse save file'));
+            } catch (err) {
+                reject(error({
+                    message: `Failed to parse save file: ${(err as Error).message}`,
+                    where: importSaveFile.name,
+                }));
             }
         };
 
-        reader.onerror = () => reject(new Error('Failed to read save file'));
-        reader.readAsText(file);
+        reader.onerror = () => reject(error({
+            message: 'Failed to import save file',
+            where: importSaveFile.name,
+        }));
+        reader.readAsText(saveFile);
     });
+};
+
+export const saveGame = () => {
+    const saveData: SaveData = {
+        entities: {},
+        store: {
+            adminId: getStore({ key: 'adminId' }),
+            tileMapId: getStore({ key: 'tileMapId' }),
+        },
+        timestamp: Date.now(),
+        version: getProjectVersion(),
+    };
+
+    Object.entries(entities).forEach(([entityId, entity]) => {
+        const components: Record<string, unknown> = {};
+
+        Object.entries(entity).forEach(([componentKey, component]) => {
+            if (component !== undefined) {
+                components[componentKey] = component;
+            }
+        });
+
+        saveData.entities[entityId] = {
+            components,
+            entityName: getRawEntityId({ entityId }),
+        };
+    });
+
+    return saveData;
+};
+
+export const loadGame = (saveData: SaveData) => {
+    if (saveData.version !== getProjectVersion()) {
+        throw error({
+            emit: true,
+            message: `Save version mismatch. Expected ${getProjectVersion()}, got ${saveData.version}`,
+            where: loadGame.name,
+        });
+    }
+
+    // Clear store
+    // voidStore();
+    // Clear state
+
+    // Restore store values
+    // Object.entries(saveData.store).forEach(([key, value]) => {
+    //     setStore({ key, value });
+    // });
+
+    Object.entries(saveData.entities).forEach(([entityId, serializedEntity]) => {
+        entities[entityId] = {} as Entity;
+
+        Object.entries(serializedEntity.components).forEach(([componentKey, componentData]) => {
+            // @ts-expect-error - Dynamic component restoration
+            addComponent({ component: componentData, entityId });
+            checkComponent({ componentId: componentKey as keyof Component, entityId });
+        });
+    });
+
+    emit({ data: saveData, target: 'all', type: GameEvents.GAME_RUN });
+};
+
+export const createRun = () => {
+    createEntityAdmin({ adminId: getStore({ key: 'adminId' }) });
+    createEntityTileMap({ tileMapName: 'map1' });
+
+    createQuest({ questName: 'QUEST_MINE_IRON_1' });
+    createQuest({ questName: 'QUEST_MINE_COPPER_1' });
+    createQuest({ questName: 'QUEST_CARRY_1' });
+    createQuest({ questName: 'QUEST_GEMS_1' });
+
+    createEntityGem({ type: Gems.MINE });
+    createEntityGem({ type: Gems.CARRY });
+};
+
+export const loadRun = ({ saveData }: { saveData: SaveData }) => {
+    createEntityAdmin({ adminId: saveData.store.adminId });
+
+    const saveTileMap = getSaveTileMap({ saveData });
+    createEntityTileMap({
+        saveTileMap,
+        tileMapName: saveTileMap._name,
+    });
+
+    emit({ target: 'render', type: RenderEvents.QUEST_CREATE });
+
+    loadSaveGem();
 };
 //#endregion

@@ -397,7 +397,6 @@
             { "type": "lab", "amount": 4 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_GEM_TUNNEL" },
             { "type": "lab", "name": "LAB_GEM_MAX_12" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_1" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_1" },
@@ -429,7 +428,6 @@
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_GEM_LIFT" },
             { "type": "lab", "name": "LAB_GEM_MAX_18" },
             { "type": "quest", "name": "QUEST_CARRY_7" }
         ]
@@ -489,7 +487,7 @@
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" },
+            
             { "type": "lab", "name": "LAB_GEM_MAX_30" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_1" },
             { "type": "quest", "name": "QUEST_CARRY_11" }
@@ -522,6 +520,76 @@
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_3" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_3" },
             { "type": "lab", "name": "LAB_GEM_MOVE_SPEED_3" }
+        ]
+    },
+    { "@": "GEMS" },
+    {
+        "name": "QUEST_GEMS_1",
+        "type": "gem",
+        "text": "Own 10 Gems",
+        "gems": 10,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_TUNNEL" },
+            { "type": "quest", "name": "QUEST_GEMS_2" }
+        ]
+    },
+    {
+        "name": "QUEST_GEMS_2",
+        "type": "gem",
+        "text": "Own 15 Gems",
+        "gems": 15,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_LIFT" },
+            { "type": "quest", "name": "QUEST_GEMS_3" }
+        ]
+    },
+    {
+        "name": "QUEST_GEMS_3",
+        "type": "gem",
+        "text": "Own 20 Gems",
+        "gems": 20,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_FLOOR" },
+            { "type": "quest", "name": "QUEST_GEMS_4" }
+        ]
+    },
+    {
+        "name": "QUEST_GEMS_4",
+        "type": "gem",
+        "text": "Own 25 Gems",
+        "gems": 25,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_SHAFT" },
+            { "type": "quest", "name": "QUEST_GEMS_5" }
+        ]
+    },
+    {
+        "name": "QUEST_GEMS_5",
+        "type": "gem",
+        "text": "Own 30 Gems",
+        "gems": 30,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" }
         ]
     }
 ]
