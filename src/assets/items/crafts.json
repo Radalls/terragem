@@ -3,5 +3,7 @@
     { "name": "GEM_CARRY", "image": "gem_carry", "text": "Travel horizontally to transport resources", "components": [{ "name": "COPPER", "amount": 10 }, { "name": "STONE", "amount": 10 }, { "name": "LUMYN", "amount": 1 }] },
     { "name": "GEM_TUNNEL", "image": "gem_tunnel", "text": "Dig horizontally to create a tunnel", "components": [{ "name": "IRON", "amount": 500 }, { "name": "STONE", "amount": 50 }, { "name": "LUMYN", "amount": 2 }] },
     { "name": "GEM_LIFT", "image": "gem_lift", "text": "Travel vertically to transport resources", "components": [{ "name": "IRON", "amount": 300 }, { "name": "COPPER", "amount": 300 }, { "name": "LUMYN", "amount": 2 }] },
+    { "name": "GEM_SHAFT", "image": "gem_shaft", "text": "Dig upward to create a shaft", "components": [{ "name": "COPPER", "amount": 500 }, { "name": "STONE", "amount": 50 }, { "name": "LUMYN", "amount": 2 }] },
+    { "name": "GEM_FLOOR", "image": "gem_floor", "text": "Place ground next to itself to create a floor", "components": [{ "name": "STONE", "amount": 200 }, { "name": "LUMYN", "amount": 2 }] },
     { "name": "MK1_MINE", "image": "mech_mk1_mine", "text": "Equip to a mine gem to improve its stats", "components": [{ "name": "IRON", "amount": 1000 }, { "name": "COPPER", "amount": 1000 }, { "name": "STONE", "amount": 100 }] }
 ]

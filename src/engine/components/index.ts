@@ -1,6 +1,6 @@
 export { type Component } from './@component';
 export { Items, type Admin, type Item, type Lab, type Quest, type Stats as Stat } from './admin';
-export { Gems, type Carry, type Lift, type Mine, type Tunnel } from './gem';
+export { Gems, type Carry, type Floor, type Lift, type Mine, type Shaft, type Tunnel } from './gem';
 export { type Position } from './position';
 export { type Sprite } from './sprite';
 export { type State } from './state';

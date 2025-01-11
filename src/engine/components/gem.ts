@@ -1,22 +1,6 @@
 import { Item } from '@/engine/components';
 
-export type Gem = Carry | Lift | Mine | Tunnel;
-
-export type Mine = {
-    _: 'Mine';
-    _digAmount: number;
-    _digSpeed: number;
-    _digStrength: number;
-    _itemCapacity: number;
-    _mech?: string;
-    _moveSpeed: number;
-    _moveX?: number;
-    _moveY?: number;
-    _xp: number;
-    _xpLvl: number;
-    _xpToNext: number;
-    items: Item[];
-};
+export type Gem = Carry | Floor | Lift | Mine | Shaft | Tunnel;
 
 export type Carry = {
     _: 'Carry';
@@ -39,6 +23,21 @@ export type Carry = {
     items: Item[];
 }
 
+export type Floor = {
+    _: 'Floor';
+    _digOffset?: number;
+    _digRange: number;
+    _digSpeed: number;
+    _digStrength: number;
+    _mech?: string;
+    _moveSpeed: number;
+    _moveX?: number;
+    _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
+};
+
 export type Lift = {
     _: 'Lift';
     _itemAmount: number;
@@ -59,6 +58,37 @@ export type Lift = {
     items: Item[];
 }
 
+export type Mine = {
+    _: 'Mine';
+    _digAmount: number;
+    _digSpeed: number;
+    _digStrength: number;
+    _itemCapacity: number;
+    _mech?: string;
+    _moveSpeed: number;
+    _moveX?: number;
+    _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
+    items: Item[];
+};
+
+export type Shaft = {
+    _: 'Shaft';
+    _digOffset?: number;
+    _digRange: number;
+    _digSpeed: number;
+    _digStrength: number;
+    _mech?: string;
+    _moveSpeed: number;
+    _moveX?: number;
+    _moveY?: number;
+    _xp: number;
+    _xpLvl: number;
+    _xpToNext: number;
+};
+
 export type Tunnel = {
     _: 'Tunnel';
     _digOffset?: number;
@@ -76,7 +106,9 @@ export type Tunnel = {
 
 export enum Gems {
     CARRY = 'Carry',
+    FLOOR = 'Floor',
     LIFT = 'Lift',
     MINE = 'Mine',
+    SHAFT = 'Shaft',
     TUNNEL = 'Tunnel',
 }

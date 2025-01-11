@@ -42,13 +42,9 @@ export enum RenderEvents {
     ADMIN_UPDATE_STORAGE = 'ADMIN_UPDATE_STORAGE',
     ADMIN_UPDATE_WORKSHOP = 'ADMIN_UPDATE_WORKSHOP',
     /* GEM */
-    GEM_CARRY_STOP = 'GEM_CARRY_STOP',
     GEM_CREATE = 'GEM_CREATE',
     GEM_DESTROY = 'GEM_DESTROY',
-    GEM_LIFT_STOP = 'GEM_LIFT_STOP',
-    GEM_MINE_STOP = 'GEM_MINE_STOP',
-    GEM_MOVE_STOP = 'GEM_MOVE_STOP',
-    GEM_TUNNEL_STOP = 'GEM_TUNNEL_STOP',
+    GEM_STOP = 'GEM_STOP',
     GEM_UPDATE = 'GEM_UPDATE',
     /* INFO */
     INFO = 'INFO',
@@ -112,6 +108,7 @@ export const onEvent = ({
         updateWorkshop();
     }
     /* GEM */
+    /* GEM MAIN */
     else if (type === RenderEvents.GEM_CREATE && entityId) {
         createGem({ gemId: entityId });
     }
@@ -121,36 +118,7 @@ export const onEvent = ({
     else if (type === RenderEvents.GEM_DESTROY && entityId) {
         destroyGem({ gemId: entityId });
     }
-    else if (type === GameEvents.GEM_MOVE_REQUEST && entityId) {
-        emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
-    }
-    else if (type === RenderEvents.GEM_MOVE_STOP && entityId) {
-        setGemMode({ gemId: entityId, mode: 'base' });
-    }
-    else if (type === GameEvents.GEM_MINE_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'mine' });
-    }
-    else if (type === RenderEvents.GEM_MINE_STOP && entityId) {
-        setGemMode({ gemId: entityId, mode: 'base' });
-    }
-    else if (type === GameEvents.GEM_CARRY_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'carry' });
-
-        emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
-    }
-    else if (type === RenderEvents.GEM_CARRY_STOP && entityId) {
-        setGemMode({ gemId: entityId, mode: 'base' });
-    }
-    else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'mine' });
-    }
-    else if (type === RenderEvents.GEM_TUNNEL_STOP && entityId) {
-        setGemMode({ gemId: entityId, mode: 'base' });
-    }
-    else if (type === GameEvents.GEM_LIFT_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'carry' });
-    }
-    else if (type === RenderEvents.GEM_LIFT_STOP && entityId) {
+    else if (type === RenderEvents.GEM_STOP && entityId) {
         setGemMode({ gemId: entityId, mode: 'base' });
     }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
@@ -162,6 +130,30 @@ export const onEvent = ({
         updateGems();
 
         emit({ entityId, target: 'render', type: RenderEvents.GEM_DESTROY });
+    }
+    /* GEM REQUESTS */
+    else if (type === GameEvents.GEM_MOVE_REQUEST && entityId) {
+        emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
+    }
+    else if (type === GameEvents.GEM_CARRY_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'carry' });
+
+        emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
+    }
+    else if (type === GameEvents.GEM_FLOOR_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'carry' });
+    }
+    else if (type === GameEvents.GEM_LIFT_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'carry' });
+    }
+    else if (type === GameEvents.GEM_MINE_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'mine' });
+    }
+    else if (type === GameEvents.GEM_SHAFT_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'mine' });
+    }
+    else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
+        setGemMode({ gemId: entityId, mode: 'mine' });
     }
     /* INFO */
     else if (type === RenderEvents.INFO && data.text) {

@@ -40,11 +40,22 @@ export const generateTileMap = ({ tileMapId, saveTileMap }: {
     if ((!(tileMapId))) tileMapId = getStore({ key: 'tileMapId' });
 
     if (saveTileMap) {
-        //TODO: handle save tiles
+        for (const tileId of saveTileMap.tiles) {
+            const tile = getComponent({ componentId: 'Tile', entityId: tileId });
+            const tileSprite = getComponent({ componentId: 'Sprite', entityId: tileId });
+            const tilePosition = getComponent({ componentId: 'Position', entityId: tileId });
 
-        // for (const tileId of saveTileMap.tiles) {
-        //     createEntityTile({ tileId });
-        // }
+            createEntityTile({
+                density: tile._density,
+                destroy: tile._destroy,
+                dropAmount: tile._dropAmount,
+                drops: tile.drops,
+                sprite: tileSprite._image,
+                tileId,
+                x: tilePosition._x,
+                y: tilePosition._y,
+            });
+        }
     }
     else {
         generateTileMapLayers({ tileMapId });

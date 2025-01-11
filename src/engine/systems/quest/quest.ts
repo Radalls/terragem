@@ -22,6 +22,10 @@ export const createQuest = ({ questName }: { questName: string }) => {
         data: questData,
     };
 
+    if (questData.type === 'gem') {
+        quest._progress = admin.gems.length;
+    }
+
     admin.quests.push(quest);
 
     emit({ target: 'render', type: RenderEvents.QUEST_CREATE });
@@ -64,9 +68,26 @@ export const progressQuestCarry = ({ amount }: { amount: number }) => {
     emit({ target: 'render', type: RenderEvents.QUEST_UPDATE });
 };
 
+export const progressQuestGems = ({ amount }: { amount: number }) => {
+    const quest = searchQuest({ name: 'gems', type: 'gem' });
+
+    if (!(quest)) return;
+    if (quest._done) return;
+    if (!(quest.data.type === 'gem')) return;
+
+    quest._progress += amount;
+
+    if (quest._progress >= quest.data.gems) {
+        endQuest({ name: quest.data.name, type: 'gem' });
+        return;
+    }
+
+    emit({ target: 'render', type: RenderEvents.QUEST_UPDATE });
+};
+
 const endQuest = ({ name, type }: {
     name: string,
-    type: 'mine' | 'carry',
+    type: 'mine' | 'carry' | 'gem',
 }) => {
     const admin = getAdmin();
 

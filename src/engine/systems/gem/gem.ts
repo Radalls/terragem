@@ -17,30 +17,14 @@ import {
 import { addAdminItem, addGemItem, removeGemItem } from '@/engine/systems/item';
 import { getGemsAtPosition, getTileAtPosition, moveToTarget } from '@/engine/systems/position';
 import { updateSprite } from '@/engine/systems/sprite';
-import { digTile, isGround, lockTile } from '@/engine/systems/tilemap';
+import { destroyTile, digTile, isGround, lockTile } from '@/engine/systems/tilemap';
 import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
+
 //#endregion
 
 //#region SYSTEMS
-export const runGemWork = ({ gemId }: { gemId: string }) => {
-    const gemType = getGemType({ gemId });
-
-    if (gemType === Gems.MINE) {
-        runGemMine({ gemId });
-    }
-    else if (gemType === Gems.CARRY) {
-        runGemCarry({ gemId });
-    }
-    else if (gemType === Gems.TUNNEL) {
-        runGemTunnel({ gemId });
-    }
-    else if (gemType === Gems.LIFT) {
-        runGemLift({ gemId });
-    }
-};
-
 //#region MOVE
 export const requestGemMove = ({ gemId, targetX, targetY }: {
     gemId: string,
@@ -65,7 +49,7 @@ export const stopGemMove = ({ gemId }: { gemId: string }) => {
     setGemRequest({ gemId, request: false });
     setGemAction({ action: 'idle', gemId });
 
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_MOVE_STOP });
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
 };
 
 export const runGemMove = ({ gemId }: { gemId: string }) => {
@@ -137,96 +121,6 @@ export const equipGem = ({ gemId }: { gemId: string }) => {
 };
 //#endregion
 
-//#region MINE
-//#region CONSTANTS
-const GEM_MINE_DISTANCE_FROM_BASE = 10;
-//#endregion
-
-export const requestGemMine = ({ gemId }: { gemId: string }) => {
-    setGemRequest({ gemId, request: true });
-    setGemAction({ action: 'work', gemId });
-};
-
-export const stopGemMine = ({ gemId }: { gemId: string }) => {
-    setGemRequest({ gemId, request: false });
-    setGemAction({ action: 'idle', gemId });
-
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_MINE_STOP });
-};
-
-export const runGemMine = ({ gemId }: { gemId: string }) => {
-    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
-
-    if (gemPosition._x < GEM_MINE_DISTANCE_FROM_BASE && gemPosition._y === 0) {
-        emit({
-            data: { alert: true, text: `${gemId} is too close to the base to start mining`, type: 'warning' },
-            entityId: gemId,
-            target: 'render',
-            type: RenderEvents.INFO,
-        });
-
-        stopGemMine({ gemId });
-        return;
-    }
-
-    const mineTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
-    const mineTile = getComponent({ componentId: 'Tile', entityId: mineTileId });
-
-    if (mineTile._lock) {
-        emit({
-            data: { alert: true, text: `${gemId} cannot mine a locked tile`, type: 'warning' },
-            entityId: gemId,
-            target: 'render',
-            type: RenderEvents.INFO,
-        });
-
-        stopGemMine({ gemId });
-        return;
-    }
-
-    const { drop, stop } = digTile({ gemId, tileId: mineTileId });
-
-    if (drop) {
-        xpGemMine({ gemId });
-
-        emit({
-            data: { amount: 1, name: drop },
-            entityId: gemId,
-            target: 'engine',
-            type: EngineEvents.GEM_MINE,
-        });
-    }
-
-    if (stop) {
-        stopGemMine({ gemId });
-    }
-};
-
-const xpGemMine = ({ gemId }: { gemId: string }) => {
-    const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
-
-    gemMine._xp += 1;
-
-    if (gemMine._xp >= gemMine._xpToNext) {
-        gemMine._xp = 0;
-        gemMine._xpLvl += 1;
-        gemMine._xpToNext = gemMine._xpToNext * 1.5;
-
-        gemMine._digSpeed += 0.5;
-
-        if (gemMine._xpLvl % 10 === 0) {
-            gemMine._itemCapacity += 1;
-        }
-        else if (gemMine._xpLvl % 50 === 0) {
-            gemMine._digStrength += 1;
-        }
-        else if (gemMine._xpLvl % 100 === 0) {
-            gemMine._digAmount += 1;
-        }
-    }
-};
-//#endregion
-
 //#region CARRY
 //#region CONSTANTS
 const GEM_CARRY_X_DISTANCE_FROM_BASE = 10;
@@ -279,7 +173,7 @@ export const stopGemCarry = ({ gemId }: { gemId: string }) => {
     setGemRequest({ gemId, request: false });
     setGemAction({ action: 'idle', gemId });
 
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_CARRY_STOP });
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
 };
 
 export const runGemCarry = ({ gemId }: { gemId: string }) => {
@@ -435,7 +329,7 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
                 data: { amount: item.amount },
                 entityId: gemId,
                 target: 'engine',
-                type: EngineEvents.GEM_CARRY,
+                type: EngineEvents.GEM_CARRY_QUEST,
             });
 
             return true;
@@ -569,99 +463,121 @@ const xpGemCarry = ({ gemId }: { gemId: string }) => {
 };
 //#endregion
 
-//#region TUNNEL
+//#region FLOOR
 //#region CONSTANTS
-const GEM_TUNNEL_DISTANCE_FROM_GROUND = 4;
 //#endregion
 
-export const requestGemTunnel = ({ gemId }: { gemId: string }) => {
-    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+export const requestGemFloor = ({ gemId }: { gemId: string }) => {
+    const gemFloor = getComponent({ componentId: 'Floor', entityId: gemId });
 
-    gemTunnel._digOffset = 1;
+    gemFloor._digOffset = 1;
 
     setGemRequest({ gemId, request: true });
     setGemAction({ action: 'work', gemId });
 };
 
-export const stopGemTunnel = ({ gemId }: { gemId: string }) => {
-    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+export const stopGemFloor = ({ gemId }: { gemId: string }) => {
+    const gemFloor = getComponent({ componentId: 'Floor', entityId: gemId });
 
-    gemTunnel._digOffset = undefined;
+    gemFloor._digOffset = undefined;
 
     setGemRequest({ gemId, request: false });
     setGemAction({ action: 'idle', gemId });
 
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_TUNNEL_STOP });
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
 };
 
-export const runGemTunnel = ({ gemId }: { gemId: string }) => {
-    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+export const runGemFloor = ({ gemId }: { gemId: string }) => {
+    const gemFloor = getComponent({ componentId: 'Floor', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
 
-    if (gemPosition._y < GEM_TUNNEL_DISTANCE_FROM_GROUND) {
+    if (gemPosition._y <= 0) {
         emit({
-            data: { alert: true, text: `${gemId} is too close to the surface to dig a tunnel`, type: 'warning' },
+            data: { alert: true, text: `${gemId} is too close to the surface to create a floor`, type: 'warning' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
         });
 
-        stopGemTunnel({ gemId });
+        stopGemFloor({ gemId });
         return;
     }
 
-    if (!(gemTunnel._digOffset)) throw error({
-        message: `${gemId} has no tunnel offset`,
+    if (!(gemFloor._digOffset)) throw error({
+        message: `${gemId} has no floor offset`,
         where: runGemTunnel.name,
     });
 
-    const digRange = getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' });
-    if (gemTunnel._digOffset > digRange) {
+    const digRange = getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digRange' });
+    if (gemFloor._digOffset > digRange) {
         emit({
-            data: { text: `${gemId} tunnel has reached maximum range`, type: 'confirm' },
+            data: { text: `${gemId} floor has reached maximum range`, type: 'confirm' },
             entityId: gemId,
             target: 'render',
             type: RenderEvents.INFO,
         });
 
-        stopGemTunnel({ gemId });
+        stopGemFloor({ gemId });
         return;
     }
 
-    const tileLeft = getTileAtPosition({ x: gemPosition._x - gemTunnel._digOffset, y: gemPosition._y });
-    const tileRight = getTileAtPosition({ x: gemPosition._x + gemTunnel._digOffset, y: gemPosition._y });
+    const leftTileId = getTileAtPosition({ x: gemPosition._x - gemFloor._digOffset, y: gemPosition._y + 1 });
+    const rightTileId = getTileAtPosition({ x: gemPosition._x + gemFloor._digOffset, y: gemPosition._y + 1 });
 
-    const { destroy: destroyLeft, stop: stopLeft } = digTile({ gemId, tileId: tileLeft });
-    const { destroy: destroyRight, stop: stopRight } = digTile({ gemId, tileId: tileRight });
+    floorTile({ gemId, tileId: leftTileId });
+    floorTile({ gemId, tileId: rightTileId });
 
-    if (stopLeft || stopRight) {
-        stopGemTunnel({ gemId });
-    }
-    else if (destroyLeft && destroyRight) {
-        gemTunnel._digOffset++;
-    }
-    else {
-        xpGemTunnel({ gemId });
+    const leftTile = getComponent({ componentId: 'Tile', entityId: leftTileId });
+    const rightTile = getComponent({ componentId: 'Tile', entityId: rightTileId });
+
+    if (!(leftTile._destroy) && !(rightTile._destroy)) {
+        gemFloor._digOffset++;
     }
 };
 
-const xpGemTunnel = ({ gemId }: { gemId: string }) => {
-    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+const floorTile = ({ gemId, tileId }: {
+    gemId: string,
+    tileId: string,
+}) => {
+    const gemFloor = getComponent({ componentId: 'Floor', entityId: gemId });
+    const tile = getComponent({ componentId: 'Tile', entityId: tileId });
 
-    gemTunnel._xp += 1;
+    if (tile._destroy) {
+        if (gemFloor._digStrength < tile._density) {
+            emit({
+                data: { text: `${gemId} is not strong enough to floor this ground`, type: 'confirm' },
+                entityId: gemId,
+                target: 'render',
+                type: RenderEvents.INFO,
+            });
 
-    if (gemTunnel._xp >= gemTunnel._xpToNext) {
-        gemTunnel._xp = 0;
-        gemTunnel._xpLvl += 1;
-        gemTunnel._xpToNext = gemTunnel._xpToNext * 1.5;
-
-        gemTunnel._digSpeed += 0.5;
-
-        if (gemTunnel._xpLvl % 10 === 0) {
-            gemTunnel._digRange += 1;
+            stopGemFloor({ gemId });
+            return;
         }
-        else if (gemTunnel._xpLvl % 50 === 0) {
-            gemTunnel._digStrength += 1;
+        else {
+            destroyTile({ tileId, value: false });
+            xpGemFloor({ gemId });
+        }
+    }
+};
+
+const xpGemFloor = ({ gemId }: { gemId: string }) => {
+    const gemFloor = getComponent({ componentId: 'Floor', entityId: gemId });
+
+    gemFloor._xp += 1;
+
+    if (gemFloor._xp >= gemFloor._xpToNext) {
+        gemFloor._xp = 0;
+        gemFloor._xpLvl += 1;
+        gemFloor._xpToNext = gemFloor._xpToNext * 1.5;
+
+        gemFloor._digSpeed += 0.5;
+
+        if (gemFloor._xpLvl % 10 === 0) {
+            gemFloor._digRange += 1;
+        }
+        else if (gemFloor._xpLvl % 50 === 0) {
+            gemFloor._digStrength += 1;
         }
     }
 };
@@ -692,7 +608,7 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
                 type: RenderEvents.INFO,
             });
 
-            emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_LIFT_STOP });
+            emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
 
             return;
         }
@@ -731,7 +647,7 @@ export const stopGemLift = ({ gemId }: { gemId: string }) => {
     setGemRequest({ gemId, request: false });
     setGemAction({ action: 'idle', gemId });
 
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_LIFT_STOP });
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
 };
 
 export const runGemLift = ({ gemId }: { gemId: string }) => {
@@ -895,6 +811,321 @@ const xpGemLift = ({ gemId }: { gemId: string }) => {
             gemLift._itemAmount += 1;
         }
     }
+};
+//#endregion
+
+//#region MINE
+//#region CONSTANTS
+const GEM_MINE_DISTANCE_FROM_BASE = 10;
+//#endregion
+
+export const requestGemMine = ({ gemId }: { gemId: string }) => {
+    setGemRequest({ gemId, request: true });
+    setGemAction({ action: 'work', gemId });
+};
+
+export const stopGemMine = ({ gemId }: { gemId: string }) => {
+    setGemRequest({ gemId, request: false });
+    setGemAction({ action: 'idle', gemId });
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
+};
+
+export const runGemMine = ({ gemId }: { gemId: string }) => {
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+    if (gemPosition._x < GEM_MINE_DISTANCE_FROM_BASE && gemPosition._y === 0) {
+        emit({
+            data: { alert: true, text: `${gemId} is too close to the base to start mining`, type: 'warning' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemMine({ gemId });
+        return;
+    }
+
+    const mineTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
+    const mineTile = getComponent({ componentId: 'Tile', entityId: mineTileId });
+
+    if (mineTile._lock) {
+        emit({
+            data: { alert: true, text: `${gemId} cannot mine a locked tile`, type: 'warning' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemMine({ gemId });
+        return;
+    }
+
+    const { drop, stop } = digTile({ gemId, tileId: mineTileId });
+
+    if (drop) {
+        xpGemMine({ gemId });
+
+        emit({
+            data: { amount: 1, name: drop },
+            entityId: gemId,
+            target: 'engine',
+            type: EngineEvents.GEM_MINE_QUEST,
+        });
+    }
+
+    if (stop) {
+        stopGemMine({ gemId });
+    }
+};
+
+const xpGemMine = ({ gemId }: { gemId: string }) => {
+    const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
+
+    gemMine._xp += 1;
+
+    if (gemMine._xp >= gemMine._xpToNext) {
+        gemMine._xp = 0;
+        gemMine._xpLvl += 1;
+        gemMine._xpToNext = gemMine._xpToNext * 1.5;
+
+        gemMine._digSpeed += 0.5;
+
+        if (gemMine._xpLvl % 10 === 0) {
+            gemMine._itemCapacity += 1;
+        }
+        else if (gemMine._xpLvl % 50 === 0) {
+            gemMine._digStrength += 1;
+        }
+        else if (gemMine._xpLvl % 100 === 0) {
+            gemMine._digAmount += 1;
+        }
+    }
+};
+//#endregion
+
+//#region SHAFT
+//#region CONSTANTS
+const GEM_SHAFT_DISTANCE_FROM_GROUND = 4;
+//#endregion
+
+export const requestGemShaft = ({ gemId }: { gemId: string }) => {
+    const gemShaft = getComponent({ componentId: 'Shaft', entityId: gemId });
+
+    gemShaft._digOffset = 1;
+
+    setGemRequest({ gemId, request: true });
+    setGemAction({ action: 'work', gemId });
+};
+
+export const stopGemShaft = ({ gemId }: { gemId: string }) => {
+    const gemShaft = getComponent({ componentId: 'Shaft', entityId: gemId });
+
+    gemShaft._digOffset = undefined;
+
+    setGemRequest({ gemId, request: false });
+    setGemAction({ action: 'idle', gemId });
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
+};
+
+export const runGemShaft = ({ gemId }: { gemId: string }) => {
+    const gemShaft = getComponent({ componentId: 'Shaft', entityId: gemId });
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+    if (gemPosition._y < GEM_SHAFT_DISTANCE_FROM_GROUND) {
+        emit({
+            data: { alert: true, text: `${gemId} is too close to the surface to dig a shaft`, type: 'warning' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemShaft({ gemId });
+        return;
+    }
+
+    if (!(gemShaft._digOffset)) throw error({
+        message: `${gemId} has no shaft offset`,
+        where: runGemTunnel.name,
+    });
+
+    const digRange = getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digRange' });
+    if (gemShaft._digOffset > digRange) {
+        emit({
+            data: { text: `${gemId} shaft has reached maximum range`, type: 'confirm' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemShaft({ gemId });
+        return;
+    }
+
+    if (gemPosition._y - gemShaft._digOffset <= 0) {
+        emit({
+            data: { text: `${gemId} shaft has reached the surface`, type: 'confirm' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemShaft({ gemId });
+        return;
+    }
+
+    const tileUp = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - gemShaft._digOffset });
+
+    const { destroy, stop } = digTile({ gemId, tileId: tileUp });
+
+    if (stop) {
+        stopGemShaft({ gemId });
+    }
+    else if (destroy) {
+        gemShaft._digOffset++;
+    }
+    else {
+        xpGemShaft({ gemId });
+    }
+};
+
+const xpGemShaft = ({ gemId }: { gemId: string }) => {
+    const gemShaft = getComponent({ componentId: 'Shaft', entityId: gemId });
+
+    gemShaft._xp += 1;
+
+    if (gemShaft._xp >= gemShaft._xpToNext) {
+        gemShaft._xp = 0;
+        gemShaft._xpLvl += 1;
+        gemShaft._xpToNext = gemShaft._xpToNext * 1.5;
+
+        gemShaft._digSpeed += 0.5;
+
+        if (gemShaft._xpLvl % 10 === 0) {
+            gemShaft._digRange += 1;
+        }
+        else if (gemShaft._xpLvl % 50 === 0) {
+            gemShaft._digStrength += 1;
+        }
+    }
+};
+//#endregion
+
+//#region TUNNEL
+//#region CONSTANTS
+const GEM_TUNNEL_DISTANCE_FROM_GROUND = 4;
+//#endregion
+
+export const requestGemTunnel = ({ gemId }: { gemId: string }) => {
+    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+
+    gemTunnel._digOffset = 1;
+
+    setGemRequest({ gemId, request: true });
+    setGemAction({ action: 'work', gemId });
+};
+
+export const stopGemTunnel = ({ gemId }: { gemId: string }) => {
+    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+
+    gemTunnel._digOffset = undefined;
+
+    setGemRequest({ gemId, request: false });
+    setGemAction({ action: 'idle', gemId });
+
+    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_STOP });
+};
+
+export const runGemTunnel = ({ gemId }: { gemId: string }) => {
+    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+
+    if (gemPosition._y < GEM_TUNNEL_DISTANCE_FROM_GROUND) {
+        emit({
+            data: { alert: true, text: `${gemId} is too close to the surface to dig a tunnel`, type: 'warning' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemTunnel({ gemId });
+        return;
+    }
+
+    if (!(gemTunnel._digOffset)) throw error({
+        message: `${gemId} has no tunnel offset`,
+        where: runGemTunnel.name,
+    });
+
+    const digRange = getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' });
+    if (gemTunnel._digOffset > digRange) {
+        emit({
+            data: { text: `${gemId} tunnel has reached maximum range`, type: 'confirm' },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.INFO,
+        });
+
+        stopGemTunnel({ gemId });
+        return;
+    }
+
+    const tileLeft = getTileAtPosition({ x: gemPosition._x - gemTunnel._digOffset, y: gemPosition._y });
+    const tileRight = getTileAtPosition({ x: gemPosition._x + gemTunnel._digOffset, y: gemPosition._y });
+
+    const { destroy: destroyLeft, stop: stopLeft } = digTile({ gemId, tileId: tileLeft });
+    const { destroy: destroyRight, stop: stopRight } = digTile({ gemId, tileId: tileRight });
+
+    if (stopLeft || stopRight) {
+        stopGemTunnel({ gemId });
+    }
+    else if (destroyLeft && destroyRight) {
+        gemTunnel._digOffset++;
+    }
+    else {
+        xpGemTunnel({ gemId });
+    }
+};
+
+const xpGemTunnel = ({ gemId }: { gemId: string }) => {
+    const gemTunnel = getComponent({ componentId: 'Tunnel', entityId: gemId });
+
+    gemTunnel._xp += 1;
+
+    if (gemTunnel._xp >= gemTunnel._xpToNext) {
+        gemTunnel._xp = 0;
+        gemTunnel._xpLvl += 1;
+        gemTunnel._xpToNext = gemTunnel._xpToNext * 1.5;
+
+        gemTunnel._digSpeed += 0.5;
+
+        if (gemTunnel._xpLvl % 10 === 0) {
+            gemTunnel._digRange += 1;
+        }
+        else if (gemTunnel._xpLvl % 50 === 0) {
+            gemTunnel._digStrength += 1;
+        }
+    }
+};
+//#endregion
+
+//#region WORK
+//#region CONSTANTS
+const gemWorks: Record<Gems, ({ gemId }: { gemId: string }) => void> = {
+    [Gems.CARRY]: runGemCarry,
+    [Gems.FLOOR]: runGemFloor,
+    [Gems.LIFT]: runGemLift,
+    [Gems.MINE]: runGemMine,
+    [Gems.SHAFT]: runGemShaft,
+    [Gems.TUNNEL]: runGemTunnel,
+};
+//#endregion
+
+export const runGemWork = ({ gemId }: { gemId: string }) => {
+    const gemType = getGemType({ gemId });
+
+    gemWorks[gemType]({ gemId });
 };
 //#endregion
 //#endregion

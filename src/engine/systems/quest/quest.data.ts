@@ -20,6 +20,14 @@ export type QuestData =
         type: 'carry';
         unlock: { name: string, type: 'lab' | 'quest' }[];
     }
+    | {
+        gems: number;
+        name: string;
+        reward: ({ amount: number, type: 'lab' } | { amount: number, name: Items, type: 'item' })[];
+        text: string;
+        type: 'gem';
+        unlock: { name: string, type: 'lab' | 'quest' }[];
+    }
 //#endregion
 
 //#region DATA

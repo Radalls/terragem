@@ -1,4 +1,4 @@
-import { Drop, Items } from '@/engine/components';
+import { Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
 const tileMapFiles: Record<string, { default: TileMapData }>
@@ -36,20 +36,6 @@ export type TileMapData = {
     }[],
     name: string,
     width: number
-};
-
-export type TileData =
-    | { tileId: string } & Record<keyof TileParams, never>
-    | (TileParams & { tileId?: never })
-
-type TileParams = {
-    density: number;
-    destroy?: boolean;
-    dropAmount: number;
-    drops: Drop[];
-    sprite: string;
-    x: number;
-    y: number;
 };
 //#endregion
 

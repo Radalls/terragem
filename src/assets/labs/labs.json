@@ -20,9 +20,25 @@
         "name": "LAB_CRAFT_GEM_LIFT",
         "text": "Unlock crafting Lift Gems",
         "image": "lab_gem_lift",
-        "cost": 4,
+        "cost": 3,
         "time": 200,
         "unlock": [{ "type": "craft", "name": "GEM_LIFT" }]
+    },
+    {
+        "name": "LAB_CRAFT_GEM_FLOOR",
+        "text": "Unlock crafting Floor Gems",
+        "image": "lab_gem_floor",
+        "cost": 4,
+        "time": 300,
+        "unlock": [{ "type": "craft", "name": "GEM_FLOOR" }]
+    },
+    {
+        "name": "LAB_CRAFT_GEM_SHAFT",
+        "text": "Unlock crafting Shaft Gems",
+        "image": "lab_gem_shaft",
+        "cost": 5,
+        "time": 400,
+        "unlock": [{ "type": "craft", "name": "GEM_SHAFT" }]
     },
     {
         "name": "LAB_CRAFT_MK1_MINE",

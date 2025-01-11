@@ -1,42 +1,60 @@
 import {
     Admin,
-    TileMap,
-    Tile,
-    Sprite,
-    Drop,
-    Position,
-    Mine,
     Carry,
-    State,
-    Lift,
-    Tunnel,
+    Drop,
+    Floor,
     Items,
+    Lift,
+    Mine,
+    Position,
+    Shaft,
+    Sprite,
+    State,
+    Tile,
+    TileMap,
+    Tunnel,
 } from '@/engine/components';
 import { getStore } from '@/engine/services/store';
 import { addComponent, getComponent } from '@/engine/systems/entity';
 import { loadTileMapData } from '@/engine/systems/tilemap';
 
 //#region CONSTANTS
-const ADMIN_INIT_LAB_POINTS = 0;
-const ADMIN_INIT_GEM_MAX = 5;
-const ADMIN_INIT_GEM_MINE_MOVE_SPEED = 3;
-const ADMIN_INIT_GEM_MINE_ITEM_CAPACITY = 10;
-const ADMIN_INIT_GEM_MINE_DIG_SPEED = 0.5;
-const ADMIN_INIT_GEM_MINE_DIG_STRENGTH = 1;
-const ADMIN_INIT_GEM_MINE_DIG_AMOUNT = 1;
+/* GEM CARRY */
 const ADMIN_INIT_GEM_CARRY_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY = 10;
 const ADMIN_INIT_GEM_CARRY_ITEM_SPEED = 2;
 const ADMIN_INIT_GEM_CARRY_ITEM_AMOUNT = 1;
 const ADMIN_INIT_GEM_CARRY_ITEM_RANGE = 4;
+/* GEM FLOOR */
+const ADMIN_INIT_GEM_FLOOR_MOVE_SPEED = 3;
+const ADMIN_INIT_GEM_FLOOR_DIG_SPEED = 1;
+const ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH = 1;
+const ADMIN_INIT_GEM_FLOOR_DIG_RANGE = 3;
+/* GEM LIFT */
+const ADMIN_INIT_GEM_LIFT_MOVE_SPEED = 3;
+const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 20;
+const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 2;
+const ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT = 1;
+/* GEM MAX */
+const ADMIN_INIT_GEM_MAX = 5;
+/* GEM MINE */
+const ADMIN_INIT_GEM_MINE_MOVE_SPEED = 3;
+const ADMIN_INIT_GEM_MINE_ITEM_CAPACITY = 10;
+const ADMIN_INIT_GEM_MINE_DIG_SPEED = 0.5;
+const ADMIN_INIT_GEM_MINE_DIG_STRENGTH = 1;
+const ADMIN_INIT_GEM_MINE_DIG_AMOUNT = 1;
+/* GEM SHAFT */
+const ADMIN_INIT_GEM_SHAFT_MOVE_SPEED = 3;
+const ADMIN_INIT_GEM_SHAFT_DIG_SPEED = 1;
+const ADMIN_INIT_GEM_SHAFT_DIG_STRENGTH = 1;
+const ADMIN_INIT_GEM_SHAFT_DIG_RANGE = 7;
+/* GEM TUNNEL */
 const ADMIN_INIT_GEM_TUNNEL_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_TUNNEL_DIG_SPEED = 1;
 const ADMIN_INIT_GEM_TUNNEL_DIG_STRENGTH = 1;
 const ADMIN_INIT_GEM_TUNNEL_DIG_RANGE = 3;
-const ADMIN_INIT_GEM_LIFT_MOVE_SPEED = 3;
-const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 10;
-const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 2;
-const ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT = 1;
+/* LABS */
+const ADMIN_INIT_LAB_POINTS = 0;
 //#endregion
 
 //#region SERVICES
@@ -74,25 +92,41 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
             _audioVolume: 0.5,
         },
         stats: {
+            /* GEM CARRY */
             _gemCarryItemAmount: ADMIN_INIT_GEM_CARRY_ITEM_AMOUNT,
             _gemCarryItemCapacity: ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY,
             _gemCarryItemRange: ADMIN_INIT_GEM_CARRY_ITEM_RANGE,
             _gemCarryItemSpeed: ADMIN_INIT_GEM_CARRY_ITEM_SPEED,
             _gemCarryMoveSpeed: ADMIN_INIT_GEM_CARRY_MOVE_SPEED,
+            /* GEM FLOOR */
+            _gemFloorDigRange: ADMIN_INIT_GEM_FLOOR_DIG_RANGE,
+            _gemFloorDigSpeed: ADMIN_INIT_GEM_FLOOR_DIG_SPEED,
+            _gemFloorDigStrength: ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH,
+            _gemFloorMoveSpeed: ADMIN_INIT_GEM_FLOOR_MOVE_SPEED,
+            /* GEM LIFT */
             _gemLiftItemAmount: ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT,
             _gemLiftItemCapacity: ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY,
             _gemLiftItemSpeed: ADMIN_INIT_GEM_LIFT_ITEM_SPEED,
             _gemLiftMoveSpeed: ADMIN_INIT_GEM_LIFT_MOVE_SPEED,
+            /* GEM MAX */
             _gemMax: ADMIN_INIT_GEM_MAX,
+            /* GEM MINE */
             _gemMineDigAmount: ADMIN_INIT_GEM_MINE_DIG_AMOUNT,
             _gemMineDigSpeed: ADMIN_INIT_GEM_MINE_DIG_SPEED,
             _gemMineDigStrength: ADMIN_INIT_GEM_MINE_DIG_STRENGTH,
             _gemMineItemCapacity: ADMIN_INIT_GEM_MINE_ITEM_CAPACITY,
             _gemMineMoveSpeed: ADMIN_INIT_GEM_MINE_MOVE_SPEED,
+            /* GEM SHAFT */
+            _gemShaftDigRange: ADMIN_INIT_GEM_SHAFT_DIG_RANGE,
+            _gemShaftDigSpeed: ADMIN_INIT_GEM_SHAFT_DIG_SPEED,
+            _gemShaftDigStrength: ADMIN_INIT_GEM_SHAFT_DIG_STRENGTH,
+            _gemShaftMoveSpeed: ADMIN_INIT_GEM_SHAFT_MOVE_SPEED,
+            /* GEM TUNNEL */
             _gemTunnelDigRange: ADMIN_INIT_GEM_TUNNEL_DIG_RANGE,
             _gemTunnelDigSpeed: ADMIN_INIT_GEM_TUNNEL_DIG_SPEED,
             _gemTunnelDigStrength: ADMIN_INIT_GEM_TUNNEL_DIG_STRENGTH,
             _gemTunnelMoveSpeed: ADMIN_INIT_GEM_TUNNEL_MOVE_SPEED,
+            /* LABS */
             _labPoints: ADMIN_INIT_LAB_POINTS,
         },
     };
@@ -256,6 +290,40 @@ export const addTunnel = ({ gemId }: { gemId: string }) => {
     addComponent({ component: tunnel, entityId: gemId });
 
     return getComponent({ componentId: 'Tunnel', entityId: gemId });
+};
+
+export const addFloor = ({ gemId }: { gemId: string }) => {
+    const floor: Floor = {
+        _: 'Floor',
+        _digRange: 0,
+        _digSpeed: 0,
+        _digStrength: 0,
+        _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
+    };
+
+    addComponent({ component: floor, entityId: gemId });
+
+    return getComponent({ componentId: 'Floor', entityId: gemId });
+};
+
+export const addShaft = ({ gemId }: { gemId: string }) => {
+    const shaft: Shaft = {
+        _: 'Shaft',
+        _digRange: 0,
+        _digSpeed: 0,
+        _digStrength: 0,
+        _moveSpeed: 0,
+        _xp: 0,
+        _xpLvl: 1,
+        _xpToNext: 100,
+    };
+
+    addComponent({ component: shaft, entityId: gemId });
+
+    return getComponent({ componentId: 'Shaft', entityId: gemId });
 };
 
 export const addState = ({ entityId, action }: {

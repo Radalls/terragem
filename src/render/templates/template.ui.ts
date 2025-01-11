@@ -537,17 +537,24 @@ const onClickGemIdle = () => {
 
     displayGemView({ display: false, gemId });
 
-    if (gemType === Gems.MINE) {
-        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MINE_REQUEST });
-    }
-    else if (gemType === Gems.CARRY) {
+    //TODO: make generic
+    if (gemType === Gems.CARRY) {
         emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_CARRY_REQUEST });
     }
-    else if (gemType === Gems.TUNNEL) {
-        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_TUNNEL_REQUEST });
+    else if (gemType === Gems.FLOOR) {
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_FLOOR_REQUEST });
     }
     else if (gemType === Gems.LIFT) {
         emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_LIFT_REQUEST });
+    }
+    else if (gemType === Gems.MINE) {
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_MINE_REQUEST });
+    }
+    else if (gemType === Gems.SHAFT) {
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_SHAFT_REQUEST });
+    }
+    else if (gemType === Gems.TUNNEL) {
+        emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_TUNNEL_REQUEST });
     }
 };
 
@@ -557,19 +564,25 @@ const onClickGemCancel = () => {
 
     const gemType = getGemType({ gemId });
 
-    if (gemType === Gems.MINE) {
-        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MINE_CANCEL });
-    }
-    else if (gemType === Gems.CARRY) {
+    if (gemType === Gems.CARRY) {
         displayGemPath({ display: false });
         emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_CARRY_CANCEL });
     }
-    else if (gemType === Gems.TUNNEL) {
-        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_TUNNEL_CANCEL });
+    else if (gemType === Gems.FLOOR) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_FLOOR_CANCEL });
     }
     else if (gemType === Gems.LIFT) {
         displayGemPath({ display: false });
         emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_LIFT_CANCEL });
+    }
+    else if (gemType === Gems.MINE) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MINE_CANCEL });
+    }
+    else if (gemType === Gems.SHAFT) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_SHAFT_CANCEL });
+    }
+    else if (gemType === Gems.TUNNEL) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_TUNNEL_CANCEL });
     }
 };
 
@@ -961,21 +974,6 @@ const createQuest = ({ name, progress, total, text }: {
     });
 };
 
-const updateQuest = ({ name, progress, total, text }: {
-    name: string,
-    progress: number,
-    text: string,
-    total: number,
-}) => {
-    const questEl = getElement({ elId: `Quest-${name}` });
-
-    questEl.innerText = `${text}: ${progress}/${total}`;
-};
-
-const removeQuest = ({ name }: { name: string }) => {
-    destroyElement({ elId: `Quest-${name}` });
-};
-
 export const updateQuests = () => {
     const admin = getAdmin();
 
@@ -997,7 +995,9 @@ export const updateQuests = () => {
                 text: quest.data.text,
                 total: (quest.data.type === 'mine')
                     ? quest.data.mine.amount
-                    : quest.data.carry,
+                    : (quest.data.type === 'carry')
+                        ? quest.data.carry
+                        : quest.data.gems,
             });
         }
         else {
@@ -1007,10 +1007,27 @@ export const updateQuests = () => {
                 text: quest.data.text,
                 total: (quest.data.type === 'mine')
                     ? quest.data.mine.amount
-                    : quest.data.carry,
+                    : (quest.data.type === 'carry')
+                        ? quest.data.carry
+                        : quest.data.gems,
             });
         }
     }
+};
+
+const updateQuest = ({ name, progress, total, text }: {
+    name: string,
+    progress: number,
+    text: string,
+    total: number,
+}) => {
+    const questEl = getElement({ elId: `Quest-${name}` });
+
+    questEl.innerText = `${text}: ${progress}/${total}`;
+};
+
+const removeQuest = ({ name }: { name: string }) => {
+    destroyElement({ elId: `Quest-${name}` });
 };
 
 export const displayQuests = ({ display }: { display: boolean }) => {

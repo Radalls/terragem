@@ -6,7 +6,7 @@ import { setState } from '@/engine/services/state';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType } from '@/engine/systems/gem';
 import { getCraftData, isItemMech } from '@/engine/systems/item';
-import { getProjectVersion } from '@/engine/systems/save';
+import { exportSaveFile, getProjectVersion, importSaveFile } from '@/engine/systems/save';
 import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 import {
@@ -110,6 +110,16 @@ export const createLaunch = () => {
         text: 'Start',
     });
 
+    createSaveFileInput();
+    createButton({
+        absolute: false,
+        click: () => onClickLoadGame(),
+        css: 'opt',
+        id: 'LaunchLoad',
+        parent: 'Launch',
+        text: 'Load',
+    });
+
     createButton({
         absolute: false,
         click: () => onClickSettings(),
@@ -127,11 +137,56 @@ export const createLaunch = () => {
     });
 };
 
+const createSaveFileInput = () => {
+    const input = document.createElement('input');
+
+    input.type = 'file';
+    input.id = 'SaveFileInput';
+    input.accept = '.json';
+    input.style.display = 'none';
+
+    input.addEventListener('change', async (event) => {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+
+        if (file) {
+            try {
+                await importSaveFile({ saveFile: file });
+            } catch (err) {
+                throw error({
+                    message: `Failed to import save file: ${(err as Error).message}`,
+                    where: createSaveFileInput.name,
+                });
+            }
+        }
+
+        input.value = '';
+    });
+
+    document.body.appendChild(input);
+
+    return input;
+};
+
 const onClickStart = () => {
     emit({ target: 'all', type: GameEvents.GAME_RUN });
     emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
     emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickLoadGame = () => {
+    emit({
+        data: { text: 'Save is WIP', type: 'warning' },
+        target: 'render',
+        type: RenderEvents.INFO,
+    });
+
+    // const fileInput = document.getElementById('SaveFileInput') as HTMLInputElement;
+
+    // if (fileInput) {
+    //     fileInput.click();
+    // }
 };
 
 const onClickSettings = () => {
@@ -222,6 +277,14 @@ export const createAdminMenu = () => {
         text: 'Back',
     });
 
+    createButton({
+        click: () => onClickSaveGame(),
+        css: 'save',
+        id: 'AdminSave',
+        parent: 'Admin',
+        text: 'Save',
+    });
+
     for (const tab of Object.values(AdminTabs)) {
         createButton({
             absolute: false,
@@ -298,6 +361,10 @@ const updateAdminContent = ({ tab, page }: {
         updateLabs();
         displayLabs({ display: true, page });
     }
+};
+
+const onClickSaveGame = () => {
+    exportSaveFile();
 };
 
 //#region STORAGE
@@ -452,17 +519,23 @@ const createGem = ({ gemId }: { gemId: string }) => {
 
     createGemData({ gemAction: gemState._action, gemId, gemType });
 
-    if (gemType === Gems.MINE) {
-        createGemMine({ gemId });
-    }
-    else if (gemType === Gems.CARRY) {
+    if (gemType === Gems.CARRY) {
         createGemCarry({ gemId });
     }
-    else if (gemType === Gems.TUNNEL) {
-        createGemTunnel({ gemId });
+    else if (gemType === Gems.FLOOR) {
+        createGemFloor({ gemId });
     }
     else if (gemType === Gems.LIFT) {
         createGemLift({ gemId });
+    }
+    else if (gemType === Gems.MINE) {
+        createGemMine({ gemId });
+    }
+    else if (gemType === Gems.SHAFT) {
+        createGemShaft({ gemId });
+    }
+    else if (gemType === Gems.TUNNEL) {
+        createGemTunnel({ gemId });
     }
     else throw error({
         message: `Gem ${gemId} has no type`,
@@ -551,32 +624,6 @@ const createGemData = ({ gemId, gemType, gemAction }: {
     });
 };
 
-const createGemMine = ({ gemId }: { gemId: string }) => {
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `MineSpeed${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`,
-    });
-
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `MineStrength${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`,
-    });
-
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `MineAmount${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`,
-    });
-};
-
 const createGemCarry = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
@@ -603,6 +650,102 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
     });
 };
 
+const createGemFloor = ({ gemId }: { gemId: string }) => {
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `FloorSpeed${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Floor Speed: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digSpeed' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `FloorStrength${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Floor Strength: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digStrength' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `FloorRange${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Floor Range: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digRange' })}`,
+    });
+};
+
+const createGemLift = ({ gemId }: { gemId: string }) => {
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `ItemSpeed${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `ItemAmount${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`,
+    });
+};
+
+const createGemMine = ({ gemId }: { gemId: string }) => {
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `MineSpeed${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `MineStrength${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `MineAmount${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`,
+    });
+};
+
+const createGemShaft = ({ gemId }: { gemId: string }) => {
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `ShaftSpeed${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Shaft Speed: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digSpeed' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `ShaftStrength${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Shaft Strength: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digStrength' })}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'stat',
+        id: `ShaftRange${gemId}`,
+        parent: `AdminGemStats${gemId}`,
+        text: `Shaft Range: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digRange' })}`,
+    });
+};
+
 const createGemTunnel = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
@@ -626,24 +769,6 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
         id: `TunnelRange${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Tunnel Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`,
-    });
-};
-
-const createGemLift = ({ gemId }: { gemId: string }) => {
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `ItemSpeed${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`,
-    });
-
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `ItemAmount${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`,
     });
 };
 
@@ -736,17 +861,23 @@ const updateGem = ({ gemId }: { gemId: string }) => {
 
     updateGemData({ gemAction: gemState._action, gemId, gemType });
 
-    if (gemType === Gems.MINE) {
-        updateGemMine({ gemId });
-    }
-    else if (gemType === Gems.CARRY) {
+    if (gemType === Gems.CARRY) {
         updateGemCarry({ gemId });
     }
-    else if (gemType === Gems.TUNNEL) {
-        updateGemTunnel({ gemId });
+    else if (gemType === Gems.FLOOR) {
+        updateGemFloor({ gemId });
     }
     else if (gemType === Gems.LIFT) {
         updateGemLift({ gemId });
+    }
+    else if (gemType === Gems.MINE) {
+        updateGemMine({ gemId });
+    }
+    else if (gemType === Gems.SHAFT) {
+        updateGemShaft({ gemId });
+    }
+    else if (gemType === Gems.TUNNEL) {
+        updateGemTunnel({ gemId });
     }
     else throw error({
         message: `Gem ${gemId} has no type`,
@@ -780,20 +911,6 @@ const updateGemData = ({ gemId, gemType, gemAction }: {
         = `Move Speed: ${getGemStat({ gemId, gemType, stat: '_moveSpeed' })}`;
 };
 
-const updateGemMine = ({ gemId }: { gemId: string }) => {
-    const gemMineSpeedEl = getElement({ elId: `MineSpeed${gemId}` });
-    gemMineSpeedEl.innerText
-        = `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`;
-
-    const gemMineStrengthEl = getElement({ elId: `MineStrength${gemId}` });
-    gemMineStrengthEl.innerText
-        = `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`;
-
-    const gemMineAmountEl = getElement({ elId: `MineAmount${gemId}` });
-    gemMineAmountEl.innerText
-        = `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`;
-};
-
 const updateGemCarry = ({ gemId }: { gemId: string }) => {
     const gemItemSpeedEl = getElement({ elId: `ItemSpeed${gemId}` });
     gemItemSpeedEl.innerText
@@ -808,6 +925,58 @@ const updateGemCarry = ({ gemId }: { gemId: string }) => {
         = `Item Range: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemRange' })}`;
 };
 
+const updateGemFloor = ({ gemId }: { gemId: string }) => {
+    const gemFloorSpeedEl = getElement({ elId: `FloorSpeed${gemId}` });
+    gemFloorSpeedEl.innerText
+        = `Floor Speed: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digSpeed' })}`;
+
+    const gemFloorStrengthEl = getElement({ elId: `FloorStrength${gemId}` });
+    gemFloorStrengthEl.innerText
+        = `Floor Strength: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digStrength' })}`;
+
+    const gemFloorRangeEl = getElement({ elId: `FloorRange${gemId}` });
+    gemFloorRangeEl.innerText
+        = `Floor Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`;
+};
+
+const updateGemLift = ({ gemId }: { gemId: string }) => {
+    const gemItemSpeedEl = getElement({ elId: `ItemSpeed${gemId}` });
+    gemItemSpeedEl.innerText
+        = `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`;
+
+    const gemItemAmountEl = getElement({ elId: `ItemAmount${gemId}` });
+    gemItemAmountEl.innerText
+        = `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`;
+};
+
+const updateGemMine = ({ gemId }: { gemId: string }) => {
+    const gemMineSpeedEl = getElement({ elId: `MineSpeed${gemId}` });
+    gemMineSpeedEl.innerText
+        = `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`;
+
+    const gemMineStrengthEl = getElement({ elId: `MineStrength${gemId}` });
+    gemMineStrengthEl.innerText
+        = `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`;
+
+    const gemMineAmountEl = getElement({ elId: `MineAmount${gemId}` });
+    gemMineAmountEl.innerText
+        = `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`;
+};
+
+const updateGemShaft = ({ gemId }: { gemId: string }) => {
+    const gemShaftSpeedEl = getElement({ elId: `ShaftSpeed${gemId}` });
+    gemShaftSpeedEl.innerText
+        = `Shaft Speed: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digSpeed' })}`;
+
+    const gemShaftStrengthEl = getElement({ elId: `ShaftStrength${gemId}` });
+    gemShaftStrengthEl.innerText
+        = `Shaft Strength: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digStrength' })}`;
+
+    const gemShaftRangeEl = getElement({ elId: `ShaftRange${gemId}` });
+    gemShaftRangeEl.innerText
+        = `Shaft Range: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digRange' })}`;
+};
+
 const updateGemTunnel = ({ gemId }: { gemId: string }) => {
     const gemTunnelSpeedEl = getElement({ elId: `TunnelSpeed${gemId}` });
     gemTunnelSpeedEl.innerText
@@ -820,16 +989,6 @@ const updateGemTunnel = ({ gemId }: { gemId: string }) => {
     const gemTunnelRangeEl = getElement({ elId: `TunnelRange${gemId}` });
     gemTunnelRangeEl.innerText
         = `Tunnel Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`;
-};
-
-const updateGemLift = ({ gemId }: { gemId: string }) => {
-    const gemItemSpeedEl = getElement({ elId: `ItemSpeed${gemId}` });
-    gemItemSpeedEl.innerText
-        = `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`;
-
-    const gemItemAmountEl = getElement({ elId: `ItemAmount${gemId}` });
-    gemItemAmountEl.innerText
-        = `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`;
 };
 
 const updateGemActions = ({ gemId, gemStore }: {
@@ -1412,7 +1571,7 @@ const updateLabPage = () => {
 
     const labMapping = labEls.map(labEl => {
         const adminLab = admin.labs.find(lab => {
-            const labId = `Lab_${lab.data.name}`;
+            const labId = `Lab${lab.data.name}`;
             return labEl.id === labId;
         });
 
@@ -1486,7 +1645,7 @@ const getLabPagesCount = () => {
 
     const visibleLabsCount = labEls.filter(labEl => {
         const adminLab = admin.labs.find(lab => {
-            const labId = `Lab_${lab.data.name}`;
+            const labId = `Lab${lab.data.name}`;
             return labEl.id === labId;
         });
 
