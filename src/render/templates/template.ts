@@ -59,9 +59,12 @@ export const createElement = ({
 
     el.setAttribute('class', `${css || elCss || ''}`.trim());
 
-    el.style.position = (absolute)
-        ? 'absolute'
-        : 'relative';
+    if (absolute) {
+        el.classList.add('abs');
+    }
+    else {
+        el.classList.add('rel');
+    }
 
     const parentEl = (parent)
         ? getElement({ elId: parent })

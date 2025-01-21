@@ -45,6 +45,7 @@ export const importSaveFile = ({ saveFile }: { saveFile: File }): Promise<void> 
             message: 'Failed to import save file',
             where: importSaveFile.name,
         }));
+
         reader.readAsText(saveFile);
     });
 };
@@ -87,15 +88,6 @@ export const loadGame = (saveData: SaveData) => {
         });
     }
 
-    // Clear store
-    // voidStore();
-    // Clear state
-
-    // Restore store values
-    // Object.entries(saveData.store).forEach(([key, value]) => {
-    //     setStore({ key, value });
-    // });
-
     Object.entries(saveData.entities).forEach(([entityId, serializedEntity]) => {
         entities[entityId] = {} as Entity;
 
@@ -113,8 +105,8 @@ export const createRun = () => {
     createEntityAdmin({ adminId: getStore({ key: 'adminId' }) });
     createEntityTileMap({ tileMapName: 'map1' });
 
-    createQuest({ questName: 'QUEST_MINE_IRON_1' });
-    createQuest({ questName: 'QUEST_MINE_COPPER_1' });
+    createQuest({ questName: 'QUEST_MINE_GEOLYN_1' });
+    createQuest({ questName: 'QUEST_MINE_CERULYN_1' });
     createQuest({ questName: 'QUEST_CARRY_1' });
     createQuest({ questName: 'QUEST_GEMS_1' });
 

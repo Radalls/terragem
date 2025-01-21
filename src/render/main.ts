@@ -2,7 +2,6 @@ import { createMenus, createUI, displayBoot, displayLaunch, initScroll } from '@
 
 export const main = () => {
     createMenus();
-    createUI();
 
     displayBoot({ display: true });
 };
@@ -10,9 +9,12 @@ export const main = () => {
 export const launch = () => {
     displayBoot({ display: false });
     displayLaunch({ display: true });
+
+    createUI();
 };
 
 export const run = () => {
     displayLaunch({ display: false });
+
     initScroll();
 };

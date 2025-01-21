@@ -6,8 +6,8 @@ export const getElement = ({ elId }: { elId: string }) => {
         ?? error({ message: `Element ${elId} does not exist`, where: getElement.name });
 };
 
-export const checkElement = ({ id }: { id: string }) => {
-    return document.getElementById(id) !== null;
+export const checkElement = ({ elId }: { elId: string }) => {
+    return document.getElementById(elId) !== null;
 };
 
 export const searchElementsById = ({ partialid }: { partialid: string }) => {

@@ -1,27 +1,21 @@
-/* GAME */
-.game {
-    height: 100%;
-    width: 100%;
-}
-
 /* TILEMAP */
 .tilemap {
-    height: 100%;
-    width: 100%;
     backface-visibility: hidden;
 }
 
 .tilemap .tile {
-    background-size: contain;
-    box-sizing: border-box;
+    border: none;
+    border-radius: 0;
+    min-width: auto;
+    transition: 0.2s all;
 }
 
 .tilemap .tile:hover {
-    border: solid 2px rgb(255, 255, 255)
+    border: solid 0.2vh #FFFFFF;
 }
 
 .tilemap .tile.request:hover {
-    border: solid 2px rgb(255, 231, 94)
+    border: solid 0.2vh #30CB48;
 }
 
 .tilemap .tile.destroy {
@@ -29,22 +23,26 @@
 }
 
 .tilemap .tile.ground {
-    background-image: none !important;
+    background-color: transparent;
     pointer-events: none;
 }
 
 .tilemap .tile.move {
-    border: solid 2px rgb(255, 231, 94)
+    border: solid 0.4vh #30CB48;
 }
 
 /* ADMIN */
 .tilemap .admin {
-    background-size: cover;
-    box-sizing: border-box;
+    background-color: transparent;
+    border: none;
+    transition: 0.4s all;
 }
 
 .tilemap .admin:hover {
-    border: solid 2px rgb(255, 255, 255);
+    border-top: solid 0.2vh #FFFFFF;
+    border-left: solid 0.2vh #FFFFFF;
+    border-right: solid 0.2vh #FFFFFF;
+    border-radius: 20px 20px 0 0;
 }
 
 .tilemap .admin.disable {
@@ -53,22 +51,24 @@
 
 /* GEM */
 .tilemap .gem {
-    background-size: contain;
+    background-color: transparent;
+    border: solid 0.3vh transparent;
     border-radius: 10px;
-    box-sizing: border-box;
+    min-width: auto;
+    transition: 0.4s all;
 }
 
 .tilemap .gem:hover {
-    border: solid 2px rgb(255, 255, 255);
+    border: solid 0.3vh #FFFFFF;
 }
 
 .tilemap .gem.request {
-    border: solid 2px rgb(255, 231, 94);
+    border: solid 0.3vh #30CB48;
     pointer-events: none;
 }
 
 .tilemap .gem.hover {
-    border: solid 2px rgb(255, 255, 255);
+    border: solid 0.3vh #FFFFFF;
 }
 
 .tilemap .gem.disable {
@@ -88,27 +88,27 @@
     }
 
     10% {
-        transform: translateX(-2px) rotate(-1deg);
+        transform: translateX(-1px) rotate(-1deg);
     }
 
     20% {
-        transform: translateX(2px) rotate(1deg);
+        transform: translateX(1px) rotate(1deg);
     }
 
     30% {
-        transform: translateX(-2px) rotate(-1deg);
+        transform: translateX(-1px) rotate(-1deg);
     }
 
     40% {
-        transform: translateX(2px) rotate(1deg);
+        transform: translateX(1px) rotate(1deg);
     }
 
     50% {
-        transform: translateY(-3px) rotate(-0.5deg);
+        transform: translateY(-1px) rotate(-0.5deg);
     }
 
     60% {
-        transform: translateY(3px) rotate(0.5deg);
+        transform: translateY(1px) rotate(0.5deg);
     }
 
     70% {
@@ -132,6 +132,6 @@
     }
 
     50% {
-        transform: translateY(-5px);
+        transform: translateY(-3px);
     }
 }

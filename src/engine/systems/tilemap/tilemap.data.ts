@@ -18,13 +18,13 @@ export type TileMapData = {
         }
         height: number,
         resources: {
-            dropAmount: { max: number, min: number },
             drops: {
                 name: Items,
                 rate: number,
             }[],
             name: string,
             spawns: {
+                dropAmount: { max: number, min: number },
                 points: {
                     width: number,
                     x: number,

@@ -35,6 +35,6 @@ export const getMechData = ({ mechName }: { mechName: string }) => {
         where: getMechData.name,
     });
 
-    return mechData as MechData;
+    return mechData as unknown as MechData;
 };
 //#endregion

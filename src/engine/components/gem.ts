@@ -17,6 +17,7 @@ export type Carry = {
     _moveTo?: 'start' | 'target';
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;
@@ -25,14 +26,13 @@ export type Carry = {
 
 export type Floor = {
     _: 'Floor';
-    _digOffset?: number;
-    _digRange: number;
     _digSpeed: number;
     _digStrength: number;
     _mech?: string;
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;
@@ -52,6 +52,7 @@ export type Lift = {
     _moveTo?: 'start' | 'target';
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;
@@ -68,6 +69,7 @@ export type Mine = {
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;
@@ -84,6 +86,7 @@ export type Shaft = {
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;
@@ -99,6 +102,7 @@ export type Tunnel = {
     _moveSpeed: number;
     _moveX?: number;
     _moveY?: number;
+    _name: string;
     _xp: number;
     _xpLvl: number;
     _xpToNext: number;

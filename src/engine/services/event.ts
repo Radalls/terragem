@@ -5,6 +5,7 @@ import { error } from '@/engine/services/error';
 import { setState } from '@/engine/services/state';
 import { clearStore, setStore } from '@/engine/services/store';
 import {
+    destroyGem,
     equipGem,
     requestGemFloor,
     requestGemLift,
@@ -47,6 +48,7 @@ export enum EngineEvents {
     GEM_CARRY_CONFIRM_START = 'GEM_CARRY_CONFIRM_START',
     GEM_CARRY_CONFIRM_TARGET = 'GEM_CARRY_CONFIRM_TARGET',
     GEM_CARRY_QUEST = 'GEM_CARRY_QUEST',
+    GEM_DESTROY = 'GEM_DESTROY',
     GEM_EQUIP = 'GEM_EQUIP',
     GEM_FLOOR_CANCEL = 'GEM_FLOOR_CANCEL',
     GEM_LIFT_CANCEL = 'GEM_LIFT_CANCEL',
@@ -186,6 +188,9 @@ export const onEvent = ({
     }
     else if (type === GameEvents.GEM_STORE && entityId) {
         setGemStore({ gemId: entityId, store: true });
+    }
+    else if (type === EngineEvents.GEM_DESTROY && entityId) {
+        destroyGem({ gemId: entityId });
     }
     else if (type === EngineEvents.GEM_EQUIP && entityId) {
         equipGem({ gemId: entityId });

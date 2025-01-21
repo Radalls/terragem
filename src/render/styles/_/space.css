@@ -1,0 +1,57 @@
+/* PADDING */
+/* ALL */
+.p-4 {
+    padding: 4px;
+}
+
+.p-8 {
+    padding: 8px;
+}
+
+.p-16 {
+    padding: 16px;
+}
+
+.p-24 {
+    padding: 24px;
+}
+
+.p-32 {
+    padding: 32px;
+}
+
+.p-box {
+    padding: 8px 16px;
+}
+
+/* TOP */
+.pt-32 {
+    padding-top: 32px;
+}
+
+/* MARGIN */
+/* LEFT */
+.ml-8 {
+    margin-left: 8px;
+}
+
+.ml-16 {
+    margin-left: 16px;
+}
+
+.ml-32 {
+    margin-left: 32px;
+}
+
+/* RIGHT */
+.mr-8 {
+    margin-right: 8px;
+}
+
+.mr-16 {
+    margin-right: 16px;
+}
+
+.mr-32 {
+    margin-right: 32px;
+}

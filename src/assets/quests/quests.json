@@ -1,52 +1,52 @@
 [
-    { "@": "MINE_IRON" },
+    { "@": "MINE_GEOLYN" },
     {
-        "name": "QUEST_MINE_IRON_1",
+        "name": "QUEST_MINE_GEOLYN_1",
         "type": "mine",
-        "text": "Mine 50 Iron",
-        "mine": { "name": "IRON", "amount": 50 },
+        "text": "Mine 50 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 50 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_1" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_2" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_2" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_2",
+        "name": "QUEST_MINE_GEOLYN_2",
         "type": "mine",
-        "text": "Mine 100 Iron",
-        "mine": { "name": "IRON", "amount": 100 },
+        "text": "Mine 100 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 2 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_4" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_3" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_3" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_3",
+        "name": "QUEST_MINE_GEOLYN_3",
         "type": "mine",
-        "text": "Mine 150 Iron",
-        "mine": { "name": "IRON", "amount": 150 },
+        "text": "Mine 150 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 150 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 3 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_7" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_4" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_4" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_4",
+        "name": "QUEST_MINE_GEOLYN_4",
         "type": "mine",
-        "text": "Mine 200 Iron",
-        "mine": { "name": "IRON", "amount": 100 },
+        "text": "Mine 200 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 4 }
@@ -54,56 +54,56 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_10" },
             { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_1" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_5" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_5" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_5",
+        "name": "QUEST_MINE_GEOLYN_5",
         "type": "mine",
-        "text": "Mine 300 Iron",
-        "mine": { "name": "IRON", "amount": 100 },
+        "text": "Mine 300 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 300 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_13" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_6" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_6" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_6",
+        "name": "QUEST_MINE_GEOLYN_6",
         "type": "mine",
-        "text": "Mine 400 Iron",
-        "mine": { "name": "IRON", "amount": 400 },
+        "text": "Mine 400 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 400 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_16" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_7" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_7" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_7",
+        "name": "QUEST_MINE_GEOLYN_7",
         "type": "mine",
-        "text": "Mine 500 Iron",
-        "mine": { "name": "IRON", "amount": 500 },
+        "text": "Mine 500 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 500 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 7 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_19" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_8" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_8" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_8",
+        "name": "QUEST_MINE_GEOLYN_8",
         "type": "mine",
-        "text": "Mine 600 Iron",
-        "mine": { "name": "IRON", "amount": 600 },
+        "text": "Mine 600 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 600 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 8 }
@@ -111,56 +111,56 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_22" },
             { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_2" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_9" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_9" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_9",
+        "name": "QUEST_MINE_GEOLYN_9",
         "type": "mine",
-        "text": "Mine 800 Iron",
-        "mine": { "name": "IRON", "amount": 800 },
+        "text": "Mine 800 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 800 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 9 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_25" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_10" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_10" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_10",
+        "name": "QUEST_MINE_GEOLYN_10",
         "type": "mine",
-        "text": "Mine 1000 Iron",
-        "mine": { "name": "IRON", "amount": 1000 },
+        "text": "Mine 1000 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 1000 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_28" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_11" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_11" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_11",
+        "name": "QUEST_MINE_GEOLYN_11",
         "type": "mine",
-        "text": "Mine 1200 Iron",
-        "mine": { "name": "IRON", "amount": 1200 },
+        "text": "Mine 1200 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 1200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 11 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_31" },
-            { "type": "quest", "name": "QUEST_MINE_IRON_12" }
+            { "type": "quest", "name": "QUEST_MINE_GEOLYN_12" }
         ]
     },
     {
-        "name": "QUEST_MINE_IRON_12",
+        "name": "QUEST_MINE_GEOLYN_12",
         "type": "mine",
-        "text": "Mine 1500 Iron",
-        "mine": { "name": "IRON", "amount": 1500 },
+        "text": "Mine 1500 Geolyn",
+        "mine": { "name": "GEOLYN", "amount": 1500 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 12 }
@@ -170,54 +170,54 @@
             { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_3" }
         ]
     },
-    { "@": "MINE_COPPER" },
+    { "@": "MINE_CERULYN" },
     {
-        "name": "QUEST_MINE_COPPER_1",
+        "name": "QUEST_MINE_CERULYN_1",
         "type": "mine",
-        "text": "Mine 50 Copper",
-        "mine": { "name": "COPPER", "amount": 50 },
+        "text": "Mine 50 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 50 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 1 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_2" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_2" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_2" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_2",
+        "name": "QUEST_MINE_CERULYN_2",
         "type": "mine",
-        "text": "Mine 100 Copper",
-        "mine": { "name": "COPPER", "amount": 100 },
+        "text": "Mine 100 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 100 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 2 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_5" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_3" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_3" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_3",
+        "name": "QUEST_MINE_CERULYN_3",
         "type": "mine",
-        "text": "Mine 150 Copper",
-        "mine": { "name": "COPPER", "amount": 150 },
+        "text": "Mine 150 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 150 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 3 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_8" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_4" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_4" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_4",
+        "name": "QUEST_MINE_CERULYN_4",
         "type": "mine",
-        "text": "Mine 200 Copper",
-        "mine": { "name": "COPPER", "amount": 100 },
+        "text": "Mine 200 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 4 }
@@ -225,56 +225,56 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_11" },
             { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_1" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_5" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_5" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_5",
+        "name": "QUEST_MINE_CERULYN_5",
         "type": "mine",
-        "text": "Mine 300 Copper",
-        "mine": { "name": "COPPER", "amount": 100 },
+        "text": "Mine 300 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 300 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_14" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_6" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_6" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_6",
+        "name": "QUEST_MINE_CERULYN_6",
         "type": "mine",
-        "text": "Mine 400 Copper",
-        "mine": { "name": "COPPER", "amount": 400 },
+        "text": "Mine 400 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 400 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 6 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_17" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_7" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_7" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_7",
+        "name": "QUEST_MINE_CERULYN_7",
         "type": "mine",
-        "text": "Mine 500 Copper",
-        "mine": { "name": "COPPER", "amount": 500 },
+        "text": "Mine 500 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 500 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 7 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_20" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_8" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_8" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_8",
+        "name": "QUEST_MINE_CERULYN_8",
         "type": "mine",
-        "text": "Mine 600 Copper",
-        "mine": { "name": "COPPER", "amount": 600 },
+        "text": "Mine 600 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 600 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 8 }
@@ -282,56 +282,56 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_23" },
             { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_2" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_9" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_9" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_9",
+        "name": "QUEST_MINE_CERULYN_9",
         "type": "mine",
-        "text": "Mine 800 Copper",
-        "mine": { "name": "COPPER", "amount": 800 },
+        "text": "Mine 800 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 800 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 9 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_26" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_10" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_10" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_10",
+        "name": "QUEST_MINE_CERULYN_10",
         "type": "mine",
-        "text": "Mine 1000 Copper",
-        "mine": { "name": "COPPER", "amount": 1000 },
+        "text": "Mine 1000 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 1000 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 10 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_29" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_11" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_11" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_11",
+        "name": "QUEST_MINE_CERULYN_11",
         "type": "mine",
-        "text": "Mine 1200 Copper",
-        "mine": { "name": "COPPER", "amount": 1200 },
+        "text": "Mine 1200 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 1200 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 11 }
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_32" },
-            { "type": "quest", "name": "QUEST_MINE_COPPER_12" }
+            { "type": "quest", "name": "QUEST_MINE_CERULYN_12" }
         ]
     },
     {
-        "name": "QUEST_MINE_COPPER_12",
+        "name": "QUEST_MINE_CERULYN_12",
         "type": "mine",
-        "text": "Mine 1400 Copper",
-        "mine": { "name": "COPPER", "amount": 1400 },
+        "text": "Mine 1400 Cerulyn",
+        "mine": { "name": "CERULYN", "amount": 1400 },
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
             { "type": "lab", "amount": 12 }
@@ -339,6 +339,326 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_35" },
             { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_3" }
+        ]
+    },
+    { "@": "MINE_DAMSYN" },
+    {
+        "name": "QUEST_MINE_DAMSYN_1",
+        "type": "mine",
+        "text": "Mine 50 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 50 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 3 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_FORGE_VULKAN" },
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_2" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_2",
+        "type": "mine",
+        "text": "Mine 100 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 4 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_3" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_3",
+        "type": "mine",
+        "text": "Mine 150 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 150 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_4" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_4",
+        "type": "mine",
+        "text": "Mine 200 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 6 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_4" },
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_5" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_5",
+        "type": "mine",
+        "text": "Mine 300 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_6" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_6",
+        "type": "mine",
+        "text": "Mine 400 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 400 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 8 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_7" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_7",
+        "type": "mine",
+        "text": "Mine 500 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_8" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_8",
+        "type": "mine",
+        "text": "Mine 600 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 600 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 10 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_5" },
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_9" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_9",
+        "type": "mine",
+        "text": "Mine 800 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 800 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 11 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_10" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_10",
+        "type": "mine",
+        "text": "Mine 1000 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 1000 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 12 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_11" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_11",
+        "type": "mine",
+        "text": "Mine 1200 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 1200 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 13 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_12" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_DAMSYN_12",
+        "type": "mine",
+        "text": "Mine 1500 Damsyn",
+        "mine": { "name": "DAMSYN", "amount": 1500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 14 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_ITEM_CAPACITY_6" }
+        ]
+    },
+    { "@": "MINE_CLARYN" },
+    {
+        "name": "QUEST_MINE_CLARYN_1",
+        "type": "mine",
+        "text": "Mine 50 Claryn",
+        "mine": { "name": "CLARYN", "amount": 50 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 3 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_FORGE_ORYON" },
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_2" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_2",
+        "type": "mine",
+        "text": "Mine 100 Claryn",
+        "mine": { "name": "CLARYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 4 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_3" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_3",
+        "type": "mine",
+        "text": "Mine 150 Claryn",
+        "mine": { "name": "CLARYN", "amount": 150 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_4" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_4",
+        "type": "mine",
+        "text": "Mine 200 Claryn",
+        "mine": { "name": "CLARYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 6 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_4" },
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_5" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_5",
+        "type": "mine",
+        "text": "Mine 300 Claryn",
+        "mine": { "name": "CLARYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_6" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_6",
+        "type": "mine",
+        "text": "Mine 400 Claryn",
+        "mine": { "name": "CLARYN", "amount": 400 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 8 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_7" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_7",
+        "type": "mine",
+        "text": "Mine 500 Claryn",
+        "mine": { "name": "CLARYN", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_8" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_8",
+        "type": "mine",
+        "text": "Mine 600 Claryn",
+        "mine": { "name": "CLARYN", "amount": 600 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 10 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_5" },
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_9" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_9",
+        "type": "mine",
+        "text": "Mine 800 Claryn",
+        "mine": { "name": "CLARYN", "amount": 800 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 11 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_10" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_10",
+        "type": "mine",
+        "text": "Mine 1000 Claryn",
+        "mine": { "name": "CLARYN", "amount": 1000 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 12 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_11" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_11",
+        "type": "mine",
+        "text": "Mine 1200 Claryn",
+        "mine": { "name": "CLARYN", "amount": 1200 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 13 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_12" }
+        ]
+    },
+    {
+        "name": "QUEST_MINE_CLARYN_12",
+        "type": "mine",
+        "text": "Mine 1400 Claryn",
+        "mine": { "name": "CLARYN", "amount": 1400 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 14 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MINE_DIG_SPEED_6" }
         ]
     },
     { "@": "CARRY" },
@@ -364,7 +684,7 @@
         "carry": 200,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 2 }
         ],
         "unlock": [
             
@@ -379,7 +699,7 @@
         "carry": 300,
         "reward": [
             { "type": "item", "name": "LUMYN", "amount": 1 },
-            { "type": "lab", "amount": 1 }
+            { "type": "lab", "amount": 3 }
         ],
         "unlock": [
             
@@ -517,9 +837,382 @@
             { "type": "lab", "amount": 12 }
         ],
         "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_36" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_3" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_3" },
-            { "type": "lab", "name": "LAB_GEM_MOVE_SPEED_3" }
+            { "type": "lab", "name": "LAB_GEM_MOVE_SPEED_3" },
+            { "type": "quest", "name": "QUEST_CARRY_13" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_13",
+        "type": "carry",
+        "text": "Carry 2800 items",
+        "carry": 2800,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 13 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_37" },
+            { "type": "quest", "name": "QUEST_CARRY_14" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_14",
+        "type": "carry",
+        "text": "Carry 3200 items",
+        "carry": 3200,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 14 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_38" },
+            { "type": "quest", "name": "QUEST_CARRY_15" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_15",
+        "type": "carry",
+        "text": "Carry 3600 items",
+        "carry": 3600,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 15 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_39" },
+            { "type": "quest", "name": "QUEST_CARRY_16" }
+        ]
+    },
+    {
+        "name": "QUEST_CARRY_16",
+        "type": "carry",
+        "text": "Carry 4000 items",
+        "carry": 4000,
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 16 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_GEM_MAX_40" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_CAPACITY_4" },
+            { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_SPEED_4" },
+            { "type": "lab", "name": "LAB_GEM_MOVE_SPEED_4" }
+        ]
+    },
+    { "@": "FORGE_VIRIDYN" },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_1",
+        "type": "forge",
+        "text": "Forge 25 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 25 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_MK1_TUNNEL" },
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_2" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_2",
+        "type": "forge",
+        "text": "Forge 50 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 50 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 6 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_3" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_3",
+        "type": "forge",
+        "text": "Forge 75 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 75 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_4" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_4",
+        "type": "forge",
+        "text": "Forge 100 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 8 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_5" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_5",
+        "type": "forge",
+        "text": "Forge 150 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 150 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_6" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_6",
+        "type": "forge",
+        "text": "Forge 200 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 200 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 10 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_7" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_7",
+        "type": "forge",
+        "text": "Forge 250 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 250 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 11 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_8" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_8",
+        "type": "forge",
+        "text": "Forge 300 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 300 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 12 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_9" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_9",
+        "type": "forge",
+        "text": "Forge 400 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 400 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 13 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_10" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_10",
+        "type": "forge",
+        "text": "Forge 500 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 14 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_11" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_11",
+        "type": "forge",
+        "text": "Forge 600 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 600 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 15 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_12" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_VIRIDYN_12",
+        "type": "forge",
+        "text": "Forge 700 Viridyn",
+        "forge": { "name": "VIRIDYN", "amount": 700 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 16 }
+        ],
+        "unlock": [
+        ]
+    },
+    { "@": "FORGE_FIRMYN" },
+    {
+        "name": "QUEST_FORGE_FIRMYN_1",
+        "type": "forge",
+        "text": "Forge 25 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 25 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 5 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_2" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_2",
+        "type": "forge",
+        "text": "Forge 50 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 50 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 6 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_3" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_3",
+        "type": "forge",
+        "text": "Forge 75 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 75 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 7 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_4" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_4",
+        "type": "forge",
+        "text": "Forge 100 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 100 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 8 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_5" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_5",
+        "type": "forge",
+        "text": "Forge 150 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 150 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 9 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_6" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_6",
+        "type": "forge",
+        "text": "Forge 200 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 200 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 10 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_7" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_7",
+        "type": "forge",
+        "text": "Forge 250 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 250 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 11 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_8" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_8",
+        "type": "forge",
+        "text": "Forge 300 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 300 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 12 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_9" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_9",
+        "type": "forge",
+        "text": "Forge 400 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 400 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 13 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_10" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_10",
+        "type": "forge",
+        "text": "Forge 500 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 500 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 14 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_11" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_11",
+        "type": "forge",
+        "text": "Forge 600 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 600 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 15 }
+        ],
+        "unlock": [
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_12" }
+        ]
+    },
+    {
+        "name": "QUEST_FORGE_FIRMYN_12",
+        "type": "forge",
+        "text": "Forge 700 Firmyn",
+        "forge": { "name": "FIRMYN", "amount": 700 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 16 }
+        ],
+        "unlock": [
         ]
     },
     { "@": "GEMS" },
@@ -589,7 +1282,9 @@
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" }
+            { "type": "lab", "name": "LAB_CRAFT_MK1_MINE" },
+            { "type": "quest", "name": "QUEST_MINE_DAMSYN_1" },
+            { "type": "quest", "name": "QUEST_MINE_CLARYN_1" }
         ]
     }
 ]

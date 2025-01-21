@@ -3,8 +3,8 @@ import { Floor, Gem, Shaft } from '@/engine/components/gem';
 import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
-import { checkComponent, getAdmin, getComponent } from '@/engine/systems/entity';
-import { getMechData } from '@/engine/systems/item';
+import { checkComponent, destroyEntity, getAdmin, getComponent } from '@/engine/systems/entity';
+import { addAdminItem, getCraftData, getMechData } from '@/engine/systems/item';
 import { updateSprite } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 
@@ -117,6 +117,12 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
     });
 };
 
+export const getGemTypeCount = ({ gemType }: { gemType: Gems }) => {
+    const admin = getAdmin();
+
+    return admin.gems.filter(gem => getGemType({ gemId: gem }) === gemType).length;
+};
+
 export const setGemRequest = ({ gemId, request }: {
     gemId: string,
     request: boolean,
@@ -153,13 +159,12 @@ export const setGemStore = ({ gemId, store }: {
     const gem = getGem({ gemId });
 
     gemState._store = store;
-    setGemAction({ action: 'idle', gemId });
-
-    updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
-
-    admin.requests = admin.requests.filter(request => request !== gemId);
 
     if (gemState._store) {
+        setGemAction({ action: 'idle', gemId });
+
+        admin.requests = admin.requests.filter(request => request !== gemId);
+
         gemPosition._x = 0;
         gemPosition._y = 0;
 
@@ -170,12 +175,14 @@ export const setGemStore = ({ gemId, store }: {
         if (gem._mech) {
             emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_EQUIP });
         }
+
+        updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
+
+        emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
     }
 
-    emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
-
     emit({
-        data: { text: `${gemId} ${store ? 'stored' : 'deployed'}`, type: 'confirm' },
+        data: { text: `${gem._name} ${store ? 'stored' : 'deployed'}`, type: 'confirm' },
         entityId: gemId,
         target: 'render',
         type: RenderEvents.INFO,
@@ -232,5 +239,35 @@ export const isGemAt = ({ gemId, at }: {
     }
 
     return false;
+};
+
+export const isGemUnlocked = ({ gemType }: { gemType: Gems }) => {
+    const admin = getAdmin();
+
+    return admin.crafts.includes(`GEM_${gemType.toUpperCase()}`);
+};
+
+export const destroyGem = ({ gemId }: { gemId: string }) => {
+    const admin = getAdmin();
+
+    const gemType = getGemType({ gemId });
+    const gem = getGem({ gemId });
+    const gemCraftData = getCraftData({ itemName: `GEM_${gemType.toUpperCase()}` });
+
+    for (const compItem of gemCraftData.components) {
+        addAdminItem({ amount: compItem.amount, name: compItem.name });
+    }
+
+    admin.gems = admin.gems.filter(gem => gem !== gemId);
+
+    emit({
+        data: { alert: true, text: `${gem._name} destroyed`, type: 'confirm' },
+        target: 'render',
+        type: RenderEvents.INFO,
+    });
+
+    emit({ data: { amount: 1 }, target: 'engine', type: EngineEvents.GEM_QUEST });
+
+    destroyEntity({ entityId: gemId });
 };
 //#endregion

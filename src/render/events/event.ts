@@ -9,7 +9,7 @@ import {
     createTileMap,
     destroyGem,
     destroyTileMap,
-    displayInfo,
+    displayAlert,
     displayLoading,
     displayQuests,
     setAdminMode,
@@ -46,6 +46,7 @@ export enum RenderEvents {
     GEM_DESTROY = 'GEM_DESTROY',
     GEM_STOP = 'GEM_STOP',
     GEM_UPDATE = 'GEM_UPDATE',
+    GEM_WORK = 'GEM_WORK',
     /* INFO */
     INFO = 'INFO',
     /* MODE */
@@ -85,7 +86,7 @@ export const onEvent = ({
         || type === GameEvents.GAME_LOADING_OFF
         || type === GameEvents.GAME_LOADING_ON
     ) {
-        displayLoading({ load: (type === GameEvents.GAME_LOADING_ON) });
+        displayLoading({ display: (type === GameEvents.GAME_LOADING_ON) });
     }
     else if (type === GameEvents.GAME_RUN) {
         run();
@@ -114,6 +115,11 @@ export const onEvent = ({
     }
     else if (type === RenderEvents.GEM_UPDATE && entityId) {
         updateGemInfo({ gemId: entityId });
+        updateAdminGems();
+        updateGems();
+    }
+    else if (type === RenderEvents.GEM_WORK && entityId) {
+        setGemMode({ gemId: entityId, mode: 'work' });
     }
     else if (type === RenderEvents.GEM_DESTROY && entityId) {
         destroyGem({ gemId: entityId });
@@ -122,9 +128,9 @@ export const onEvent = ({
         setGemMode({ gemId: entityId, mode: 'base' });
     }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
-        updateGems();
-
         emit({ entityId, target: 'render', type: RenderEvents.GEM_CREATE });
+
+        updateGems();
     }
     else if (type === GameEvents.GEM_STORE && entityId) {
         updateGems();
@@ -136,28 +142,27 @@ export const onEvent = ({
         emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
     }
     else if (type === GameEvents.GEM_CARRY_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'carry' });
-
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
         emit({ target: 'render', type: RenderEvents.MODE_REQUEST });
     }
     else if (type === GameEvents.GEM_FLOOR_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'carry' });
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
     }
     else if (type === GameEvents.GEM_LIFT_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'carry' });
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
     }
     else if (type === GameEvents.GEM_MINE_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'mine' });
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
     }
     else if (type === GameEvents.GEM_SHAFT_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'mine' });
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
     }
     else if (type === GameEvents.GEM_TUNNEL_REQUEST && entityId) {
-        setGemMode({ gemId: entityId, mode: 'mine' });
+        emit({ entityId, target: 'render', type: RenderEvents.GEM_WORK });
     }
     /* INFO */
     else if (type === RenderEvents.INFO && data.text) {
-        displayInfo({ alert: data.alert, text: data.text, type: data.type });
+        displayAlert({ alert: data.alert, text: data.text, type: data.type });
     }
     /* MODE */
     else if (type === RenderEvents.MODE_BASE) {
@@ -192,8 +197,6 @@ export const onEvent = ({
     /* SPRITE */
     else if (type === RenderEvents.SPRITE_UPDATE && entityId) {
         createSprite({ elId: entityId });
-        updateAdminGems();
-        updateGems();
     }
     /* TILEMAP */
     else if (type === RenderEvents.TILEMAP_CREATE && entityId) {

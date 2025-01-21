@@ -7,9 +7,21 @@ const fontFiles = import.meta.glob('/src/assets/fonts/**/*.{ttf,woff,woff2}', { 
 
 //#region TYPES
 export type AssetManager = {
+    getAudioUrl: (audioName: string) => string;
+    getSpriteUrl: (spriteName: string) => string;
     isLoadingComplete: () => boolean;
     startLoading: () => Promise<boolean>;
 }
+
+type Asset = {
+    path: string;
+    url: string;
+};
+//#endregion
+
+//#region CONSTANTS
+const spriteCache = new Map<string, Asset>();
+const audioCache = new Map<string, Asset>();
 //#endregion
 
 //#region SERVICES
@@ -28,6 +40,9 @@ export const createAssetManager = () => {
             loadingPromise = null;
 
             if (success) {
+                initializeSpriteCache();
+                initializeAudioCache();
+
                 emit({ target: 'all', type: GameEvents.GAME_LOADING_OFF });
             } else {
                 emit({ target: 'all', type: GameEvents.GAME_LOADING_ERROR });
@@ -41,7 +56,39 @@ export const createAssetManager = () => {
 
     const isLoadingComplete = () => !(isLoading) && !(loadingPromise);
 
+    const getSpriteUrl = (spriteName: string): string => {
+        const asset = spriteCache.get(spriteName);
+
+        if (!(asset)) {
+            error({
+                message: `Sprite ${spriteName} not found in cache`,
+                where: 'getSpriteUrl',
+            });
+
+            return '';
+        }
+
+        return asset.url;
+    };
+
+    const getAudioUrl = (audioName: string): string => {
+        const asset = audioCache.get(audioName);
+
+        if (!(asset)) {
+            error({
+                message: `Audio ${audioName} not found in cache`,
+                where: 'getAudioUrl',
+            });
+
+            return '';
+        }
+
+        return asset.url;
+    };
+
     return {
+        getAudioUrl,
+        getSpriteUrl,
         isLoadingComplete,
         startLoading,
     } as AssetManager;
@@ -91,9 +138,22 @@ const loadSprites = async (): Promise<boolean> => {
     return results.every(result => result);
 };
 
+const initializeSpriteCache = () => {
+    Object.entries(spriteFiles).forEach(([path, module]) => {
+        const normalizedPath = path.replace('/src/assets/sprites/', '');
+        const spriteName = normalizedPath.split('/').pop()?.split('.')[0] || '';
+
+        spriteCache.set(spriteName, {
+            path: normalizedPath,
+            url: (module as { default: string }).default,
+        });
+    });
+};
+
 const loadAudio = async (): Promise<boolean> => {
     const audio = Object.entries(audioFiles).map(([path, module]) => {
         const audio = new Audio();
+
         return new Promise<boolean>((resolve) => {
             audio.oncanplaythrough = () => resolve(true);
 
@@ -115,6 +175,18 @@ const loadAudio = async (): Promise<boolean> => {
     const results = await Promise.all(audio);
 
     return results.every(result => result);
+};
+
+const initializeAudioCache = () => {
+    Object.entries(audioFiles).forEach(([path, module]) => {
+        const normalizedPath = path.replace('/src/assets/audio/', '');
+        const audioName = normalizedPath.split('/').pop()?.split('.')[0] || '';
+
+        audioCache.set(audioName, {
+            path: normalizedPath,
+            url: (module as { default: string }).default,
+        });
+    });
 };
 
 const loadFonts = async (): Promise<boolean> => {

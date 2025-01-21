@@ -1,0 +1,25 @@
+.abs {
+    position: absolute;
+}
+
+.rel {
+    position: relative;
+}
+
+.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.enable {
+    pointer-events: all;
+}
+
+.disable {
+    pointer-events: none;
+}
+
+.hidden {
+    display: none;
+}

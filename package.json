@@ -1,11 +1,11 @@
 {
     "name": "terragem",
     "private": true,
-    "version": "0.5.4",
+    "version": "0.5.5",
     "type": "module",
     "scripts": {
         "build": "tsc && vite build",
-        "dev": "vite",
+        "dev": "vite --force",
         "preview": "vite preview",
         "lint": "eslint . --ext .ts",
         "lint-fix": "eslint . --ext .ts --fix",
@@ -15,20 +15,22 @@
     "author": "Radalls",
     "license": "ISC",
     "dependencies": {
-        "uuid": "^10.0.0"
+        "uuid": "^11.0.5"
     },
     "devDependencies": {
-        "@types/node": "^22.4.1",
+        "@eslint/config-array": "^0.19.1",
+        "@eslint/object-schema": "^2.1.5",
+        "@types/node": "^22.10.5",
         "@types/uuid": "^10.0.0",
-        "@typescript-eslint/eslint-plugin": "^7.6.0",
-        "@typescript-eslint/parser": "^7.6.0",
+        "@typescript-eslint/eslint-plugin": "^8.19.1",
+        "@typescript-eslint/parser": "^8.19.1",
         "eslint": "^8.57.0",
-        "eslint-plugin-import": "^2.29.1",
-        "eslint-plugin-typescript-sort-keys": "^3.2.0",
+        "eslint-plugin-import": "^2.31.0",
+        "eslint-plugin-typescript-sort-keys": "^3.3.0",
         "ts-node": "^10.9.2",
         "ts-node-dev": "^2.0.0",
-        "typescript": "^5.3.3",
-        "vite": "^5.0.8",
-        "vitest": "^2.0.5"
+        "typescript": "^5.7.3",
+        "vite": "^6.0.7",
+        "vitest": "^2.1.8"
     }
 }

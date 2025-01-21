@@ -3,6 +3,7 @@ import {
     Carry,
     Drop,
     Floor,
+    Gems,
     Items,
     Lift,
     Mine,
@@ -16,6 +17,7 @@ import {
 } from '@/engine/components';
 import { getStore } from '@/engine/services/store';
 import { addComponent, getComponent } from '@/engine/systems/entity';
+import { getGemTypeCount } from '@/engine/systems/gem';
 import { loadTileMapData } from '@/engine/systems/tilemap';
 
 //#region CONSTANTS
@@ -29,10 +31,9 @@ const ADMIN_INIT_GEM_CARRY_ITEM_RANGE = 4;
 const ADMIN_INIT_GEM_FLOOR_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_FLOOR_DIG_SPEED = 1;
 const ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH = 1;
-const ADMIN_INIT_GEM_FLOOR_DIG_RANGE = 3;
 /* GEM LIFT */
 const ADMIN_INIT_GEM_LIFT_MOVE_SPEED = 3;
-const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 20;
+const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 50;
 const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 2;
 const ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT = 1;
 /* GEM MAX */
@@ -72,11 +73,11 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
             },
             {
                 _amount: 25,
-                _name: Items.IRON,
+                _name: Items.GEOLYN,
             },
             {
                 _amount: 25,
-                _name: Items.COPPER,
+                _name: Items.CERULYN,
             },
             {
                 _amount: 1,
@@ -99,7 +100,6 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
             _gemCarryItemSpeed: ADMIN_INIT_GEM_CARRY_ITEM_SPEED,
             _gemCarryMoveSpeed: ADMIN_INIT_GEM_CARRY_MOVE_SPEED,
             /* GEM FLOOR */
-            _gemFloorDigRange: ADMIN_INIT_GEM_FLOOR_DIG_RANGE,
             _gemFloorDigSpeed: ADMIN_INIT_GEM_FLOOR_DIG_SPEED,
             _gemFloorDigStrength: ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH,
             _gemFloorMoveSpeed: ADMIN_INIT_GEM_FLOOR_MOVE_SPEED,
@@ -227,6 +227,7 @@ export const addMine = ({ gemId }: { gemId: string }) => {
         _digStrength: 0,
         _itemCapacity: 0,
         _moveSpeed: 0,
+        _name: `Mine-${getGemTypeCount({ gemType: Gems.MINE })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
@@ -246,6 +247,7 @@ export const addCarry = ({ gemId }: { gemId: string }) => {
         _itemRange: 0,
         _itemSpeed: 0,
         _moveSpeed: 0,
+        _name: `Carry-${getGemTypeCount({ gemType: Gems.CARRY })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
@@ -264,6 +266,7 @@ export const addLift = ({ gemId }: { gemId: string }) => {
         _itemCapacity: 0,
         _itemSpeed: 0,
         _moveSpeed: 0,
+        _name: `Lift-${getGemTypeCount({ gemType: Gems.LIFT })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
@@ -282,6 +285,7 @@ export const addTunnel = ({ gemId }: { gemId: string }) => {
         _digSpeed: 0,
         _digStrength: 0,
         _moveSpeed: 0,
+        _name: `Tunnel-${getGemTypeCount({ gemType: Gems.TUNNEL })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
@@ -295,10 +299,10 @@ export const addTunnel = ({ gemId }: { gemId: string }) => {
 export const addFloor = ({ gemId }: { gemId: string }) => {
     const floor: Floor = {
         _: 'Floor',
-        _digRange: 0,
         _digSpeed: 0,
         _digStrength: 0,
         _moveSpeed: 0,
+        _name: `Floor-${getGemTypeCount({ gemType: Gems.FLOOR })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
@@ -316,6 +320,7 @@ export const addShaft = ({ gemId }: { gemId: string }) => {
         _digSpeed: 0,
         _digStrength: 0,
         _moveSpeed: 0,
+        _name: `Shaft-${getGemTypeCount({ gemType: Gems.SHAFT })}`,
         _xp: 0,
         _xpLvl: 1,
         _xpToNext: 100,
