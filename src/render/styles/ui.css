@@ -1,325 +1,152 @@
 /* UI */
 .ui {
-    bottom: 0;
-    box-sizing: border-box;
-    left: 0;
-    pointer-events: none;
-    position: absolute;
-    right: 0;
-    top: 0;
     z-index: 1000;
 }
 
 .ui.request {
-    border: solid 10px rgb(255, 231, 94)
+    border: solid 10px #30CB48;
 }
 
-/* LOADING */
-.ui .loading {
-    align-items: center;
-    background-color: rgba(0, 0, 0, 0.9);
-    display: none;
-    height: 100%;
-    justify-content: center;
-    padding: 8px;
-    width: 100%;
-}
-
-.loader {
-    border-top: 16px solid rgb(94, 81, 243);
-    border-right: 16px solid rgb(89, 28, 219);
-    border-bottom: 16px solid rgb(137, 29, 170);
-    border-left: 16px solid rgb(123, 34, 56);
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
-/* INFO */
-.alerts {
-    align-items: center;
-    bottom: 8px;
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-    gap: 4px;
-    justify-content: center;
-    padding: 8px 16px;
-    pointer-events: none;
-    width: 100%;
-    z-index: 100000000;
-}
-
-.alerts .alert {
-    background-color: rgb(94, 81, 243);
-    border: 5px solid rgb(89, 28, 219);
-    border-radius: 10px;
-    color: rgb(255, 255, 255);
-    font-size: 18px;
-    padding: 8px 16px;
-    text-align: center;
-}
-
-/* GEM */
-.ui .gem-view {
-    background-color: rgb(89, 28, 219);
-    border: 5px solid rgb(255, 255, 255);
-    border-radius: 10px;
-    bottom: 8px;
-    color: rgb(255, 255, 255);
-    display: none;
-    flex-direction: column;
-    font-size: 16px;
-    gap: 16px;
-    left: 8px;
-    padding: 16px;
-    pointer-events: all;
-    width: 25%;
-    z-index: 1000;
-}
-
-.ui .gem-view-placeholder {
-    background-size: contain;
-    border: 5px solid rgb(166, 166, 166);
-    border-radius: 10px 20px;
-    bottom: 8px;
-    height: 64px;
-    left: 8px;
-    pointer-events: none;
-    width: 64px;
-    z-index: 1000;
-}
-
-.ui .gem-view .close {
-    background-size: contain;
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    height: 24px;
-    padding: 4px;
-    right: 2px;
-    top: 2px;
-    width: 24px;
-    z-index: 10000;
-}
-
-.ui .gem-view .sprite {
-    background-size: contain;
-    height: 32px;
-    right: 40px;
-    top: 2px;
-    width: 32px;
-}
-
-.ui .gem-view .data {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.ui .gem-view .actions {
-    align-items: center;
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-}
-
-.ui .gem-view .action {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 4px;
-}
-
-.ui .gem-view .items {
-    align-items: center;
-    display: flex;
-    gap: 8px;
-    height: 24px;
-}
-
-.ui .gem-view .items .item {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
-    border-radius: 20px;
-    display: flex;
-    justify-content: center;
-    padding: 2px 4px;
-}
-
-.ui .gem-view .items .item .icon {
-    background-size: contain;
-    height: 24px;
-    width: 24px;
-}
-
-.ui .gem-view .items .item .amount {
-    font-size: 12px;
-}
-
-/* GEMS */
-.ui .gems {
-    background-color: rgb(89, 28, 219);
-    border: 5px solid rgb(255, 255, 255);
-    border-radius: 10px;
-    bottom: 8px;
-    color: rgb(255, 255, 255);
-    display: none;
-    flex-direction: column;
-    font-size: 16px;
-    gap: 16px;
-    height: 50%;
-    padding: 16px;
-    pointer-events: all;
-    right: 8px;
-    width: 25%;
-    z-index: 1000;
-}
-
-.ui .gems-placeholder {
-    background-size: contain;
-    border: 5px solid rgb(255, 255, 255);
-    border-radius: 20px 10px;
-    bottom: 8px;
-    height: 64px;
-    pointer-events: all;
-    right: 8px;
-    width: 64px;
-    z-index: 1000;
-}
-
-.ui .gems .close {
-    background-size: contain;
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    top: 2px;
-    height: 24px;
-    left: 2px;
-    padding: 4px;
-    width: 24px;
-}
-
-.ui .gems .page {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    height: 100%;
-    padding-top: 32px;
-    pointer-events: none;
-}
-
-.ui .gems .actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.ui .gems .actions .action {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-.ui .gems .actions .index {
+.ui .index {
     bottom: 0;
     right: 0;
 }
 
-.ui .gems .page .gem {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
+/* INFO */
+.alerts {
+    bottom: 0.8vh;
+    z-index: 100000000;
+}
+
+.alert {
+    background-color: #30CB48;
+    color: #FFFFFF;
+    max-width: 80%;
+}
+
+/* GEM */
+.gem-view {
+    bottom: 1vh;
+    left: 1vh;
+    z-index: 1000;
+}
+
+.gem-view-icon {
+    background-color: #30CB48;
+    border: 0.5vh solid #B4B8D2;
+    border-radius: 10px 20px;
+    width: 8vh;
+    height: 8vh;
+    bottom: 1vh;
+    left: 1vh;
+    z-index: 1000;
+}
+
+.gem-view .close {
+    top: -3vh;
+    right: -3vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
+}
+
+.gem-view .sprite {
+    width: 5vh;
+    height: 5vh;
+}
+
+.gem-view .item {
+    background-color: #6B648D;
     border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    gap: 32px;
-    justify-content: center;
-    padding: 12px 24px;
-    pointer-events: all;
+    color: #FFFFFF;
 }
 
-.ui .gems .page .gem .sprite {
-    background-size: contain;
-    height: 32px;
-    pointer-events: none;
-    width: 32px;
+.gem-view .item .icon {
+    width: 4vh;
+    height: 4vh;
 }
 
-.ui .gems .page .gem .label {
-    pointer-events: none;
+/* GEMS */
+.ui .gems {
+    bottom: 1vh;
+    right: 1vh;
+    z-index: 1000;
+}
+
+.ui .gems-icon {
+    background-color: #30CB48;
+    border-radius: 20px 10px;
+    width: 8vh;
+    height: 8vh;
+    bottom: 1vh;
+    right: 1vh;
+    z-index: 1000;
+}
+
+.ui .gems .close {
+    top: -3vh;
+    left: -3vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
+}
+
+.ui .gems .all {
+    background-color: #30CB48;
+    top: -3vh;
+    left: 3vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
+}
+
+.ui .gems .type {
+    background-color: #30CB48;
+    background-size: 3vh 3vh;
+    top: -3vh;
+    left: 8vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
+}
+
+.ui .gems .sprite {
+    width: 5vh;
+    height: 5vh;
 }
 
 /* ADMIN */
-
-.ui .admin-placeholder {
-    background-size: contain;
-    border: 5px solid rgb(255, 255, 255);
+.ui .admin-icon {
+    background-color: #30CB48;
     border-radius: 20px 10px;
-    height: 64px;
-    left: 8px;
-    pointer-events: all;
-    top: 8px;
-    width: 64px;
+    width: 8vh;
+    height: 8vh;
+    top: 1vh;
+    left: 1vh;
     z-index: 1000;
 }
 
 /* QUEST */
 .ui .quests {
-    background-color: rgb(89, 28, 219);
-    border: 5px solid rgb(255, 255, 255);
-    border-radius: 10px;
-    color: rgb(255, 255, 255);
-    display: none;
-    flex-direction: column;
-    font-size: 10px;
-    gap: 16px;
-    padding: 8px;
-    padding-bottom: 48px;
-    pointer-events: all;
-    right: 8px;
-    top: 8px;
-    width: 20%;
-    z-index: 100;
+    top: 1vh;
+    right: 1vh;
+    z-index: 1000;
 }
 
-.ui .quests-placeholder {
-    background-size: contain;
-    border: 5px solid rgb(255, 255, 255);
+.ui .quests-icon {
+    background-color: #30CB48;
     border-radius: 10px 20px;
-    height: 64px;
-    pointer-events: all;
-    right: 8px;
-    top: 8px;
-    width: 64px;
+    width: 8vh;
+    height: 8vh;
+    top: 1vh;
+    right: 1vh;
     z-index: 1000;
 }
 
 .ui .quests .close {
-    background-size: contain;
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    bottom: 2px;
-    height: 24px;
-    left: 2px;
-    padding: 4px;
-    width: 24px;
-}
-
-.ui .quests .quest {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    font-size: 16px;
-    padding: 8px;
+    bottom: -3vh;
+    left: -3vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
 }

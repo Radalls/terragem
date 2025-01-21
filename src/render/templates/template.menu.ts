@@ -4,7 +4,7 @@ import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
 import { setState } from '@/engine/services/state';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
-import { gemHasItems, getGem, getGemStat, getGemType } from '@/engine/systems/gem';
+import { gemHasItems, getGem, getGemStat, getGemType, isGemUnlocked } from '@/engine/systems/gem';
 import { getCraftData, isItemMech } from '@/engine/systems/item';
 import { exportSaveFile, getProjectVersion, importSaveFile } from '@/engine/systems/save';
 import { getSpritePath } from '@/engine/systems/sprite';
@@ -27,6 +27,7 @@ export const createMenus = () => {
     createBoot();
     createLaunch();
     createSettings();
+    createLoading();
 };
 
 export const displayMenus = ({ display }: { display: boolean }) => {
@@ -39,10 +40,37 @@ export const displayMenus = ({ display }: { display: boolean }) => {
     setState({ key: 'gamePause', value: display });
 };
 
+//#region LOADING
+const createLoading = () => {
+    createElement({
+        css: 'loading hidden full align',
+        id: 'Loading',
+        parent: 'Menus',
+    });
+
+    createElement({
+        absolute: false,
+        css: 'loader w-10 h-10',
+        id: 'Loader',
+        parent: 'Loading',
+    });
+};
+
+export const displayLoading = ({ display }: { display: boolean }) => {
+    displayMenus({ display: true });
+
+    const loading = getElement({ elId: 'Loading' });
+
+    loading.style.display = (display)
+        ? 'flex'
+        : 'none';
+};
+//#endregion
+
 //#region BOOT
 export const createBoot = () => {
     createElement({
-        css: 'menu boot',
+        css: 'boot full hidden',
         id: 'Boot',
         parent: 'Menus',
     });
@@ -56,7 +84,7 @@ export const createBoot = () => {
 
     createButton({
         click: () => onClickBoot(),
-        css: 'opt',
+        css: 'center w-15 p-box t-24',
         id: 'BootLaunch',
         parent: 'Boot',
         text: 'Boot',
@@ -89,7 +117,7 @@ export const displayBoot = ({ display }: { display: boolean }) => {
 //#region LAUNCH
 export const createLaunch = () => {
     createElement({
-        css: 'menu launch',
+        css: 'launch col full align hidden g-32',
         id: 'Launch',
         parent: 'Menus',
     });
@@ -104,7 +132,7 @@ export const createLaunch = () => {
     createButton({
         absolute: false,
         click: () => onClickStart(),
-        css: 'opt',
+        css: 'align w-15 p-box t-24',
         id: 'LaunchStart',
         parent: 'Launch',
         text: 'Start',
@@ -114,7 +142,7 @@ export const createLaunch = () => {
     createButton({
         absolute: false,
         click: () => onClickLoadGame(),
-        css: 'opt',
+        css: 'align w-15 p-box t-24',
         id: 'LaunchLoad',
         parent: 'Launch',
         text: 'Load',
@@ -123,7 +151,7 @@ export const createLaunch = () => {
     createButton({
         absolute: false,
         click: () => onClickSettings(),
-        css: 'opt',
+        css: 'align w-15 p-box t-24',
         id: 'LaunchSettings',
         parent: 'Launch',
         text: 'Settings',
@@ -176,17 +204,11 @@ const onClickStart = () => {
 };
 
 const onClickLoadGame = () => {
-    emit({
-        data: { text: 'Save is WIP', type: 'warning' },
-        target: 'render',
-        type: RenderEvents.INFO,
-    });
+    const fileInput = document.getElementById('SaveFileInput') as HTMLInputElement;
 
-    // const fileInput = document.getElementById('SaveFileInput') as HTMLInputElement;
-
-    // if (fileInput) {
-    //     fileInput.click();
-    // }
+    if (fileInput) {
+        fileInput.click();
+    }
 };
 
 const onClickSettings = () => {
@@ -215,7 +237,7 @@ export const displayLaunch = ({ display }: { display: boolean }) => {
 //#region SETTINGS
 export const createSettings = () => {
     createElement({
-        css: 'menu settings',
+        css: 'settings',
         id: 'Settings',
         parent: 'Menus',
     });
@@ -235,61 +257,61 @@ export const displaySettings = ({ display }: { display: boolean }) => {
 //#region ADMIN
 //#region CONSTANTS
 enum AdminTabs {
+    // eslint-disable-next-line typescript-sort-keys/string-enum
     STORAGE = 'AdminTabStorage',
     // eslint-disable-next-line typescript-sort-keys/string-enum
     GEMS = 'AdminTabGems',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
     WORKSHOP = 'AdminTabWorkshop',
     // eslint-disable-next-line typescript-sort-keys/string-enum
     LAB = 'AdminTabLab',
 }
-
-const ADMIN_TAB_BORDER = 'solid 5px rgb(255, 255, 255)';
-const ADMIN_TAB_BORDER_SELECT = 'solid 5px rgb(255, 231, 94)';
 //#endregion
 
+//#region CREATE
 export const createAdminMenu = () => {
     createElement({
-        css: 'menu admin',
+        css: 'admin row full center hidden g-32 p-32',
         id: 'Admin',
         parent: 'Menus',
     });
 
     createElement({
         absolute: false,
-        css: 'tabs',
+        css: 'frame col around w-15 p-8',
         id: 'AdminTabs',
         parent: 'Admin',
     });
 
     createElement({
         absolute: false,
-        css: 'content',
+        css: 'frame col full p-32',
         id: 'AdminContent',
         parent: 'Admin',
     });
 
     createButton({
-        absolute: false,
-        click: () => displayAdminMenu({ display: false }),
-        css: 'tab',
-        id: 'AdminBack',
-        parent: 'AdminTabs',
-        text: 'Back',
-    });
-
-    createButton({
         click: () => onClickSaveGame(),
-        css: 'save',
+        css: 'save p-4 t-12',
         id: 'AdminSave',
         parent: 'Admin',
         text: 'Save',
+    });
+
+    createButton({
+        absolute: false,
+        click: () => displayAdminMenu({ display: false }),
+        css: 'admin-tab full-w t-20 p-24',
+        id: 'AdminBack',
+        parent: 'AdminTabs',
+        text: 'Back',
     });
 
     for (const tab of Object.values(AdminTabs)) {
         createButton({
             absolute: false,
             click: () => selectAdminTab({ tab }),
-            css: 'tab',
+            css: 'admin-tab full-w t-20 p-24',
             id: tab,
             parent: 'AdminTabs',
             text: tab.replace('AdminTab', ''),
@@ -301,41 +323,9 @@ export const createAdminMenu = () => {
     createWorkshop();
     createLabs();
 };
+//#endregion
 
-export const displayAdminMenu = ({ display }: { display: boolean }) => {
-    displayMenus({ display });
-
-    const adminEl = getElement({ elId: 'Admin' });
-
-    adminEl.style.display = (display)
-        ? 'flex'
-        : 'none';
-
-    if (display) {
-        selectAdminTab({ tab: AdminTabs.STORAGE });
-        displayAdminUI({ display: false });
-    }
-    else {
-        selectAdminTab({});
-        displayAdminUI({ display: true });
-    }
-};
-
-const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
-    const adminTabsEls = searchElementsByClassName({ className: 'tab', parent: 'AdminTabs' });
-
-    adminTabsEls.forEach((adminTabEl) => adminTabEl.style.border = ADMIN_TAB_BORDER);
-
-    if (tab) {
-        const tabEl = getElement({ elId: tab });
-        tabEl.style.border = ADMIN_TAB_BORDER_SELECT;
-
-        updateAdminContent({ tab });
-
-        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
-    }
-};
-
+//#region UPDATE
 const updateAdminContent = ({ tab, page }: {
     page?: number,
     tab: string,
@@ -362,36 +352,56 @@ const updateAdminContent = ({ tab, page }: {
         displayLabs({ display: true, page });
     }
 };
+//#endregion
+
+//#region ACTIONS
+const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
+    const adminTabsEls = searchElementsByClassName({ className: 'admin-tab', parent: 'AdminTabs' });
+
+    adminTabsEls.forEach((adminTabEl) => adminTabEl.classList.remove('select'));
+
+    if (tab) {
+        const tabEl = getElement({ elId: tab });
+        tabEl.classList.add('select');
+
+        updateAdminContent({ tab });
+
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
+};
 
 const onClickSaveGame = () => {
     exportSaveFile();
+};
+//#endregion
+
+export const displayAdminMenu = ({ display }: { display: boolean }) => {
+    displayMenus({ display });
+
+    const adminEl = getElement({ elId: 'Admin' });
+
+    adminEl.style.display = (display)
+        ? 'flex'
+        : 'none';
+
+    if (display) {
+        selectAdminTab({ tab: AdminTabs.STORAGE });
+        displayAdminUI({ display: false });
+    }
+    else {
+        selectAdminTab({});
+        displayAdminUI({ display: true });
+    }
 };
 
 //#region STORAGE
 const createStorage = () => {
     createElement({
         absolute: false,
-        css: 'storage',
+        css: 'storage row full g-12',
         id: 'AdminStorage',
         parent: 'AdminContent',
     });
-};
-
-export const updateStorage = () => {
-    const admin = getAdmin();
-
-    for (const item of admin.items) {
-        const itemEl = checkElement({ id: `Item${item._name}` });
-
-        if (itemEl) {
-            const itemAmountEl = getElement({ elId: `ItemAmount${item._name}` });
-
-            itemAmountEl.innerText = `x${item._amount}`;
-        }
-        else {
-            createStorageItem({ itemAmount: item._amount, itemName: item._name });
-        }
-    }
 };
 
 const createStorageItem = ({ itemName, itemAmount }: {
@@ -400,7 +410,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
 }) => {
     createElement({
         absolute: false,
-        css: 'item',
+        css: 'item btn row align w-20 h-20',
         id: `Item${itemName}`,
         parent: 'AdminStorage',
     });
@@ -415,7 +425,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
     });
 
     createElement({
-        css: 'label',
+        css: 'label t-12',
         id: `ItemLabel${itemName}`,
         parent: `Item${itemName}`,
         text: itemName,
@@ -429,6 +439,23 @@ const createStorageItem = ({ itemName, itemAmount }: {
     });
 };
 
+export const updateStorage = () => {
+    const admin = getAdmin();
+
+    for (const item of admin.items) {
+        const itemEl = checkElement({ elId: `Item${item._name}` });
+
+        if (itemEl) {
+            const itemAmountEl = getElement({ elId: `ItemAmount${item._name}` });
+
+            itemAmountEl.innerText = `x${item._amount}`;
+        }
+        else {
+            createStorageItem({ itemAmount: item._amount, itemName: item._name });
+        }
+    }
+};
+
 export const displayStorage = ({ display }: { display: boolean }) => {
     const storageEl = getElement({ elId: 'AdminStorage' });
 
@@ -440,22 +467,48 @@ export const displayStorage = ({ display }: { display: boolean }) => {
 
 //#region GEMS
 //#region CONSTANTS
+enum GemsTabs {
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    MINE = 'gem_mine',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    CARRY = 'gem_carry',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    TUNNEL = 'gem_tunnel',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    LIFT = 'gem_lift',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    FLOOR = 'gem_floor',
+    // eslint-disable-next-line typescript-sort-keys/string-enum
+    SHAFT = 'gem_shaft',
+}
+
+const tabsToGems = {
+    [GemsTabs.MINE]: Gems.MINE,
+    [GemsTabs.CARRY]: Gems.CARRY,
+    [GemsTabs.TUNNEL]: Gems.TUNNEL,
+    [GemsTabs.LIFT]: Gems.LIFT,
+    [GemsTabs.FLOOR]: Gems.FLOOR,
+    [GemsTabs.SHAFT]: Gems.SHAFT,
+};
+
 let GEMS_PAGE_INDEX = 0;
 const GEMS_AMOUNT_PER_PAGE = 4;
+let GEMS_TAB_INDEX = 0;
+let DISPLAY_ALL_GEMS = true;
 //#endregion
 
 //#region CREATE
 const createGems = () => {
     createElement({
         absolute: false,
-        css: 'gems',
+        css: 'gems col full g-8',
         id: 'AdminGems',
         parent: 'AdminContent',
     });
 
     createElement({
         absolute: false,
-        css: 'page',
+        css: 'col full g-8',
         id: 'AdminGemsPage',
         parent: 'AdminGems',
     });
@@ -464,9 +517,25 @@ const createGems = () => {
 };
 
 const createGemsActions = () => {
+    createButton({
+        click: () => onClickGemsAll(),
+        css: 'all p-4',
+        id: 'AdminGemsAll',
+        image: getSpritePath({ spriteName: 'ui_gem_placeholder' }),
+        parent: 'AdminGems',
+    });
+
+    createButton({
+        click: () => onClickGemsType(),
+        css: 'type p-4',
+        id: 'AdminGemsType',
+        image: getSpritePath({ spriteName: Object.values(GemsTabs)[GEMS_TAB_INDEX] }),
+        parent: 'AdminGems',
+    });
+
     createElement({
         absolute: false,
-        css: 'actions',
+        css: 'row align g-12',
         id: 'AdminGemsActions',
         parent: 'AdminGems',
     });
@@ -474,7 +543,7 @@ const createGemsActions = () => {
     createButton({
         absolute: false,
         click: () => onClickGemsPage({ action: 'previous' }),
-        css: 'action',
+        css: 'p-box',
         id: 'AdminGemsPagePrevious',
         parent: 'AdminGemsActions',
         text: '<',
@@ -483,7 +552,7 @@ const createGemsActions = () => {
     createButton({
         absolute: false,
         click: () => onClickGemsPage({ action: 'next' }),
-        css: 'action',
+        css: 'p-box',
         id: 'AdminGemsPageNext',
         parent: 'AdminGemsActions',
         text: '>',
@@ -504,16 +573,23 @@ const createGem = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'gem',
+        css: 'btn row align h-25 p-box',
         id: `AdminGem${gemId}`,
         parent: 'AdminGemsPage',
     });
 
     createElement({
         absolute: false,
-        css: 'sprite',
+        css: 'sprite mr-32',
         id: `AdminGemSprite${gemId}`,
         image: gemSprite._image,
+        parent: `AdminGem${gemId}`,
+    });
+
+    createButton({
+        click: () => onClickGemDestroy({ gemId }),
+        css: 'destroy',
+        id: `AdminGemDestroy${gemId}`,
         parent: `AdminGem${gemId}`,
     });
 
@@ -554,36 +630,34 @@ const createGemData = ({ gemId, gemType, gemAction }: {
 
     createElement({
         absolute: false,
-        css: 'data',
+        css: 'col align full g-4',
         id: `AdminGemData${gemId}`,
         parent: `AdminGem${gemId}`,
     });
 
     createElement({
         absolute: false,
-        css: 'infos',
+        css: 'row between full',
         id: `AdminGemInfo${gemId}`,
         parent: `AdminGemData${gemId}`,
     });
 
     createElement({
         absolute: false,
-        css: 'stats',
+        css: 'row wrap full g-4',
         id: `AdminGemStats${gemId}`,
         parent: `AdminGemData${gemId}`,
     });
 
     createElement({
         absolute: false,
-        css: 'info',
         id: `AdminGemLabel${gemId}`,
         parent: `AdminGemInfo${gemId}`,
-        text: gemId,
+        text: gem._name,
     });
 
     createElement({
         absolute: false,
-        css: 'info',
         id: `AdminGemType${gemId}`,
         parent: `AdminGemInfo${gemId}`,
         text: `Type: ${gemType}`,
@@ -591,7 +665,6 @@ const createGemData = ({ gemId, gemType, gemAction }: {
 
     createElement({
         absolute: false,
-        css: 'info',
         id: `AdminGemState${gemId}`,
         parent: `AdminGemInfo${gemId}`,
         text: `State: ${gemAction}`,
@@ -599,7 +672,6 @@ const createGemData = ({ gemId, gemType, gemAction }: {
 
     createElement({
         absolute: false,
-        css: 'info',
         id: `AdminGemLvl${gemId}`,
         parent: `AdminGemInfo${gemId}`,
         text: `Lvl: ${gem._xpLvl}`,
@@ -608,7 +680,7 @@ const createGemData = ({ gemId, gemType, gemAction }: {
     if (gemHasItems(gem)) {
         createElement({
             absolute: false,
-            css: 'stat',
+            css: 'w-20 t-10 t-l',
             id: `ItemCapacity${gemId}`,
             parent: `AdminGemStats${gemId}`,
             text: `Item Capacity: ${getGemStat({ gemId, gemType, stat: '_itemCapacity' })}`,
@@ -617,7 +689,7 @@ const createGemData = ({ gemId, gemType, gemAction }: {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `MoveSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Move Speed: ${getGemStat({ gemId, gemType, stat: '_moveSpeed' })}`,
@@ -627,7 +699,7 @@ const createGemData = ({ gemId, gemType, gemAction }: {
 const createGemCarry = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ItemSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemSpeed' })}`,
@@ -635,7 +707,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ItemAmount${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemAmount' })}`,
@@ -643,7 +715,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ItemRange${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Item Range: ${getGemStat({ gemId, gemType: Gems.CARRY, stat: '_itemRange' })}`,
@@ -653,7 +725,7 @@ const createGemCarry = ({ gemId }: { gemId: string }) => {
 const createGemFloor = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `FloorSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Floor Speed: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digSpeed' })}`,
@@ -661,25 +733,17 @@ const createGemFloor = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `FloorStrength${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Floor Strength: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digStrength' })}`,
-    });
-
-    createElement({
-        absolute: false,
-        css: 'stat',
-        id: `FloorRange${gemId}`,
-        parent: `AdminGemStats${gemId}`,
-        text: `Floor Range: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digRange' })}`,
     });
 };
 
 const createGemLift = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ItemSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`,
@@ -687,7 +751,7 @@ const createGemLift = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ItemAmount${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`,
@@ -697,7 +761,7 @@ const createGemLift = ({ gemId }: { gemId: string }) => {
 const createGemMine = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `MineSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Mine Speed: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digSpeed' })}`,
@@ -705,7 +769,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `MineStrength${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Mine Strength: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digStrength' })}`,
@@ -713,7 +777,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `MineAmount${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Mine Amount: ${getGemStat({ gemId, gemType: Gems.MINE, stat: '_digAmount' })}`,
@@ -723,7 +787,7 @@ const createGemMine = ({ gemId }: { gemId: string }) => {
 const createGemShaft = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ShaftSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Shaft Speed: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digSpeed' })}`,
@@ -731,7 +795,7 @@ const createGemShaft = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ShaftStrength${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Shaft Strength: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digStrength' })}`,
@@ -739,7 +803,7 @@ const createGemShaft = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `ShaftRange${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Shaft Range: ${getGemStat({ gemId, gemType: Gems.SHAFT, stat: '_digRange' })}`,
@@ -749,7 +813,7 @@ const createGemShaft = ({ gemId }: { gemId: string }) => {
 const createGemTunnel = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `TunnelSpeed${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Tunnel Speed: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digSpeed' })}`,
@@ -757,7 +821,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `TunnelStrength${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Tunnel Strength: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digStrength' })}`,
@@ -765,7 +829,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
 
     createElement({
         absolute: false,
-        css: 'stat',
+        css: 'w-20 t-10 t-l',
         id: `TunnelRange${gemId}`,
         parent: `AdminGemStats${gemId}`,
         text: `Tunnel Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`,
@@ -775,7 +839,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
 const createGemActions = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'actions',
+        css: 'col align w-15 g-8 ml-32',
         id: `AdminGemActions${gemId}`,
         parent: `AdminGem${gemId}`,
     });
@@ -783,7 +847,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemEquip({ gemId }),
-        css: 'equip',
+        css: 'hidden full-w',
         id: `AdminGemEquip${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Equip',
@@ -792,7 +856,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemView({ gemId }),
-        css: 'view',
+        css: 'hidden full-w',
         id: `AdminGemView${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'View',
@@ -801,7 +865,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemDeploy({ gemId }),
-        css: 'deploy',
+        css: 'full-w',
         id: `AdminGemDeploy${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Deploy',
@@ -814,7 +878,7 @@ export const updateAdminGems = () => {
     const admin = getAdmin();
 
     for (const gem of admin.gems) {
-        const gemEl = checkElement({ id: `AdminGem${gem}` });
+        const gemEl = checkElement({ elId: `AdminGem${gem}` });
 
         if (gemEl) {
             updateGem({ gemId: gem });
@@ -823,32 +887,35 @@ export const updateAdminGems = () => {
             createGem({ gemId: gem });
         }
     }
+
+    updateAdminGemsPage();
 };
 
 const updateAdminGemsPage = () => {
-    const admin = getAdmin();
-    const gemsPagesCount = Math.ceil(admin.gems.length / GEMS_AMOUNT_PER_PAGE);
-
     const gemsPageEl = getElement({ elId: 'AdminGemsPage' });
+    const gemEls = Array.from(gemsPageEl.children) as HTMLElement[];
+
+    const displayableGems = (DISPLAY_ALL_GEMS)
+        ? gemEls
+        : gemEls.filter(el => {
+            const gemId = el.id.replace('AdminGem', '');
+            const tabGemType = Object.values(GemsTabs)[GEMS_TAB_INDEX];
+
+            return getGemType({ gemId }) === tabsToGems[tabGemType];
+        });
+
+    gemEls.forEach(el => el.style.display = 'none');
+
+    const startIndex = GEMS_PAGE_INDEX * GEMS_AMOUNT_PER_PAGE;
+    const endIndex = startIndex + GEMS_AMOUNT_PER_PAGE;
+
+    displayableGems
+        .slice(startIndex, endIndex)
+        .forEach(el => el.style.display = 'flex');
+
+    const totalPages = Math.ceil(displayableGems.length / GEMS_AMOUNT_PER_PAGE);
     const gemsPageIndexEl = getElement({ elId: 'AdminGemsPageIndex' });
-    gemsPageIndexEl.innerText = `${GEMS_PAGE_INDEX + 1}/${gemsPagesCount || 1}`;
-
-    if (!(admin.gems.length)) return;
-
-    for (let i = 0; i < gemsPageEl.children.length; i++) {
-        const gemEl = gemsPageEl.children[i] as HTMLElement;
-        gemEl.style.display = 'none';
-    }
-
-    const gemStartIndex = GEMS_PAGE_INDEX * GEMS_AMOUNT_PER_PAGE;
-    const gemEndIndex = gemStartIndex + GEMS_AMOUNT_PER_PAGE;
-    for (let j = gemStartIndex; j < gemEndIndex; j++) {
-        if (j >= admin.gems.length) break;
-
-        const gemEl = gemsPageEl.children[j] as HTMLElement;
-
-        gemEl.style.display = 'flex';
-    }
+    gemsPageIndexEl.innerText = `${GEMS_PAGE_INDEX + 1}/${totalPages || 1}`;
 };
 
 const updateGem = ({ gemId }: { gemId: string }) => {
@@ -858,6 +925,11 @@ const updateGem = ({ gemId }: { gemId: string }) => {
 
     const gemSpriteEl = getElement({ elId: `AdminGemSprite${gemId}` });
     gemSpriteEl.style.backgroundImage = `url("${gemSprite._image}")`;
+
+    const gemDestroyEl = getElement({ elId: `AdminGemDestroy${gemId}` });
+    gemDestroyEl.style.display = (gemState._store)
+        ? 'flex'
+        : 'none';
 
     updateGemData({ gemAction: gemState._action, gemId, gemType });
 
@@ -928,15 +1000,11 @@ const updateGemCarry = ({ gemId }: { gemId: string }) => {
 const updateGemFloor = ({ gemId }: { gemId: string }) => {
     const gemFloorSpeedEl = getElement({ elId: `FloorSpeed${gemId}` });
     gemFloorSpeedEl.innerText
-        = `Floor Speed: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digSpeed' })}`;
+        = `Floor Speed: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digSpeed' })}`;
 
     const gemFloorStrengthEl = getElement({ elId: `FloorStrength${gemId}` });
     gemFloorStrengthEl.innerText
-        = `Floor Strength: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digStrength' })}`;
-
-    const gemFloorRangeEl = getElement({ elId: `FloorRange${gemId}` });
-    gemFloorRangeEl.innerText
-        = `Floor Range: ${getGemStat({ gemId, gemType: Gems.TUNNEL, stat: '_digRange' })}`;
+        = `Floor Strength: ${getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digStrength' })}`;
 };
 
 const updateGemLift = ({ gemId }: { gemId: string }) => {
@@ -1051,6 +1119,14 @@ const onClickGemEquip = ({ gemId }: { gemId: string }) => {
     emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
+const onClickGemDestroy = ({ gemId }: { gemId: string }) => {
+    emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_DESTROY });
+
+    updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+
+    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
 const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
     const admin = getAdmin();
     const gemsPagesCount = Math.ceil(admin.gems.length / GEMS_AMOUNT_PER_PAGE);
@@ -1065,6 +1141,37 @@ const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
     }
 
     updateAdminGemsPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickGemsAll = () => {
+    DISPLAY_ALL_GEMS = true;
+    GEMS_PAGE_INDEX = 0;
+
+    updateAdminGems();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickGemsType = () => {
+    const gemsTabsCount = Object.values(GemsTabs).length;
+
+    DISPLAY_ALL_GEMS = false;
+    GEMS_PAGE_INDEX = 0;
+
+    GEMS_TAB_INDEX = (GEMS_TAB_INDEX + 1) % gemsTabsCount;
+
+    const gemType = tabsToGems[Object.values(GemsTabs)[GEMS_TAB_INDEX]];
+    if (!(isGemUnlocked({ gemType }))) {
+        GEMS_TAB_INDEX = 0;
+    }
+
+    const gemsTypeEl = getElement({ elId: 'AdminGemsType' });
+    gemsTypeEl.style.backgroundImage =
+        `url("${getSpritePath({ spriteName: Object.values(GemsTabs)[GEMS_TAB_INDEX] })}")`;
+
+    updateAdminGems();
 
     emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
@@ -1098,14 +1205,14 @@ const WORKSHOP_AMOUNT_PER_PAGE = 4;
 const createWorkshop = () => {
     createElement({
         absolute: false,
-        css: 'workshop',
+        css: 'workshop col full g-8',
         id: 'AdminWorkshop',
         parent: 'AdminContent',
     });
 
     createElement({
         absolute: false,
-        css: 'page',
+        css: 'col full g-8',
         id: 'WorkshopPage',
         parent: 'AdminWorkshop',
     });
@@ -1116,7 +1223,7 @@ const createWorkshop = () => {
 const createWorkshopActions = () => {
     createElement({
         absolute: false,
-        css: 'actions',
+        css: 'row align g-12',
         id: 'WorkshopActions',
         parent: 'AdminWorkshop',
     });
@@ -1124,7 +1231,7 @@ const createWorkshopActions = () => {
     createButton({
         absolute: false,
         click: () => onClickWorkshopPage({ action: 'previous' }),
-        css: 'action',
+        css: 'p-box',
         id: 'WorkshopPagePrevious',
         parent: 'WorkshopActions',
         text: '<',
@@ -1133,7 +1240,7 @@ const createWorkshopActions = () => {
     createButton({
         absolute: false,
         click: () => onClickWorkshopPage({ action: 'next' }),
-        css: 'action',
+        css: 'p-box',
         id: 'WorkshopPageNext',
         parent: 'WorkshopActions',
         text: '>',
@@ -1153,36 +1260,36 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'craft',
+        css: 'btn row align h-25 p-box',
         id: `Craft${craft}`,
         parent: 'WorkshopPage',
     });
 
     createElement({
         absolute: false,
-        css: 'image',
-        id: `CraftImage${craft}`,
+        css: 'sprite mr-32',
+        id: `CraftSprite${craft}`,
         image: getSpritePath({ spriteName: craftData.image }),
         parent: `Craft${craft}`,
     });
 
     createElement({
         absolute: false,
-        css: 'data',
+        css: 'col full g-12',
         id: `CraftData${craft}`,
         parent: `Craft${craft}`,
     });
 
     createElement({
         absolute: false,
-        css: 'info',
+        css: 'row g-16',
         id: `CraftInfo${craft}`,
         parent: `CraftData${craft}`,
     });
 
     createElement({
         absolute: false,
-        css: 'name',
+        css: 't-20',
         id: `CraftName${craft}`,
         parent: `CraftInfo${craft}`,
         text: craftData.name.split('_').join(' '),
@@ -1190,7 +1297,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'text',
+        css: 't-16',
         id: `CraftText${craft}`,
         parent: `CraftInfo${craft}`,
         text: craftData.text,
@@ -1198,7 +1305,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'components',
+        css: 'row g-16',
         id: `CraftComponents${craft}`,
         parent: `CraftData${craft}`,
     });
@@ -1208,7 +1315,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
         createElement({
             absolute: false,
-            css: 'comp',
+            css: 'row align',
             id: `CraftComp${craft}${comp.name}`,
             parent: `CraftComponents${craft}`,
         });
@@ -1223,7 +1330,6 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
         createElement({
             absolute: false,
-            css: 'amount',
             id: `CraftCompAmount${craft}${comp.name}`,
             parent: `CraftComp${craft}${comp.name}`,
             text: `x${comp.amount}` + ((adminItem) ? ` (${adminItem._amount})` : ''),
@@ -1233,7 +1339,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
     createButton({
         absolute: false,
         click: () => onClickWorkshopCraft({ craft }),
-        css: 'run',
+        css: 'w-15 p-box ml-32',
         id: `CraftRun${craft}`,
         parent: `Craft${craft}`,
         text: 'Craft',
@@ -1246,7 +1352,7 @@ export const updateWorkshop = () => {
     const admin = getAdmin();
 
     for (const craft of admin.crafts) {
-        const craftEl = checkElement({ id: `Craft${craft}` });
+        const craftEl = checkElement({ elId: `Craft${craft}` });
 
         if (!(craftEl)) {
             createWorkshopCraft({ craft });
@@ -1296,6 +1402,7 @@ const updateWorkshopPage = () => {
 };
 //#endregion
 
+//#region ACTIONS
 const onClickWorkshopPage = ({ action }: { action: 'previous' | 'next' }) => {
     const admin = getAdmin();
     const workshopPagesCount = Math.ceil(admin.crafts.length / WORKSHOP_AMOUNT_PER_PAGE);
@@ -1320,6 +1427,7 @@ const onClickWorkshopCraft = ({ craft }: { craft: string }) => {
     emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
     emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
+//#endregion
 
 export const displayWorkshop = ({ display, page }: {
     display: boolean,
@@ -1350,7 +1458,7 @@ const LAB_AMOUNT_PER_PAGE = 5;
 const createLabs = () => {
     createElement({
         absolute: false,
-        css: 'labs',
+        css: 'labs col full g-8',
         id: 'AdminLabs',
         parent: 'AdminContent',
     });
@@ -1359,7 +1467,7 @@ const createLabs = () => {
 
     createElement({
         absolute: false,
-        css: 'page',
+        css: 'col full g-8',
         id: 'LabPage',
         parent: 'AdminLabs',
     });
@@ -1372,14 +1480,13 @@ const createLabStats = () => {
 
     createElement({
         absolute: false,
-        css: 'stats',
+        css: 'row g-32 t-20',
         id: 'LabStats',
         parent: 'AdminLabs',
     });
 
     createElement({
         absolute: false,
-        css: 'stat',
         id: 'LabPoints',
         parent: 'LabStats',
         text: `Lab Points: ${admin.stats._labPoints}`,
@@ -1387,7 +1494,6 @@ const createLabStats = () => {
 
     createElement({
         absolute: false,
-        css: 'stat',
         id: 'GemMax',
         parent: 'LabStats',
         text: `Max Gem: ${admin.stats._gemMax} (${admin.gems.length})`,
@@ -1397,14 +1503,14 @@ const createLabStats = () => {
 const createLabActions = () => {
     createElement({
         absolute: false,
-        css: 'actions',
+        css: 'row align g-12',
         id: 'LabActions',
         parent: 'AdminLabs',
     });
 
     createButton({
         click: () => onClickLabDisplayDone(),
-        css: 'done',
+        css: 'done p-box',
         id: 'LabDisplayDone',
         parent: 'LabActions',
         text: (LAB_DISPLAY_DONE)
@@ -1415,7 +1521,7 @@ const createLabActions = () => {
     createButton({
         absolute: false,
         click: () => onClickLabPage({ action: 'previous' }),
-        css: 'action',
+        css: 'p-box',
         id: 'LabPagePrevious',
         parent: 'LabActions',
         text: '<',
@@ -1424,7 +1530,7 @@ const createLabActions = () => {
     createButton({
         absolute: false,
         click: () => onClickLabPage({ action: 'next' }),
-        css: 'action',
+        css: 'p-box',
         id: 'LabPageNext',
         parent: 'LabActions',
         text: '>',
@@ -1448,22 +1554,22 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 }) => {
     createElement({
         absolute: false,
-        css: 'lab',
+        css: 'btn row between h-20 p-box',
         id: `Lab${labName}`,
         parent: 'LabPage',
     });
 
     createElement({
         absolute: false,
-        css: 'image',
-        id: `LabImage${labName}`,
+        css: 'sprite',
+        id: `LabSprite${labName}`,
         image: getSpritePath({ spriteName: labImage }),
         parent: `Lab${labName}`,
     });
 
     createElement({
         absolute: false,
-        css: 'text',
+        css: 't-18',
         id: `LabText${labName}`,
         parent: `Lab${labName}`,
         text: labText,
@@ -1471,7 +1577,7 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 
     createElement({
         absolute: false,
-        css: 'cost',
+        css: 't-12',
         id: `LabCost${labName}`,
         parent: `Lab${labName}`,
         text: `Cost: ${labCost}`,
@@ -1479,7 +1585,7 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 
     createElement({
         absolute: false,
-        css: 'run',
+        css: 't-16',
         id: `LabRun${labName}`,
         parent: `Lab${labName}`,
         text: `Running: ${labProgress}/${labTime}`,
@@ -1487,7 +1593,7 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 
     createElement({
         absolute: false,
-        css: 'done',
+        css: 't-16 hidden',
         id: `LabDone${labName}`,
         parent: `Lab${labName}`,
         text: 'Done !',
@@ -1496,7 +1602,6 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
     createButton({
         absolute: false,
         click: () => onClickLabStart({ labName }),
-        css: 'start',
         id: `LabStart${labName}`,
         parent: `Lab${labName}`,
         text: 'Start',
@@ -1511,7 +1616,7 @@ export const updateLabs = () => {
     updateLabStats();
 
     for (const lab of admin.labs) {
-        const labEl = checkElement({ id: `Lab${lab.data.name}` });
+        const labEl = checkElement({ elId: `Lab${lab.data.name}` });
 
         if (labEl) {
             if (lab._done) {
@@ -1566,6 +1671,7 @@ const updateLabStats = () => {
 
 const updateLabPage = () => {
     const admin = getAdmin();
+
     const labPageEl = getElement({ elId: 'LabPage' });
     const labEls = Array.from(labPageEl.children) as HTMLElement[];
 

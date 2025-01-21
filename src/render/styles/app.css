@@ -1,15 +1,88 @@
+@import './_/flex.css';
+@import './_/font.css';
+@import './_/misc.css';
+@import './_/size.css';
+@import './_/space.css';
+@import './_/var.css';
+
+/* FONT */
+@font-face {
+    font-family: 'Font1';
+    src: url('/src/assets/fonts/font1_ub.otf') format('opentype');
+    font-weight: 800;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Font1';
+    src: url('/src/assets/fonts/font1_eb.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Font1';
+    src: url('/src/assets/fonts/font1_b.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Font1';
+    src: url('/src/assets/fonts/font1_m.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Font1';
+    src: url('/src/assets/fonts/font1_l.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+}
+
 /* APP */
 body {
+    background-color: #0B1438;
+    color: #6B648D;
+    font-family: 'Font1';
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
     overflow: hidden;
+}
+
+div {
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    box-sizing: border-box;
+    text-align: center;
+    user-select: none;
 }
 
 .app {
-    height: 100%;
     overflow: hidden;
-    width: 100%;
 }
 
+/* COMPONENTS */
 .btn {
     cursor: pointer;
-    text-align: center;
+    background-color: #B4B8D2;
+    border: solid 0.5vh #FFFFFF;
+    border-radius: 20px;
+    min-width: 10vh;
+}
+
+.btn.select {
+    background-color: #30CB48;
+    color: #FFFFFF;
+    border: solid 0.5vh #30CB48;
+}
+
+.frame {
+    background-color: #D1D5ED;
+    border: solid 1vh #FFFFFF;
+    border-radius: 20px;
+    min-width: 30vh;
 }

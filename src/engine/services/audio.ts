@@ -1,12 +1,6 @@
+import { asset } from '@/engine/main';
 import { error } from '@/engine/services/error';
 import { getAdmin } from '@/engine/systems/entity';
-
-//#region CONSTANTS
-const audioFiles: Record<string, { default: string }>
-    = import.meta.glob('../../../src/assets/audio/**/*.mp3', { eager: true });
-
-const audios: HTMLAudioElement[] = [];
-//#endregion
 
 //#region TYPES
 export type AudioData = {
@@ -16,12 +10,13 @@ export type AudioData = {
 };
 //#endregion
 
+//#region CONSTANTS
+const audios: Map<string, HTMLAudioElement> = new Map();
+//#endregion
+
 //#region HELPERS
 export const getAudioPath = ({ audioName }: { audioName: string }) => {
-    const audioKey = audioName.replace(/^(.*?)(\/[^/]+)?(\.[^./]+)?$/, '$1').split('_')[0];
-    const audioPath = `../../assets/audio/${audioKey}/${audioName}.mp3`;
-
-    return audioFiles[audioPath].default
+    return asset.getAudioUrl(audioName)
         ?? error({ message: `Audio ${audioName} not found`, where: getAudioPath.name });
 };
 
@@ -47,31 +42,24 @@ export const initAudios = () => {
 };
 
 export const createAudio = ({ audioName }: { audioName: string }) => {
-    const existingAudio = audios.find(audio => audio.src === getAudioPath({ audioName }));
-    if (existingAudio) return;
+    if (audios.has(audioName)) return;
 
     const audio = new Audio(getAudioPath({ audioName }));
 
-    audios.push(audio);
+    audios.set(audioName, audio);
 };
 
 export const destroyAudio = ({ audioName }: { audioName: string }) => {
-    const audio = audios.find(audio => audio.src === audioName)
+    const audio = audios.get(audioName)
         ?? error({ message: `Audio ${audioName} not found`, where: destroyAudio.name });
 
     audio.pause();
-
-    audios.splice(audios.indexOf(audio), 1);
+    audios.delete(audioName);
 };
 
-export const playAudio = ({ audioName, loop = false, volume = 1 }: {
-    audioName: string,
-    loop?: boolean,
-    volume?: number
-}) => {
+export const playAudio = ({ audioName, loop = false, volume = 1 }: AudioData) => {
     const admin = getAdmin();
-
-    const audio = audios.find(audio => audio.src.includes(audioName))
+    const audio = audios.get(audioName)
         ?? error({ message: `Audio ${audioName} not found`, where: playAudio.name });
 
     if (audio.loop && audio.currentTime > 0) return;
@@ -84,15 +72,15 @@ export const playAudio = ({ audioName, loop = false, volume = 1 }: {
 };
 
 export const pauseAudio = ({ audioName }: { audioName: string }) => {
-    const audio = audios.find(audio => audio.src.includes(audioName))
-        ?? error({ message: `Audio ${audioName} not found`, where: playAudio.name });
+    const audio = audios.get(audioName)
+        ?? error({ message: `Audio ${audioName} not found`, where: pauseAudio.name });
 
     audio.pause();
 };
 
 export const stopAudio = ({ audioName }: { audioName: string }) => {
-    const audio = audios.find(audio => audio.src.includes(audioName))
-        ?? error({ message: `Audio ${audioName} not found`, where: playAudio.name });
+    const audio = audios.get(audioName)
+        ?? error({ message: `Audio ${audioName} not found`, where: stopAudio.name });
 
     audio.pause();
     audio.currentTime = 0;
@@ -100,15 +88,14 @@ export const stopAudio = ({ audioName }: { audioName: string }) => {
 
 export const setVolumeAudio = ({ audioName, volume }: { audioName?: string, volume: number }) => {
     if (audioName) {
-        const audio = audios.find(audio => audio.src.includes(audioName))
-            ?? error({ message: `Audio ${audioName} not found`, where: playAudio.name });
+        const audio = audios.get(audioName)
+            ?? error({ message: `Audio ${audioName} not found`, where: setVolumeAudio.name });
 
         audio.volume = volume;
-    }
-    else {
-        const audioLoops = audios.filter(audio => audio.loop);
-
-        audioLoops.forEach(audio => audio.volume = volume);
+    } else {
+        audios.forEach(audio => {
+            if (audio.loop) audio.volume = volume;
+        });
     }
 };
 //#endregion

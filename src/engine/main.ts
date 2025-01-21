@@ -15,19 +15,9 @@ export let asset: AssetManager;
 export const main = () => {
     asset = createAssetManager();
     asset.startLoading();
-
-    initAudios();
 };
 
 export const launch = () => {
-    setState({ key: 'gameLaunch', value: true });
-
-    createEntityAdmin({});
-
-    startCycle();
-};
-
-export const run = ({ saveData }: { saveData?: SaveData }) => {
     if (!(asset.isLoadingComplete())) {
         error({
             message: 'Loading manager is not complete',
@@ -35,6 +25,14 @@ export const run = ({ saveData }: { saveData?: SaveData }) => {
         });
     }
 
+    setState({ key: 'gameLaunch', value: true });
+
+    createEntityAdmin({});
+    startCycle();
+    initAudios();
+};
+
+export const run = ({ saveData }: { saveData?: SaveData }) => {
     emit({ target: 'all', type: GameEvents.GAME_LOADING_ON });
 
     if (saveData) {

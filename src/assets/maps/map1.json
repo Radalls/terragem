@@ -1,6 +1,6 @@
 {
     "name": "map1",
-    "height": 100,
+    "height": 50,
     "width": 64,
     "layers": [
         {
@@ -10,64 +10,110 @@
                 "dropAmount": { "min": 15, "max": 30 },
                 "drops": [
                     { "name": "STONE", "rate": 0.8 },
-                    { "name": "IRON", "rate": 0.1 },
-                    { "name": "COPPER", "rate": 0.1 }
+                    { "name": "GEOLYN", "rate": 0.1 },
+                    { "name": "CERULYN", "rate": 0.1 }
                 ]
             },
             "resources": [
                 {
-                    "name": "tile_iron",
-                    "dropAmount": { "min": 3000, "max": 4000 },
+                    "name": "tile_geolyn",
                     "drops": [
-                        { "name": "IRON", "rate": 0.8 },
+                        { "name": "GEOLYN", "rate": 0.8 },
                         { "name": "STONE", "rate": 0.2 }
                     ],
                     "spawns": [
                         {
                             "startY": 2,
                             "points": [
-                                { "x": 15, "y": 0, "width": 4 },
-                                { "x": 15, "y": 1, "width": 4 },
-                                { "x": 15, "y": 2, "width": 4 }
-                            ]
+                                { "x": 20, "y": 0, "width": 2 },
+                                { "x": 20, "y": 1, "width": 2 },
+                                { "x": 50, "y": 0, "width": 2 },
+                                { "x": 50, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 75, "max": 100 }
+                        },
+                        {
+                            "startY": 6,
+                            "points": [
+                                { "x": 30, "y": 0, "width": 3 },
+                                { "x": 30, "y": 1, "width": 3 },
+                                { "x": 30, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 100, "max": 200 }
                         },
                         {
                             "startY": 8,
                             "points": [
-                                { "x": 35, "y": 0, "width": 3 },
-                                { "x": 35, "y": 1, "width": 4 },
-                                { "x": 36, "y": 2, "width": 5 },
-                                { "x": 36, "y": 3, "width": 5 },
-                                { "x": 36, "y": 4, "width": 5 }
-                            ]
+                                { "x": 2, "y": 0, "width": 3 },
+                                { "x": 2, "y": 1, "width": 3 },
+                                { "x": 2, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 100, "max": 200 }
+                        },
+                        {
+                            "startY": 14,
+                            "points": [
+                                { "x": 38, "y": 0, "width": 4 },
+                                { "x": 38, "y": 1, "width": 4 },
+                                { "x": 38, "y": 2, "width": 4 },
+                                { "x": 38, "y": 3, "width": 4 },
+                                { "x": 50, "y": 0, "width": 4 },
+                                { "x": 50, "y": 1, "width": 4 },
+                                { "x": 50, "y": 2, "width": 4 },
+                                { "x": 50, "y": 3, "width": 4 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
                         }
                     ]
                 },
                 {
-                    "name": "tile_copper",
-                    "dropAmount": { "min": 3000, "max": 4000 },
+                    "name": "tile_cerulyn",
                     "drops": [
-                        { "name": "COPPER", "rate": 0.8 },
+                        { "name": "CERULYN", "rate": 0.8 },
                         { "name": "STONE", "rate": 0.2 }
                     ],
                     "spawns": [
                         {
                             "startY": 2,
                             "points": [
-                                { "x": 40, "y": 0, "width": 4 },
-                                { "x": 40, "y": 1, "width": 4 },
-                                { "x": 40, "y": 2, "width": 4 }
-                            ]
+                                { "x": 24, "y": 0, "width": 2 },
+                                { "x": 24, "y": 1, "width": 2 },
+                                { "x": 47, "y": 0, "width": 2 },
+                                { "x": 47, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 75, "max": 100 }
+                        },
+                        {
+                            "startY": 6,
+                            "points": [
+                                { "x": 55, "y": 0, "width": 3 },
+                                { "x": 55, "y": 1, "width": 3 },
+                                { "x": 55, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 100, "max": 200 }
                         },
                         {
                             "startY": 8,
                             "points": [
-                                { "x": 11, "y": 0, "width": 3 },
-                                { "x": 11, "y": 1, "width": 4 },
-                                { "x": 10, "y": 2, "width": 5 },
-                                { "x": 10, "y": 3, "width": 5 },
-                                { "x": 10, "y": 4, "width": 5 }
-                            ]
+                                { "x": 12, "y": 0, "width": 3 },
+                                { "x": 12, "y": 1, "width": 3 },
+                                { "x": 12, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 100, "max": 200 }
+                        },
+                        {
+                            "startY": 14,
+                            "points": [
+                                { "x": 15, "y": 0, "width": 4 },
+                                { "x": 15, "y": 1, "width": 4 },
+                                { "x": 15, "y": 2, "width": 4 },
+                                { "x": 15, "y": 3, "width": 4 },
+                                { "x": 35, "y": 0, "width": 4 },
+                                { "x": 35, "y": 1, "width": 4 },
+                                { "x": 35, "y": 2, "width": 4 },
+                                { "x": 35, "y": 3, "width": 4 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
                         }
                     ]
                 }
@@ -77,15 +123,215 @@
             "height": 30,
             "ground": {
                 "name": "tile_ground",
-                "dropAmount": { "min": 30, "max": 50 },
+                "dropAmount": { "min": 25, "max": 50 },
                 "drops": [
-                    { "name": "STONE", "rate": 0.7 },
-                    { "name": "IRON", "rate": 0.05 },
-                    { "name": "COPPER", "rate": 0.05 },
-                    { "name": "LEAD", "rate": 0.05 },
-                    { "name": "LUMYN", "rate": 0.01 }
+                    { "name": "STONE", "rate": 0.8 },
+                    { "name": "DAMSYN", "rate": 0.1 },
+                    { "name": "CLARYN", "rate": 0.1 }
                 ]
-            }
+            },
+            "resources": [
+                {
+                    "name": "tile_damsyn",
+                    "drops": [
+                        { "name": "DAMSYN", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 2,
+                            "points": [
+                                { "x": 2, "y": 0, "width": 2 },
+                                { "x": 2, "y": 1, "width": 2 },
+                                { "x": 15, "y": 0, "width": 2 },
+                                { "x": 15, "y": 1, "width": 2 },
+                                { "x": 30, "y": 0, "width": 2 },
+                                { "x": 30, "y": 1, "width": 2 },
+                                { "x": 45, "y": 0, "width": 2 },
+                                { "x": 45, "y": 1, "width": 2 },
+                                { "x": 60, "y": 0, "width": 2 },
+                                { "x": 60, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 250, "max": 500 }
+                        },
+                        {
+                            "startY": 8,
+                            "points": [
+                                { "x": 20, "y": 0, "width": 3 },
+                                { "x": 20, "y": 1, "width": 3 },
+                                { "x": 20, "y": 2, "width": 3 },
+                                { "x": 50, "y": 0, "width": 3 },
+                                { "x": 50, "y": 1, "width": 3 },
+                                { "x": 50, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 5000, "max": 10000 }
+                        },
+                        {
+                            "startY": 16,
+                            "points": [
+                                { "x": 8, "y": 0, "width": 4 },
+                                { "x": 8, "y": 1, "width": 4 },
+                                { "x": 8, "y": 2, "width": 4 },
+                                { "x": 8, "y": 3, "width": 4 },
+                                { "x": 32, "y": 0, "width": 4 },
+                                { "x": 32, "y": 1, "width": 4 },
+                                { "x": 32, "y": 2, "width": 4 },
+                                { "x": 32, "y": 3, "width": 4 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
+                        },
+                        {
+                            "startY": 24,
+                            "points": [
+                                { "x": 15, "y": 0, "width": 5 },
+                                { "x": 15, "y": 1, "width": 6 },
+                                { "x": 15, "y": 2, "width": 7 }
+                            ],
+                            "dropAmount": { "min": 50000, "max": 100000 }
+                        }
+                    ]
+                },
+                {
+                    "name": "tile_claryn",
+                    "drops": [
+                        { "name": "CLARYN", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 2,
+                            "points": [
+                                { "x": 20, "y": 0, "width": 2 },
+                                { "x": 20, "y": 1, "width": 2 },
+                                { "x": 50, "y": 0, "width": 2 },
+                                { "x": 50, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 250, "max": 500 }
+                        },
+                        {
+                            "startY": 8,
+                            "points": [
+                                { "x": 16, "y": 0, "width": 3 },
+                                { "x": 16, "y": 1, "width": 3 },
+                                { "x": 16, "y": 2, "width": 3 },
+                                { "x": 24, "y": 0, "width": 3 },
+                                { "x": 24, "y": 1, "width": 3 },
+                                { "x": 24, "y": 2, "width": 3 }
+                            ],
+                            "dropAmount": { "min": 5000, "max": 10000 }
+                        },
+                        {
+                            "startY": 16,
+                            "points": [
+                                { "x": 28, "y": 0, "width": 4 },
+                                { "x": 28, "y": 1, "width": 4 },
+                                { "x": 28, "y": 2, "width": 4 },
+                                { "x": 28, "y": 3, "width": 4 },
+                                { "x": 52, "y": 0, "width": 4 },
+                                { "x": 52, "y": 1, "width": 4 },
+                                { "x": 52, "y": 2, "width": 4 },
+                                { "x": 52, "y": 3, "width": 4 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
+                        },
+                        {
+                            "startY": 24,
+                            "points": [
+                                { "x": 45, "y": 0, "width": 5 },
+                                { "x": 45, "y": 1, "width": 6 },
+                                { "x": 45, "y": 2, "width": 7 }
+                            ],
+                            "dropAmount": { "min": 50000, "max": 100000 }
+                        }
+                    ]
+                },
+                {
+                    "name": "tile_geolyn",
+                    "drops": [
+                        { "name": "GEOLYN", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 4,
+                            "points": [
+                                { "x": 55, "y": 0, "width": 2 },
+                                { "x": 55, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 500, "max": 1000 }
+                        },
+                        {
+                            "startY": 10,
+                            "points": [
+                                { "x": 40, "y": 0, "width": 2 },
+                                { "x": 40, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 1000, "max": 2500 }
+                        },
+                        {
+                            "startY": 18,
+                            "points": [
+                                { "x": 50, "y": 0, "width": 2 },
+                                { "x": 50, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 5000, "max": 10000 }
+                        },
+                        {
+                            "startY": 26,
+                            "points": [
+                                { "x": 8, "y": 0, "width": 2 },
+                                { "x": 8, "y": 1, "width": 2 },
+                                { "x": 35, "y": 0, "width": 2 },
+                                { "x": 35, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
+                        }
+                    ]
+                },
+                {
+                    "name": "tile_cerulyn",
+                    "drops": [
+                        { "name": "CERULYN", "rate": 0.8 },
+                        { "name": "STONE", "rate": 0.2 }
+                    ],
+                    "spawns": [
+                        {
+                            "startY": 4,
+                            "points": [
+                                { "x": 10, "y": 0, "width": 2 },
+                                { "x": 10, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 500, "max": 1000 }
+                        },
+                        {
+                            "startY": 10,
+                            "points": [
+                                { "x": 45, "y": 0, "width": 2 },
+                                { "x": 45, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 1000, "max": 2500 }
+                        },
+                        {
+                            "startY": 18,
+                            "points": [
+                                { "x": 25, "y": 0, "width": 2 },
+                                { "x": 25, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 5000, "max": 10000 }
+                        },
+                        {
+                            "startY": 26,
+                            "points": [
+                                { "x": 5, "y": 0, "width": 2 },
+                                { "x": 5, "y": 1, "width": 2 },
+                                { "x": 60, "y": 0, "width": 2 },
+                                { "x": 60, "y": 1, "width": 2 }
+                            ],
+                            "dropAmount": { "min": 10000, "max": 15000 }
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }

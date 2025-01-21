@@ -1,475 +1,132 @@
 /* MENU */
 .menus {
-    bottom: 0;
-    display: none;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+    background-color: #0B1438;
     z-index: 10000;
 }
 
-.menu {
-    display: none;
-    width: 100%;
-}
-
-/* BOOT */
-.boot {
-    background-color: rgb(24, 6, 62);
-    height: 100%;
-    width: 100%;
-}
-
-.boot .title {
-    color: rgb(255, 255, 255);
-    font-size: 80px;
-    left: 50%;
-    top: 20%;
-    transform: translate(-50%, -50%);
-}
-
-.boot .opt {
-    background-color: rgb(94, 81, 243);
-    border: solid 5px rgb(255, 255, 255);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    font-size: 24px;
-    left: 50%;
-    padding: 24px;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-}
-
 .version {
-    bottom: 8px;
-    color: rgb(255, 255, 255);
-    font-size: 24px;
-    right: 8px;
+    bottom: 0.8vh;
+    right: 0.8vh;
+}
+
+/* LOADING */
+.loading {
+    background-color: rgba(0, 0, 0);
+}
+
+.loader {
+    border-top: 1.6vh solid rgb(94, 81, 243);
+    border-right: 1.6vh solid rgb(89, 28, 219);
+    border-bottom: 1.6vh solid rgb(137, 29, 170);
+    border-left: 1.6vh solid rgb(123, 34, 56);
+    border-radius: 50%;
+    width: 20vh;
+    height: 20vh;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* LAUNCH */
 .launch {
-    align-items: center;
-    background-color: rgb(24, 6, 62);
-    flex-direction: column;
-    gap: 32px;
-    height: 100%;
-    justify-content: center;
-    padding-top: 64px;
-}
-
-.launch .title {
-    color: rgb(255, 255, 255);
-    font-size: 80px;
-    left: 50%;
-    top: 20%;
-    transform: translate(-50%, -50%);
-}
-
-.launch .opt {
-    background-color: rgb(94, 81, 243);
-    border: solid 5px rgb(255, 255, 255);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    font-size: 24px;
-    padding: 24px;
-    width: 200px;
+    padding-top: 12.8vh;
 }
 
 /* SETTINGS */
-.settings {
-    background-color: rgb(89, 28, 219);
-}
 
 /* ADMIN */
-.menus .admin {
-    background-color: rgb(24, 6, 62);
-    display: none;
-    flex-direction: row;
-    gap: 64px;
-    height: calc(100% - 128px);
-    padding: 64px;
-    width: calc(100% - 128px);
+.admin-tab {
+    min-width: 100%;
 }
 
-.admin .tabs {
-    align-items: center;
-    background-color: rgb(89, 28, 219);
-    border-radius: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-around;
-    padding: 32px;
-    width: 15%;
+.save {
+    right: 2vh;
+    top: 2vh;
+    min-width: auto;
 }
 
-.admin .tab {
-    background-color: rgb(94, 81, 243);
-    border: solid 5px rgb(255, 255, 255);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    font-size: 24px;
-    padding: 24px;
-    width: calc(100% - 48px);
+.menus .sprite {
+    height: 10vh;
+    width: 10vh;
+    min-width: 3vh;
 }
 
-.admin .content {
-    background-color: rgb(89, 28, 219);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    flex-direction: column;
-    padding: 32px;
-    width: 100%;
+.menus .index {
+    bottom: 0;
+    right: 0;
 }
 
-.admin .save {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    padding: 8px;
-    right: 8px;
-    top: 8px;
+.done {
+    bottom: 0;
+    left: 0;
+}
+
+.icon {
+    height: 3vh;
+    width: 3vh;
 }
 
 /* STORAGE */
-.admin .content .storage {
-    display: none;
-    flex-direction: row;
-    gap: 12px;
-    height: 100%;
-    width: 100%;
+.menus .item .icon {
+    height: 10vh;
+    width: 10vh;
 }
 
-.storage .item {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    height: 15%;
-    justify-content: center;
-    width: 15%;
-}
-
-.storage .item .icon {
-    background-size: contain;
-    height: 64px;
-    width: 64px;
-}
-
-.storage .item .label {
-    bottom: 4px;
-    font-size: 12px;
+.menus .item .label {
+    bottom: -0.2vh;
     left: 50%;
     transform: translate(-50%, 0);
 }
 
-.storage .item .amount {
-    right: 10px;
-    top: 4px;
+.menus .item .amount {
+    right: 0.6vh;
+    top: -0.2vh;
 }
 
 /* GEMS */
-.admin .content .gems {
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
+.menus .all {
+    background-color: #30CB48;
+    top: -8.5vh;
+    left: 0;
+    height: 7vh;
+    width: 7vh;
+    min-width: auto;
 }
 
-.admin .content .gems .page {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
+.menus .type {
+    background-color: #30CB48;
+    background-size: 5vh 5vh;
+    top: -8.5vh;
+    left: 9vh;
+    height: 7vh;
+    width: 7vh;
+    min-width: auto;
 }
 
-.admin .content .gems .actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.admin .content .gems .actions .action {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-.admin .content .gems .actions .index {
-    bottom: 0;
-    right: 0;
-}
-
-.admin .content .gems .page .gem {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    height: 20%;
-    justify-content: space-between;
-    padding: 12px 24px;
-}
-
-.admin .content .gems .page .gem .sprite {
-    height: 64px;
-    width: 64px;
-}
-
-.admin .content .gems .page .gem .data {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    justify-content: center;
-    width: 66%;
-}
-
-.admin .content .gems .page .gem .infos {
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.admin .content .gems .page .gem .infos .info {
-    font-size: 18px;
-}
-
-.admin .content .gems .page .gem .stats {
-    display: flex;
-    flex-wrap: wrap;
-    width: 100%;
-}
-
-.admin .content .gems .page .gem .stats .stat {
-    font-size: 14px;
-    width: 33%;
-}
-
-.admin .content .gems .page .gem .actions {
-    align-items: center;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    justify-content: center;
-    width: 15%;
-}
-
-.admin .content .gems .page .gem .actions .view {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    display: none;
-    padding: 4px;
-    width: 100%;
-}
-
-.admin .content .gems .page .gem .actions .deploy {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 4px;
-    width: 100%;
-}
-
-.admin .content .gems .page .gem .actions .equip {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    display: none;
-    padding: 4px;
-    width: 100%;
+.menus .destroy {
+    background-color: #F02222;
+    border: none;
+    right: -0.8vh;
+    top: -0.8vh;
+    height: 2vh;
+    width: 2vh;
+    min-width: auto;
 }
 
 /* WORKSHOP */
-.admin .content .workshop {
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-}
-
-.workshop .page {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-}
-
-.workshop .actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.workshop .actions .action {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-.workshop .actions .index {
-    bottom: 0;
-    right: 0;
-}
-
-.workshop .page .craft {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: flex;
-    height: 20%;
-    justify-content: space-between;
-    padding: 12px 24px;
-}
-
-.craft .image {
-    background-size: contain;
-    height: 64px;
-    width: 64px;
-}
-
-.craft .data {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.craft .data .info {
-    align-items: center;
-    display: flex;
-    gap: 16px;
-    justify-content: center;
-}
-
-.craft .data .info .name {
-    font-size: 22px;
-}
-
-.craft .data .info .text {
-    font-size: 18px;
-}
-
-.craft .components {
-    display: flex;
-    gap: 16px;
-}
-
-.craft .components .comp {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-}
-
-.craft .components .comp .icon {
-    background-size: contain;
-    height: 32px;
-    width: 32px;
-}
-
-.craft .run {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
-}
+/* --- */
 
 /* LAB */
-.admin .content .labs {
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-}
-
-.labs .stats {
-    display: flex;
-    gap: 20px;
-    font-size: 20px;
-}
-
-.labs .page {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-}
-
-.labs .actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-}
-
-.labs .actions .action {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-
-.labs .actions .done {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    bottom: 0;
-    left: 0;
-    padding: 8px 16px;
-}
-
-.labs .actions .index {
-    bottom: 0;
-    right: 0;
-}
-
-.labs .page .lab {
-    align-items: center;
-    background-color: rgb(94, 81, 243);
-    border-radius: 20px;
-    color: rgb(255, 255, 255);
-    display: none;
-    height: 20%;
-    justify-content: space-between;
-    padding: 0 24px;
-}
-
-.lab .image {
-    background-size: contain;
-    height: 64px;
-    width: 64px;
-}
-
-.lab .text {
-    font-size: 18px;
-}
-
-.lab .cost {
-    font-size: 14px;
-}
-
-.lab .done {
-    display: none;
-}
-
-.lab .run {
-    font-size: 16px;
-}
-
-.lab .start {
-    background-color: rgb(94, 81, 243);
-    border: solid 2px rgb(255, 255, 255);
-    border-radius: 20px;
-    padding: 8px 16px;
+.labs .sprite {
+    height: 6vh;
+    width: 6vh;
+    min-width: 3vh;
 }

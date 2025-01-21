@@ -1,0 +1,20 @@
+.colors {
+    /* accent */
+    color: #30CB48;
+    /* warning */
+    color: #F3A72D;
+    /* error */
+    color: #D02929;
+    /* border */
+    color: #FFFFFF;
+    /* light */
+    color: #D1D5ED;
+    /* grey */
+    color: #B4B8D2;
+    /* dark */
+    color: #85879B;
+    /* text */
+    color: #6B648D;
+    /* background */
+    color: #0B1438;
+}

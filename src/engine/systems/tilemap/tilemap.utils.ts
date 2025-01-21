@@ -13,6 +13,12 @@ export const isGround = ({ tileId }: { tileId: string }) => {
     return tileSprite._image.includes('ground');
 };
 
+export const isLock = ({ tileId }: { tileId: string }) => {
+    const tile = getComponent({ componentId: 'Tile', entityId: tileId });
+
+    return tile._lock;
+};
+
 export const destroyTile = ({ tileId, value = true }: {
     tileId: string,
     value?: boolean
@@ -27,7 +33,9 @@ export const destroyTile = ({ tileId, value = true }: {
         emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_DESTROY });
     }
     else {
-        updateSprite({ entityId: tileId, image: `tile_ground${tile._density}` });
+        updateSprite({ entityId: tileId, image: 'tile_floor' });
+
+        emit({ entityId: tileId, target: 'render', type: RenderEvents.TILE_CREATE });
     }
 };
 

@@ -1,10 +1,13 @@
+import { Gems } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
 import { getStore } from '@/engine/services/store';
 import { getComponent } from '@/engine/systems/entity';
+import { getGemType } from '@/engine/systems/gem';
 import { getSpritePath } from '@/engine/systems/sprite';
 import {
+    checkElement,
     createButton,
     createElement,
     destroyElement,
@@ -16,60 +19,57 @@ import {
 
 //#region CONSTANTS
 export const TILE_SIZE = 32;
-export const TILEMAP_GROUND_LEVEL = 5;
-
-let tileMapElId: string;
-
-const SCROLL_SPEED = 5;
-const SCROLL_EDGE_TRIGGER = 10;
-let cursorX = 0;
-let cursorY = 0;
-let scrollMaxX = 0;
-let scrollMaxY = 0;
-let scrollViewportX = 0;
-let scrollViewportY = 0;
 //#endregion
 
 //#region TEMPLATES
 //#region TILEMAP
+//#region CONSTANTS
+export const TILEMAP_GROUND_LEVEL = 5;
+
+let tileMapElId: string;
+//#endregion
+
 export const createTileMap = ({ tileMapId }: { tileMapId: string }) => {
-    const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapId });
-
-    scrollMaxX = (tileMap._width * TILE_SIZE) / 2;
-    scrollMaxY = (tileMap._height * TILE_SIZE) / 2;
-
     tileMapElId = tileMapId;
 
     createElement({
-        css: 'tilemap',
+        css: 'tilemap enable',
         entityId: tileMapId,
         sprite: true,
     });
 
     createAdmin();
+    setScroll();
 };
 
 export const destroyTileMap = ({ tileMapId }: { tileMapId: string }) => {
-    scrollMaxX = 0;
-    scrollMaxY = 0;
-
     destroyElement({ elId: tileMapId });
+    clearScroll();
 };
 //#endregion
 
 //#region TILE
 export const createTile = ({ tileId }: { tileId: string }) => {
-    const tileEl = createButton({
-        click: () => selectTile({ tileId }),
-        entityId: tileId,
-        parent: tileMapElId,
-        sprite: true,
-    });
+    const tileElExist = checkElement({ elId: tileId });
 
-    const tilePosition = getComponent({ componentId: 'Position', entityId: tileId });
+    if (tileElExist) {
+        setTileMode({ mode: 'base', tileId });
+        return;
+    }
+    else {
+        const tileEl = createButton({
+            click: () => selectTile({ tileId }),
+            css: 'tile enable',
+            entityId: tileId,
+            parent: tileMapElId,
+            sprite: true,
+        });
 
-    tileEl.style.top = `${tilePosition._y * TILE_SIZE + TILEMAP_GROUND_LEVEL * TILE_SIZE}px`;
-    tileEl.style.left = `${tilePosition._x * TILE_SIZE}px`;
+        const tilePosition = getComponent({ componentId: 'Position', entityId: tileId });
+
+        tileEl.style.top = `${tilePosition._y * TILE_SIZE + TILEMAP_GROUND_LEVEL * TILE_SIZE}px`;
+        tileEl.style.left = `${tilePosition._x * TILE_SIZE}px`;
+    }
 };
 
 export const setTileMode = ({ tileId, mode, remove }: {
@@ -138,6 +138,17 @@ const selectTile = ({ tileId }: { tileId: string }) => {
 //#endregion
 
 //#region SCROLL
+//#region CONSTANTS
+const SCROLL_SPEED = 5;
+const SCROLL_EDGE_TRIGGER = 10;
+let cursorX = 0;
+let cursorY = 0;
+let scrollMaxX = 0;
+let scrollMaxY = 0;
+let scrollViewportX = 0;
+let scrollViewportY = 0;
+//#endregion
+
 export const initScroll = () => {
     window.addEventListener('mousemove', (e: MouseEvent) => {
         cursorX = e.clientX;
@@ -149,37 +160,59 @@ export const updateScroll = () => {
     const { innerWidth, innerHeight } = window;
     const tileMapEl = getElement({ elId: tileMapElId });
 
+    let newScrollX = scrollViewportX;
+    let newScrollY = scrollViewportY;
+
     if (cursorX > innerWidth - SCROLL_EDGE_TRIGGER) {
-        scrollViewportX = Math.min(scrollViewportX + SCROLL_SPEED, scrollMaxX);
+        newScrollX = Math.min(newScrollX + SCROLL_SPEED, scrollMaxX);
     }
     if (cursorX < SCROLL_EDGE_TRIGGER) {
-        scrollViewportX = Math.max(scrollViewportX - SCROLL_SPEED, 0);
-    }
-    if (cursorY > innerHeight - SCROLL_EDGE_TRIGGER) {
-        scrollViewportY = Math.min(scrollViewportY + SCROLL_SPEED, scrollMaxY);
-    }
-    if (cursorY < SCROLL_EDGE_TRIGGER) {
-        scrollViewportY = Math.max(scrollViewportY - SCROLL_SPEED, 0);
+        newScrollX = Math.max(newScrollX - SCROLL_SPEED, 0);
     }
 
+    if (cursorY > innerHeight - SCROLL_EDGE_TRIGGER) {
+        newScrollY = Math.min(newScrollY + SCROLL_SPEED, scrollMaxY);
+    }
+    if (cursorY < SCROLL_EDGE_TRIGGER) {
+        newScrollY = Math.max(newScrollY - SCROLL_SPEED, 0);
+    }
+
+    scrollViewportX = newScrollX;
+    scrollViewportY = newScrollY;
+
     tileMapEl.style.transform = `translate3d(${-scrollViewportX}px, ${-scrollViewportY}px, 0)`;
+};
+
+const setScroll = () => {
+    const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapElId });
+    const { innerWidth, innerHeight } = window;
+
+    scrollMaxX = Math.max(0, (tileMap._width * TILE_SIZE) - innerWidth);
+    scrollMaxY = Math.max(0, ((tileMap._height * TILE_SIZE) + ((TILEMAP_GROUND_LEVEL + 1) * TILE_SIZE)) - innerHeight);
+};
+
+const clearScroll = () => {
+    scrollMaxX = 0;
+    scrollMaxY = 0;
+    scrollViewportX = 0;
+    scrollViewportY = 0;
 };
 //#endregion
 
 //#region ENTITY
-const placeTileEntity = ({ elId, width, height, top, left }: {
+const placeTileEntity = ({ elId, width, height, x, y }: {
     elId: string,
     height: number,
-    left: number,
-    top?: number,
     width: number
+    x: number,
+    y: number,
 }) => {
     const el = getElement({ elId });
 
     el.style.width = `${width * TILE_SIZE}px`;
     el.style.height = `${height * TILE_SIZE}px`;
-    el.style.top = `${(TILEMAP_GROUND_LEVEL + 1) * TILE_SIZE - ((top ?? height) * TILE_SIZE)}px`;
-    el.style.left = `${left * TILE_SIZE}px`;
+    el.style.left = `${x * TILE_SIZE}px`;
+    el.style.top = `${((y + ((TILEMAP_GROUND_LEVEL + 1) - height)) * TILE_SIZE)}px`;
     el.style.zIndex = '1';
 };
 
@@ -199,11 +232,17 @@ const createAdmin = () => {
         click: () => displayAdminMenu({ display: true }),
         css: 'admin',
         id: 'AdminEntity',
-        image: getSpritePath({ spriteName: 'ui_admin' }),
+        image: getSpritePath({ spriteName: 'build_admin' }),
         parent: tileMapElId,
     });
 
-    placeTileEntity({ elId: 'AdminEntity', height: 2, left: 3, width: 4 });
+    placeTileEntity({
+        elId: 'AdminEntity',
+        height: 2,
+        width: 4,
+        x: 1,
+        y: 0,
+    });
 };
 
 export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
@@ -224,10 +263,8 @@ export const createGem = ({ gemId }: { gemId: string }) => {
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
 
     createButton({
-        click: () => {
-            setGemMode({ gemId, mode: 'request' });
-            displayGemView({ display: true, gemId });
-        },
+        click: () => onClickGem({ gemId }),
+        css: 'gem',
         entityId: gemId,
         parent: tileMapElId,
         sprite: true,
@@ -236,8 +273,9 @@ export const createGem = ({ gemId }: { gemId: string }) => {
     placeTileEntity({
         elId: gemId,
         height: gemSprite._height,
-        left: gemPosition._x,
         width: gemSprite._width,
+        x: gemPosition._x,
+        y: gemPosition._y,
     });
 };
 
@@ -247,10 +285,20 @@ export const destroyGem = ({ gemId }: { gemId: string }) => {
 
 export const setGemMode = ({ gemId, mode, remove }: {
     gemId: string,
-    mode: 'base' | 'request' | 'hover' | 'disable' | 'mine' | 'carry'
+    mode: 'base' | 'request' | 'hover' | 'disable' | 'work' | 'mine' | 'carry',
     remove?: boolean,
 }) => {
+    const gemType = getGemType({ gemId });
     const gemEl = getElement({ elId: gemId });
+
+    if (mode === 'work') {
+        if (gemType === Gems.CARRY || gemType === Gems.FLOOR || gemType === Gems.LIFT) {
+            mode = 'carry';
+        }
+        else if (gemType === Gems.MINE || gemType === Gems.SHAFT || gemType === Gems.TUNNEL) {
+            mode = 'mine';
+        }
+    }
 
     if (remove) {
         gemEl.classList.remove(mode);
@@ -267,6 +315,11 @@ export const setGemMode = ({ gemId, mode, remove }: {
     else {
         gemEl.classList.add(mode);
     }
+};
+
+const onClickGem = ({ gemId }: { gemId: string }) => {
+    setGemMode({ gemId, mode: 'request' });
+    displayGemView({ display: true, gemId });
 };
 
 export const setAllOtherGemsMode = ({ gemId, mode, remove }: {
