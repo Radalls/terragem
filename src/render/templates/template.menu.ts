@@ -13,6 +13,7 @@ import {
     checkElement,
     createButton,
     createElement,
+    destroyElement,
     displayAdminUI,
     displayGemView,
     getElement,
@@ -847,7 +848,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemEquip({ gemId }),
-        css: 'hidden full-w',
+        css: 'hidden full-w h-25',
         id: `AdminGemEquip${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Equip',
@@ -856,7 +857,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemView({ gemId }),
-        css: 'hidden full-w',
+        css: 'hidden full-w h-25',
         id: `AdminGemView${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'View',
@@ -865,7 +866,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemDeploy({ gemId }),
-        css: 'full-w',
+        css: 'full-w h-25',
         id: `AdminGemDeploy${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Deploy',
@@ -1121,6 +1122,8 @@ const onClickGemEquip = ({ gemId }: { gemId: string }) => {
 
 const onClickGemDestroy = ({ gemId }: { gemId: string }) => {
     emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_DESTROY });
+
+    destroyElement({ elId: `AdminGem${gemId}` });
 
     updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
 

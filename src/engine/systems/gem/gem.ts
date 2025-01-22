@@ -538,7 +538,9 @@ const floorTile = ({ gemId, tileId }: {
     }
 
     if (tile._destroy) {
-        if (gemFloor._digStrength < tile._density) {
+        const floorStrength = getGemStat({ gemId, gemType: Gems.FLOOR, stat: '_digStrength' });
+
+        if (floorStrength < tile._density) {
             emit({
                 data: { text: `${gemFloor._name} is not strong enough to floor this ground`, type: 'confirm' },
                 entityId: gemId,
@@ -570,9 +572,7 @@ const xpGemFloor = ({ gemId }: { gemId: string }) => {
         gemFloor._xpLvl += 1;
         gemFloor._xpToNext = gemFloor._xpToNext * 1.5;
 
-        gemFloor._digSpeed += 0.5;
-
-        if (gemFloor._xpLvl % 50 === 0) {
+        if (gemFloor._xpLvl % 10 === 0) {
             gemFloor._digStrength += 1;
         }
     }

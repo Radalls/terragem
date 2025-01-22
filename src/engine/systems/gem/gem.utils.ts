@@ -266,7 +266,7 @@ export const destroyGem = ({ gemId }: { gemId: string }) => {
         type: RenderEvents.INFO,
     });
 
-    emit({ data: { amount: 1 }, target: 'engine', type: EngineEvents.GEM_QUEST });
+    emit({ data: { amount: -1 }, target: 'engine', type: EngineEvents.GEM_QUEST });
 
     destroyEntity({ entityId: gemId });
 };

@@ -688,5 +688,30 @@
         "cost": 9,
         "time": 600,
         "unlock": [{ "type": "stat", "name": "GEM_CARRY_ITEM_AMOUNT", "amount": 1 }]
+    },
+    { "@": "GEM_LIFT_ITEM_CAPACITY" },
+    {
+        "name": "LAB_GEM_LIFT_ITEM_CAPACITY_1",
+        "text": "Increase ALL LIFT Gems Item Capacity by 50",
+        "image": "lab_gem_lift_item_capacity",
+        "cost": 10,
+        "time": 200,
+        "unlock": [{ "type": "stat", "name": "GEM_LIFT_ITEM_CAPACITY", "amount": 50 }]
+    },
+    {
+        "name": "LAB_GEM_LIFT_ITEM_CAPACITY_2",
+        "text": "Increase ALL LIFT Gems Item Capacity by 50",
+        "image": "lab_gem_lift_item_capacity",
+        "cost": 20,
+        "time": 300,
+        "unlock": [{ "type": "stat", "name": "GEM_LIFT_ITEM_CAPACITY", "amount": 50 }]
+    },
+    {
+        "name": "LAB_GEM_LIFT_ITEM_CAPACITY_3",
+        "text": "Increase ALL LIFT Gems Item Capacity by 50",
+        "image": "lab_gem_lift_item_capacity",
+        "cost": 30,
+        "time": 400,
+        "unlock": [{ "type": "stat", "name": "GEM_LIFT_ITEM_CAPACITY", "amount": 50 }]
     }
 ]
