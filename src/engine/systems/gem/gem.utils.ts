@@ -123,6 +123,25 @@ export const getGemTypeCount = ({ gemType }: { gemType: Gems }) => {
     return admin.gems.filter(gem => getGemType({ gemId: gem }) === gemType).length;
 };
 
+export const getGemSprite = ({ gemId, error = false }: {
+    error?: boolean,
+    gemId: string,
+}) => {
+    const gem = getGem({ gemId });
+    const gemType = getGemType({ gemId });
+    let gemSprite = `gem_${gemType.toLowerCase()}`;
+
+    if (isGemMech({ gemId })) {
+        gemSprite += `_${gem._mech?.split('_')[0].toLowerCase()}`;
+    }
+
+    if (error) {
+        gemSprite += '_error';
+    }
+
+    return gemSprite;
+};
+
 export const setGemRequest = ({ gemId, request }: {
     gemId: string,
     request: boolean,
@@ -153,7 +172,6 @@ export const setGemStore = ({ gemId, store }: {
 }) => {
     const admin = getAdmin();
 
-    const gemType = getGemType({ gemId });
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
     const gem = getGem({ gemId });
@@ -176,7 +194,7 @@ export const setGemStore = ({ gemId, store }: {
             emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_EQUIP });
         }
 
-        updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
+        updateSprite({ entityId: gemId, image: getGemSprite({ gemId }) });
 
         emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_UPDATE });
     }
@@ -245,6 +263,12 @@ export const isGemUnlocked = ({ gemType }: { gemType: Gems }) => {
     const admin = getAdmin();
 
     return admin.crafts.includes(`GEM_${gemType.toUpperCase()}`);
+};
+
+export const isGemMech = ({ gemId }: { gemId: string }) => {
+    const gem = getGem({ gemId });
+
+    return !!gem._mech;
 };
 
 export const destroyGem = ({ gemId }: { gemId: string }) => {

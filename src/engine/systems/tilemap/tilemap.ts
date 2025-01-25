@@ -9,6 +9,7 @@ import { getComponent } from '@/engine/systems/entity';
 import {
     gemHasItems,
     getGem,
+    getGemSprite,
     getGemStat,
     getGemType,
     isGemAtCapacity,
@@ -272,7 +273,7 @@ export const digTile = ({ tileId, gemId }: {
 
     if (gemHasItems(gem)) {
         if (isGemAtCapacity({ gemId })) {
-            updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}_error` });
+            updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
 
             return { stop: false };
         }
@@ -307,7 +308,7 @@ export const digTile = ({ tileId, gemId }: {
                     name: drop,
                 });
 
-                updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
+                updateSprite({ entityId: gemId, image: getGemSprite({ gemId }) });
 
                 return { drop, stop: false };
             }

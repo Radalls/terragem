@@ -2,9 +2,10 @@ import { Items } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { createEntityGem } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
+import { createBuild } from '@/engine/systems/build';
 import { getAdmin } from '@/engine/systems/entity';
 import { isGemAtCapacity, getGem, gemHasItems } from '@/engine/systems/gem';
-import { getCraftData, isItemGem, isItemMech, itemToGem } from '@/engine/systems/item';
+import { getCraftData, isItemBuild, isItemGem, isItemMech, itemToGem } from '@/engine/systems/item';
 import { RenderEvents } from '@/render/events';
 
 //#region CONSTANTS
@@ -118,6 +119,9 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
 
         if (isItemGem({ itemName })) {
             createEntityGem({ type: itemToGem({ itemName }) });
+        }
+        else if (isItemBuild({ itemName })) {
+            createBuild({ buildName: itemName });
         }
         else {
             addAdminItem({ amount: 1, name: craftData.name });

@@ -1,9 +1,10 @@
-import { Gems } from '@/engine/components';
+import { Gems, Items } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { EngineEvents } from '@/engine/services/event';
 import { getState } from '@/engine/services/state';
 import { getStore } from '@/engine/services/store';
-import { getComponent } from '@/engine/systems/entity';
+import { getBuildData } from '@/engine/systems/build';
+import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { getGemType } from '@/engine/systems/gem';
 import { getSpritePath } from '@/engine/systems/sprite';
 import {
@@ -86,21 +87,28 @@ export const setTileMode = ({ tileId, mode, remove }: {
     }
 
     if (mode === 'base') {
-        const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
+        if (tileId) {
+            const tileEl = getElement({ elId: tileId });
+            tileEl.classList.remove('request');
+            tileEl.classList.remove('destroy');
+        }
+        else {
+            const tileEls = searchElementsByClassName({ className: 'tile', parent: tileMapElId });
+            tileEls.forEach((tileEl) => {
+                if (!(tileEl.classList.contains('destroy'))) {
+                    tileEl.classList.remove('request');
+                }
+            });
 
-        tileEls.forEach((tileEl) => {
-            if (!(tileEl.classList.contains('destroy'))) {
-                tileEl.classList.remove('request');
+            if (
+                getState({ key: 'requestGemMove' })
+                || getState({ key: 'requestGemCarryStart' })
+                || getState({ key: 'requestGemCarryTarget' })
+            ) {
+                const gemId = getStore({ key: 'requestId' });
+
+                setAllOtherGemsMode({ gemId, mode: 'disable', remove: true });
             }
-        });
-
-        if (
-            getState({ key: 'requestGemMove' })
-            || getState({ key: 'requestGemCarryStart' })
-            || getState({ key: 'requestGemCarryTarget' })
-        ) {
-            const gemId = getStore({ key: 'requestId' });
-            setAllOtherGemsMode({ gemId, mode: 'disable', remove: true });
         }
     }
     else if (mode === 'request') {
@@ -200,12 +208,13 @@ const clearScroll = () => {
 //#endregion
 
 //#region ENTITY
-const placeTileEntity = ({ elId, width, height, x, y }: {
+const placeTileEntity = ({ elId, width, height, x, y, z = 1 }: {
     elId: string,
     height: number,
     width: number
     x: number,
     y: number,
+    z?: number
 }) => {
     const el = getElement({ elId });
 
@@ -213,7 +222,7 @@ const placeTileEntity = ({ elId, width, height, x, y }: {
     el.style.height = `${height * TILE_SIZE}px`;
     el.style.left = `${x * TILE_SIZE}px`;
     el.style.top = `${((y + ((TILEMAP_GROUND_LEVEL + 1) - height)) * TILE_SIZE)}px`;
-    el.style.zIndex = '1';
+    el.style.zIndex = `${z}`;
 };
 
 export const updateTileEntity = ({ elId }: { elId: string }) => {
@@ -228,6 +237,8 @@ export const updateTileEntity = ({ elId }: { elId: string }) => {
 
 //#region ADMIN
 const createAdmin = () => {
+    const adminBuildData = getBuildData({ buildName: 'ADMIN' });
+
     createButton({
         click: () => displayAdminMenu({ display: true }),
         css: 'admin',
@@ -238,10 +249,11 @@ const createAdmin = () => {
 
     placeTileEntity({
         elId: 'AdminEntity',
-        height: 2,
-        width: 4,
-        x: 1,
+        height: adminBuildData.height,
+        width: adminBuildData.width,
+        x: adminBuildData.x,
         y: 0,
+        z: 0,
     });
 };
 
@@ -256,6 +268,35 @@ export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
     }
 };
 //#endregion
+
+//#region BUILD
+//#region CONSTANTS
+//#endregion
+
+export const createBuild = ({ buildName }: { buildName: Items }) => {
+    const admin = getAdmin();
+
+    const buildData = getBuildData({ buildName });
+    const buildCount = (buildName === Items.BUILD_FORGE_VULKAN)
+        ? admin.builds.forges.vulkan
+        : admin.builds.forges.oryon;
+
+    createElement({
+        css: 'build',
+        id: `Build${buildName}-${buildCount}`,
+        image: getSpritePath({ spriteName: `build_${buildName.toLowerCase()}` }),
+        parent: tileMapElId,
+    });
+
+    placeTileEntity({
+        elId: `Build${buildName}-${buildCount}`,
+        height: buildData.height,
+        width: buildData.width,
+        x: buildData.x,
+        y: buildCount - 1,
+        z: 0,
+    });
+};
 
 //#region GEM
 export const createGem = ({ gemId }: { gemId: string }) => {

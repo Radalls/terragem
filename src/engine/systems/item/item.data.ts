@@ -1,5 +1,5 @@
-import crafts from '@/assets/items/crafts.json';
-import mechs from '@/assets/mechs/mechs.json';
+import crafts from '@/assets/data/crafts.json';
+import mechs from '@/assets/data/mechs.json';
 import { Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
@@ -19,7 +19,9 @@ export type MechData = {
 
 //#region DATA
 export const getCraftData = ({ itemName }: { itemName: string }) => {
-    const craftData = crafts.find((data) => data.name === itemName) ?? error({
+    const craftz = crafts.filter((data) => !(data['@']));
+
+    const craftData = craftz.find((data) => data.name === itemName) ?? error({
         message: `CraftData for ${itemName} not found`,
         where: getCraftData.name,
     });

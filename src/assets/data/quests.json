@@ -353,6 +353,7 @@
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_CRAFT_FORGE_VULKAN" },
+            { "type": "quest", "name": "QUEST_FORGE_VIRIDYN_1" },
             { "type": "quest", "name": "QUEST_MINE_DAMSYN_2" }
         ]
     },
@@ -513,6 +514,7 @@
         ],
         "unlock": [
             { "type": "lab", "name": "LAB_CRAFT_FORGE_ORYON" },
+            { "type": "quest", "name": "QUEST_FORGE_FIRMYN_1" },
             { "type": "quest", "name": "QUEST_MINE_CLARYN_2" }
         ]
     },
@@ -1070,6 +1072,7 @@
             { "type": "lab", "amount": 5 }
         ],
         "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_MK1_CARRY" },
             { "type": "quest", "name": "QUEST_FORGE_FIRMYN_2" }
         ]
     },

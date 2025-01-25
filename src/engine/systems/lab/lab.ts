@@ -94,7 +94,7 @@ export const endLab = ({ name }: { name: string }) => {
         else if (unlock.type === 'stat') {
             const statName = getLabDataStat({ name: unlock.name });
 
-            admin.stats[statName] += unlock.amount;
+            admin.stats[statName] = Math.round((admin.stats[statName] + unlock.amount) * 10) / 10;
 
             emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_GEMS });
         }

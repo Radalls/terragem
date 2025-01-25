@@ -25,6 +25,7 @@ import {
     updateWorkshop,
     updateGems,
     updateScroll,
+    createBuild,
 } from '@/render/templates';
 
 //#region TYPES
@@ -41,6 +42,8 @@ export enum RenderEvents {
     ADMIN_UPDATE_LABS = 'ADMIN_UPDATE_LABS',
     ADMIN_UPDATE_STORAGE = 'ADMIN_UPDATE_STORAGE',
     ADMIN_UPDATE_WORKSHOP = 'ADMIN_UPDATE_WORKSHOP',
+    /* BUILDS */
+    BUILD_CREATE = 'BUILD_CREATE',
     /* GEM */
     GEM_CREATE = 'GEM_CREATE',
     GEM_DESTROY = 'GEM_DESTROY',
@@ -107,6 +110,10 @@ export const onEvent = ({
     }
     else if (type === RenderEvents.ADMIN_UPDATE_WORKSHOP) {
         updateWorkshop();
+    }
+    /* BUILDS */
+    else if (type === RenderEvents.BUILD_CREATE && data) {
+        createBuild({ buildName: data });
     }
     /* GEM */
     /* GEM MAIN */
