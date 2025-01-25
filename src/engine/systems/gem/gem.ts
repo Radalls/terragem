@@ -13,6 +13,7 @@ import {
     setGemRequest,
     getGemStat,
     gemHasItems,
+    getGemSprite,
 } from '@/engine/systems/gem';
 import { addAdminItem, addGemItem, removeGemItem } from '@/engine/systems/item';
 import { getGemsAtPosition, getTileAtPosition, moveToTarget } from '@/engine/systems/position';
@@ -90,7 +91,7 @@ export const equipGem = ({ gemId }: { gemId: string }) => {
         admin.mechs.push(gem._mech.slice());
         gem._mech = undefined;
 
-        updateSprite({ entityId: gemId, image: `gem_${gemType.toLowerCase()}` });
+        updateSprite({ entityId: gemId, image: getGemSprite({ gemId }) });
 
         return;
     }
@@ -101,7 +102,7 @@ export const equipGem = ({ gemId }: { gemId: string }) => {
         gem._mech = mech;
         admin.mechs.splice(admin.mechs.indexOf(mech), 1);
 
-        updateSprite({ entityId: gemId, image: `mech_${gem._mech.toLowerCase()}` });
+        updateSprite({ entityId: gemId, image: getGemSprite({ gemId }) });
 
         emit({
             data: { text: `Equipped ${gem._name} with ${gem._mech}`, type: 'confirm' },
@@ -227,7 +228,7 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
             if (item) {
                 addGemItem({ amount: item.amount, gemId, name: item.name });
 
-                updateSprite({ entityId: gemId, image: 'gem_carry' });
+                updateSprite({ entityId: gemId, image: getGemSprite({ gemId }) });
 
                 return true;
             }
@@ -237,7 +238,7 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
         }
     }
     else {
-        updateSprite({ entityId: gemId, image: 'gem_carry_error' });
+        updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
 
         return false;
     }
@@ -311,7 +312,7 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
         const gemCarryTile = getComponent({ componentId: 'Tile', entityId: gemCarryTileId });
 
         if (!(gemCarryTile._lock)) {
-            updateSprite({ entityId: gemId, image: 'gem_carry_error' });
+            updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
 
             return false;
         }
@@ -338,7 +339,7 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
         }
     }
     else {
-        updateSprite({ entityId: gemId, image: 'gem_carry_error' });
+        updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
 
         return false;
     }

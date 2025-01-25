@@ -21,6 +21,9 @@ import { getGemTypeCount } from '@/engine/systems/gem';
 import { loadTileMapData } from '@/engine/systems/tilemap';
 
 //#region CONSTANTS
+/* FORGES */
+const ADMIN_INIT_FORGE_VULKAN_SPEED = 0.1;
+const ADMIN_INIT_FORGE_ORYON_SPEED = 0.1;
 /* GEM CARRY */
 const ADMIN_INIT_GEM_CARRY_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY = 10;
@@ -64,24 +67,30 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
 
     const admin: Admin = {
         _: 'Admin',
+        builds: {
+            forges: {
+                oryon: 0,
+                vulkan: 0,
+            },
+        },
         crafts: ['GEM_MINE'],
         gems: [],
         items: [
             {
                 _amount: 50,
-                _name: Items.STONE,
+                _name: Items.RES_STONE,
             },
             {
                 _amount: 25,
-                _name: Items.GEOLYN,
+                _name: Items.RES_GEOLYN,
             },
             {
                 _amount: 25,
-                _name: Items.CERULYN,
+                _name: Items.RES_CERULYN,
             },
             {
                 _amount: 1,
-                _name: Items.LUMYN,
+                _name: Items.RES_LUMYN,
             },
         ],
         labs: [],
@@ -93,6 +102,9 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
             _audioVolume: 0.5,
         },
         stats: {
+            /* FORGES */
+            _forgeOryonSpeed: ADMIN_INIT_FORGE_ORYON_SPEED,
+            _forgeVulkanSpeed: ADMIN_INIT_FORGE_VULKAN_SPEED,
             /* GEM CARRY */
             _gemCarryItemAmount: ADMIN_INIT_GEM_CARRY_ITEM_AMOUNT,
             _gemCarryItemCapacity: ADMIN_INIT_GEM_CARRY_ITEM_CAPACITY,

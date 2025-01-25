@@ -476,10 +476,10 @@ const onClickGemMove = () => {
         emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
     else if (gemState._action === 'move') {
-        updateGemActions();
+        onClickGemCancel();
 
-        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MOVE_CANCEL });
         emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+        updateGemActions();
     }
     else if (gemState._action === 'work') {
         onClickGemCancel();
@@ -553,6 +553,11 @@ const onClickGemCancel = () => {
     const gemId = CURRENT_GEM_ID;
 
     const gemType = getGemType({ gemId });
+    const gemState = getComponent({ componentId: 'State', entityId: gemId });
+
+    if (gemState._action === 'move') {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MOVE_CANCEL });
+    }
 
     if (gemType === Gems.CARRY) {
         displayGemPath({ display: false });

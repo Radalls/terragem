@@ -1,0 +1,30 @@
+[
+    { "@": "ADMIN" },
+    {
+        "name": "ADMIN",
+        "width": 4,
+        "height": 2,
+        "x": 1
+    },
+    { "@": "FORGE" },
+    {
+        "name": "FORGE_VULKAN",
+        "width": 1,
+        "height": 1,
+        "x": 5,
+        "forge": {
+            "inputs": [{ "name": "GEOLYN", "amount": 5 }, { "name": "DAMSYN", "amount": 5 }],
+            "outputs": [{ "name": "VIRIDYN", "amount": 1 }]
+        }
+    },
+    {
+        "name": "FORGE_ORYON",
+        "width": 1,
+        "height": 1,
+        "x": 6,
+        "forge": {
+            "inputs": [{ "name": "CERULYN", "amount": 5 }, { "name": "CLARYN", "amount": 5 }],
+            "outputs": [{ "name": "FIRMYN", "amount": 1 }]
+        }
+    }
+]

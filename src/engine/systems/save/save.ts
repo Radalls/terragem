@@ -2,8 +2,16 @@ import { Component, Gems } from '@/engine/components';
 import { emit, GameEvents } from '@/engine/services/emit';
 import { createEntityAdmin, createEntityGem, createEntityTileMap } from '@/engine/services/entity';
 import { error } from '@/engine/services/error';
+import { EngineEvents } from '@/engine/services/event';
 import { getStore } from '@/engine/services/store';
-import { addComponent, checkComponent, entities, Entity, getRawEntityId } from '@/engine/systems/entity';
+import {
+    addComponent,
+    ADMIN_ENTITY_NAME,
+    checkComponent,
+    entities,
+    Entity,
+    getRawEntityId,
+} from '@/engine/systems/entity';
 import { createQuest } from '@/engine/systems/quest';
 import { getProjectVersion, getSaveTileMap, loadSaveGem, SaveData } from '@/engine/systems/save';
 import { RenderEvents } from '@/render/events';
@@ -61,6 +69,11 @@ export const saveGame = () => {
         version: getProjectVersion(),
     };
 
+    const adminIds = Object.keys(entities).filter(id => getRawEntityId({ entityId: id }) === ADMIN_ENTITY_NAME);
+    for (const adminId of adminIds) {
+        if (adminId !== getStore({ key: 'adminId' })) delete entities[adminId];
+    }
+
     Object.entries(entities).forEach(([entityId, entity]) => {
         const components: Record<string, unknown> = {};
 
@@ -112,6 +125,10 @@ export const createRun = () => {
 
     createEntityGem({ type: Gems.MINE });
     createEntityGem({ type: Gems.CARRY });
+
+    emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
+    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 export const loadRun = ({ saveData }: { saveData: SaveData }) => {
@@ -126,5 +143,9 @@ export const loadRun = ({ saveData }: { saveData: SaveData }) => {
     emit({ target: 'render', type: RenderEvents.QUEST_CREATE });
 
     loadSaveGem();
+
+    emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
+    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion

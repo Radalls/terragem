@@ -10,7 +10,8 @@ import { RenderEvents } from '@/render/events';
 export const isGround = ({ tileId }: { tileId: string }) => {
     const tileSprite = getComponent({ componentId: 'Sprite', entityId: tileId });
 
-    return tileSprite._image.includes('ground');
+    return tileSprite._image.includes('ground')
+        || tileSprite._image.includes('floor');
 };
 
 export const isLock = ({ tileId }: { tileId: string }) => {

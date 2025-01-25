@@ -5,7 +5,7 @@ import { EngineEvents } from '@/engine/services/event';
 import { setState } from '@/engine/services/state';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType, isGemUnlocked } from '@/engine/systems/gem';
-import { getCraftData, isItemMech } from '@/engine/systems/item';
+import { getCraftData } from '@/engine/systems/item';
 import { exportSaveFile, getProjectVersion, importSaveFile } from '@/engine/systems/save';
 import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
@@ -199,9 +199,6 @@ const createSaveFileInput = () => {
 
 const onClickStart = () => {
     emit({ target: 'all', type: GameEvents.GAME_RUN });
-    emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
-    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
-    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 const onClickLoadGame = () => {
@@ -419,9 +416,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
     createElement({
         css: 'icon',
         id: `ItemIcon${itemName}`,
-        image: (isItemMech({ itemName }))
-            ? getSpritePath({ spriteName: `mech_${itemName.toLowerCase()}` })
-            : getSpritePath({ spriteName: `resource_${itemName.toLowerCase()}` }),
+        image: getSpritePath({ spriteName: `resource_${itemName.toLowerCase()}` }),
         parent: `Item${itemName}`,
     });
 
@@ -429,7 +424,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
         css: 'label t-12',
         id: `ItemLabel${itemName}`,
         parent: `Item${itemName}`,
-        text: itemName,
+        text: itemName.replace('_', ' '),
     });
 
     createElement({
@@ -840,7 +835,7 @@ const createGemTunnel = ({ gemId }: { gemId: string }) => {
 const createGemActions = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
-        css: 'col align w-15 g-8 ml-32',
+        css: 'col align w-15 g-2 ml-32',
         id: `AdminGemActions${gemId}`,
         parent: `AdminGem${gemId}`,
     });
@@ -848,7 +843,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemEquip({ gemId }),
-        css: 'hidden full-w h-25',
+        css: 'hidden full-w t-12',
         id: `AdminGemEquip${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Equip',
@@ -857,7 +852,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemView({ gemId }),
-        css: 'hidden full-w h-25',
+        css: 'hidden full-w t-12',
         id: `AdminGemView${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'View',
@@ -866,7 +861,7 @@ const createGemActions = ({ gemId }: { gemId: string }) => {
     createButton({
         absolute: false,
         click: () => onClickGemDeploy({ gemId }),
-        css: 'full-w h-25',
+        css: 'full-w t-12',
         id: `AdminGemDeploy${gemId}`,
         parent: `AdminGemActions${gemId}`,
         text: 'Deploy',
@@ -1278,14 +1273,14 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'col full g-12',
+        css: 'col between full g-12',
         id: `CraftData${craft}`,
         parent: `Craft${craft}`,
     });
 
     createElement({
         absolute: false,
-        css: 'row g-16',
+        css: 'row align g-16',
         id: `CraftInfo${craft}`,
         parent: `CraftData${craft}`,
     });
@@ -1425,9 +1420,10 @@ const onClickWorkshopPage = ({ action }: { action: 'previous' | 'next' }) => {
 };
 
 const onClickWorkshopCraft = ({ craft }: { craft: string }) => {
+    emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
+
     updateAdminContent({ page: WORKSHOP_PAGE_INDEX, tab: AdminTabs.WORKSHOP });
 
-    emit({ data: craft, target: 'engine', type: EngineEvents.CRAFT_REQUEST });
     emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion

@@ -1,4 +1,4 @@
-import quests from '@/assets/quests/quests.json';
+import quests from '@/assets/data/quests.json';
 import { Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 

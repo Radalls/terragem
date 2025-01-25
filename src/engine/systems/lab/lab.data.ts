@@ -1,4 +1,4 @@
-import labs from '@/assets/labs/labs.json';
+import labs from '@/assets/data/labs.json';
 import { error } from '@/engine/services/error';
 
 //#region TYPES
