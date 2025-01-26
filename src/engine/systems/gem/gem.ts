@@ -239,7 +239,6 @@ const runGemCarryPick = ({ gemId }: { gemId: string }) => {
     }
     else {
         updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
-
         return false;
     }
 
@@ -264,6 +263,13 @@ const findGemCarryPicks = ({ gemId }: { gemId: string }) => {
             if (gemHasItems(gem)) {
                 pickGems.push(g);
             }
+        }
+    }
+
+    if (!(pickGems.length)) {
+        const { tile: gemTile } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y });
+        if (gemTile._lift) {
+            pickGems.push(gemTile._lift);
         }
     }
 
@@ -308,12 +314,9 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
         }
     }
     else if (gemPosition._y === 0) {
-        const gemCarryTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
-        const gemCarryTile = getComponent({ componentId: 'Tile', entityId: gemCarryTileId });
-
+        const { tile: gemCarryTile } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
         if (!(gemCarryTile._lock)) {
             updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
-
             return false;
         }
 
@@ -340,7 +343,6 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
     }
     else {
         updateSprite({ entityId: gemId, image: getGemSprite({ error: true, gemId }) });
-
         return false;
     }
 };
@@ -362,6 +364,15 @@ const findGemCarryDrops = ({ gemId }: { gemId: string }) => {
 
         if (checkComponent({ componentId: Gems.LIFT, entityId: g })) {
             dropGems.push({ gemId: g, priority: 1 });
+        }
+    }
+
+    if (!(dropGems.length)) {
+        const { tile: gemTile } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y });
+        if (gemTile._lift) {
+            if (!(isGemAtCapacity({ gemId: gemTile._lift }))) {
+                dropGems.push({ gemId: gemTile._lift, priority: 1 });
+            }
         }
     }
 
@@ -414,9 +425,7 @@ const carryTo = ({ gemId }: { gemId: string }) => {
         y: gemPosition._y,
     };
 
-    const gemMoveTargetTileId = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
-    const gemMoveTargetTile = getComponent({ componentId: 'Tile', entityId: gemMoveTargetTileId });
-
+    const { tile: gemMoveTargetTile } = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
     if (!(gemMoveTargetTile._destroy)) {
         stopGemCarry({ gemId });
 
@@ -499,7 +508,7 @@ export const runGemFloor = ({ gemId }: { gemId: string }) => {
         return;
     }
 
-    const floorTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y });
+    const { tileId: floorTileId } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y });
     floorTile({ gemId, tileId: floorTileId });
 };
 
@@ -511,8 +520,7 @@ const floorTile = ({ gemId, tileId }: {
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
     const tile = getComponent({ componentId: 'Tile', entityId: tileId });
 
-    const aboveTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - 1 });
-    const aboveTile = getComponent({ componentId: 'Tile', entityId: aboveTileId });
+    const { tile: aboveTile } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - 1 });
     if (!(aboveTile._destroy)) {
         emit({
             data: { text: `${gemFloor._name} floor has reached a ceiling`, type: 'confirm' },
@@ -594,12 +602,14 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
     gemLift._moveStartY = gemPosition._y;
 
     if (gemLift._moveStartY >= GEM_LIFT_DISTANCE_FROM_GROUND) {
-        const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
-        const gemTile = getComponent({ componentId: 'Tile', entityId: gemTileId });
+        const { tile: gemTile, tileId: gemTileId } = getTileAtPosition({
+            x: gemLift._moveStartX,
+            y: gemLift._moveStartY + 1,
+        });
 
-        if (gemTile._destroy || (!(isGround({ tileId: gemTileId })) && !(isLock({ tileId: gemTileId })))) {
+        if (gemTile._destroy || !(isGround({ tileId: gemTileId })) || isLock({ tileId: gemTileId })) {
             emit({
-                data: { alert: true, text: `${gemLift._name} is not on solid ground`, type: 'error' },
+                data: { alert: true, text: `${gemLift._name} cannot start a lift on this tile`, type: 'error' },
                 entityId: gemId,
                 target: 'render',
                 type: RenderEvents.INFO,
@@ -630,10 +640,24 @@ export const stopGemLift = ({ gemId }: { gemId: string }) => {
         where: stopGemLift.name,
     });
 
+    if (
+        gemLift._moveTargetX === undefined
+        || gemLift._moveTargetY === undefined
+    ) throw error({
+        message: `${gemId} has no lift target position`,
+        where: stopGemLift.name,
+    });
+
     if (gemLift._moveStartY >= GEM_LIFT_DISTANCE_FROM_GROUND) {
-        const gemTileId = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
+        const { tileId: gemTileId } = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY + 1 });
         lockTile({ tileId: gemTileId, value: false });
     }
+
+    const { tile: gemLiftStartTile } = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY });
+    gemLiftStartTile._lift = undefined;
+
+    const { tile: gemLiftTargetTile } = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+    gemLiftTargetTile._lift = undefined;
 
     gemLift._moveTo = undefined;
     gemLift._moveStartX = undefined;
@@ -676,18 +700,8 @@ export const runGemLift = ({ gemId }: { gemId: string }) => {
         return;
     }
 
-    if (isGemAt({ at: 'start', gemId })) {
-        if (!(isGemAtCapacity({ gemId }))) {
-            return;
-        }
-    }
-    else if (isGemAt({ at: 'target', gemId })) {
-        if (!(gemLift.items.length === 0)) {
-            return;
-        }
-        else if (gemLift.items.length === 0) {
-            xpGemLift({ gemId });
-        }
+    if (isGemAt({ at: 'target', gemId })) {
+        xpGemLift({ gemId });
     }
 
     const switchCarry = liftTo({ gemId });
@@ -710,20 +724,29 @@ const setGemLiftTarget = ({ gemId }: { gemId: string }) => {
     gemLift._moveTargetX = gemLift._moveStartX;
     gemLift._moveTargetY = gemLift._moveStartY;
 
-    while (gemLift._moveTargetY > 0) {
+    const liftRange = getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemRange' });
+    let liftMoveTargetDiff = 0;
+    while (liftMoveTargetDiff < liftRange) {
+        liftMoveTargetDiff++;
         gemLift._moveTargetY--;
 
-        const targetTileId = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+        if (gemLift._moveTargetY <= 0) {
+            gemLift._moveTargetY = 0;
+            break;
+        }
 
-        if (!targetTileId) continue;
-
-        const targetTile = getComponent({ componentId: 'Tile', entityId: targetTileId });
-
-        if (!targetTile._destroy) {
+        const { tile: targetTile } = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+        if (!(targetTile._destroy)) {
             gemLift._moveTargetY++;
             break;
         }
     }
+
+    const { tile: startTile } = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY });
+    startTile._lift = gemId;
+
+    const { tile: targetTile } = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+    targetTile._lift = gemId;
 };
 
 const liftTo = ({ gemId }: { gemId: string }) => {
@@ -772,9 +795,7 @@ const liftTo = ({ gemId }: { gemId: string }) => {
             : gemPosition._y - 1,
     };
 
-    const gemMoveTargetTileId = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
-    const gemMoveTargetTile = getComponent({ componentId: 'Tile', entityId: gemMoveTargetTileId });
-
+    const { tile: gemMoveTargetTile } = getTileAtPosition({ x: gemMoveTarget.x, y: gemMoveTarget.y });
     if (!(gemMoveTargetTile._destroy)) {
         stopGemLift({ gemId });
 
@@ -797,8 +818,6 @@ const liftTo = ({ gemId }: { gemId: string }) => {
 };
 
 const xpGemLift = ({ gemId }: { gemId: string }) => {
-    //TODO: fix xpGemLift
-    return;
     const gemLift = getComponent({ componentId: 'Lift', entityId: gemId });
 
     gemLift._xpLvl += 1;
@@ -809,13 +828,6 @@ const xpGemLift = ({ gemId }: { gemId: string }) => {
         gemLift._xpToNext = gemLift._xpToNext * 1.5;
 
         gemLift._itemCapacity += 1;
-
-        if (gemLift._xpLvl % 5 === 0) {
-            gemLift._itemSpeed += 0.5;
-        }
-        else if (gemLift._xpLvl % 10 === 0) {
-            gemLift._itemAmount += 1;
-        }
     }
 };
 //#endregion
@@ -840,9 +852,7 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
     const gemMine = getComponent({ componentId: 'Mine', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
 
-    const mineTileId = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
-    const mineTile = getComponent({ componentId: 'Tile', entityId: mineTileId });
-
+    const { tile: mineTile, tileId: mineTileId } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y + 1 });
     if (mineTile._lock) {
         emit({
             data: { alert: true, text: `${gemMine._name} cannot mine a locked tile`, type: 'warning' },
@@ -856,7 +866,6 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
     }
 
     const { drop, stop } = digTile({ gemId, tileId: mineTileId });
-
     if (drop) {
         xpGemMine({ gemId });
 
@@ -973,10 +982,9 @@ export const runGemShaft = ({ gemId }: { gemId: string }) => {
         return;
     }
 
-    const tileUp = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - gemShaft._digOffset });
+    const { tileId: tileUp } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - gemShaft._digOffset });
 
     const { destroy, stop } = digTile({ gemId, tileId: tileUp });
-
     if (stop) {
         stopGemShaft({ gemId });
     }
@@ -1073,8 +1081,8 @@ export const runGemTunnel = ({ gemId }: { gemId: string }) => {
         return;
     }
 
-    const tileLeft = getTileAtPosition({ x: gemPosition._x - gemTunnel._digOffset, y: gemPosition._y });
-    const tileRight = getTileAtPosition({ x: gemPosition._x + gemTunnel._digOffset, y: gemPosition._y });
+    const { tileId: tileLeft } = getTileAtPosition({ x: gemPosition._x - gemTunnel._digOffset, y: gemPosition._y });
+    const { tileId: tileRight } = getTileAtPosition({ x: gemPosition._x + gemTunnel._digOffset, y: gemPosition._y });
 
     const { destroy: destroyLeft, stop: stopLeft } = digTile({ gemId, tileId: tileLeft });
     const { destroy: destroyRight, stop: stopRight } = digTile({ gemId, tileId: tileRight });

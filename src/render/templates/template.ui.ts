@@ -612,10 +612,10 @@ const displayGemPath = ({ display }: { display: boolean }) => {
                 && gem._moveTargetX !== undefined
                 && gem._moveTargetY !== undefined
             ) {
-                const tileStart = getTileAtPosition({ x: gem._moveStartX, y: gem._moveStartY });
+                const { tileId: tileStart } = getTileAtPosition({ x: gem._moveStartX, y: gem._moveStartY });
                 setTileMode({ mode: 'move', remove: !(display), tileId: tileStart });
 
-                const tileTarget = getTileAtPosition({ x: gem._moveTargetX, y: gem._moveTargetY });
+                const { tileId: tileTarget } = getTileAtPosition({ x: gem._moveTargetX, y: gem._moveTargetY });
                 setTileMode({ mode: 'move', remove: !(display), tileId: tileTarget });
             }
         }

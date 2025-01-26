@@ -36,9 +36,9 @@ const ADMIN_INIT_GEM_FLOOR_DIG_SPEED = 0.2;
 const ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH = 1;
 /* GEM LIFT */
 const ADMIN_INIT_GEM_LIFT_MOVE_SPEED = 3;
-const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 50;
-const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 2;
-const ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT = 1;
+const ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY = 20;
+const ADMIN_INIT_GEM_LIFT_ITEM_SPEED = 0.1;
+const ADMIN_INIT_GEM_LIFT_ITEM_RANGE = 4;
 /* GEM MAX */
 const ADMIN_INIT_GEM_MAX = 5;
 /* GEM MINE */
@@ -51,7 +51,7 @@ const ADMIN_INIT_GEM_MINE_DIG_AMOUNT = 1;
 const ADMIN_INIT_GEM_SHAFT_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_SHAFT_DIG_SPEED = 1;
 const ADMIN_INIT_GEM_SHAFT_DIG_STRENGTH = 1;
-const ADMIN_INIT_GEM_SHAFT_DIG_RANGE = 7;
+const ADMIN_INIT_GEM_SHAFT_DIG_RANGE = 4;
 /* GEM TUNNEL */
 const ADMIN_INIT_GEM_TUNNEL_MOVE_SPEED = 3;
 const ADMIN_INIT_GEM_TUNNEL_DIG_SPEED = 1;
@@ -116,8 +116,8 @@ export const addAdmin = ({ adminId }: { adminId?: string | null }) => {
             _gemFloorDigStrength: ADMIN_INIT_GEM_FLOOR_DIG_STRENGTH,
             _gemFloorMoveSpeed: ADMIN_INIT_GEM_FLOOR_MOVE_SPEED,
             /* GEM LIFT */
-            _gemLiftItemAmount: ADMIN_INIT_GEM_LIFT_ITEM_AMOUNT,
             _gemLiftItemCapacity: ADMIN_INIT_GEM_LIFT_ITEM_CAPACITY,
+            _gemLiftItemRange: ADMIN_INIT_GEM_LIFT_ITEM_RANGE,
             _gemLiftItemSpeed: ADMIN_INIT_GEM_LIFT_ITEM_SPEED,
             _gemLiftMoveSpeed: ADMIN_INIT_GEM_LIFT_MOVE_SPEED,
             /* GEM MAX */
@@ -274,8 +274,8 @@ export const addCarry = ({ gemId }: { gemId: string }) => {
 export const addLift = ({ gemId }: { gemId: string }) => {
     const lift: Lift = {
         _: 'Lift',
-        _itemAmount: 0,
         _itemCapacity: 0,
+        _itemRange: 0,
         _itemSpeed: 0,
         _moveSpeed: 0,
         _name: `Lift-${getGemTypeCount({ gemType: Gems.LIFT })}`,

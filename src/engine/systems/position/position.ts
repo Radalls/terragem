@@ -61,12 +61,9 @@ export const moveToTarget = ({ entityId, targetX, targetY }: {
         return false;
     }
 
-    const tileId = getTileAtPosition({ x: nextPosition.x, y: nextPosition.y });
-    const tile = getComponent({ componentId: 'Tile', entityId: tileId });
-
+    const { tile } = getTileAtPosition({ x: nextPosition.x, y: nextPosition.y });
     if (!(tile._destroy)) {
         activePathRequests.delete(entityId);
-
         return false;
     }
 
@@ -87,7 +84,9 @@ export const getTileAtPosition = ({ x, y }: { x: number; y: number }) => {
         const tilePosition = getComponent({ componentId: 'Position', entityId: tileId });
 
         if (tilePosition._x === x && tilePosition._y === y) {
-            return tileId;
+            const tile = getComponent({ componentId: 'Tile', entityId: tileId });
+
+            return { tile, tileId };
         }
     }
 

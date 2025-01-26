@@ -40,8 +40,8 @@ export type Floor = {
 
 export type Lift = {
     _: 'Lift';
-    _itemAmount: number;
     _itemCapacity: number;
+    _itemRange: number;
     _itemSpeed: number;
     _mech?: string;
     _moveSpeed: number;

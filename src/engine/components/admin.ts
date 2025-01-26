@@ -43,10 +43,11 @@ export type Stats = {
     _gemFloorDigStrength: number;
     _gemFloorMoveSpeed: number;
     /* Lift */
-    _gemLiftItemAmount: number;
     _gemLiftItemCapacity: number;
+    _gemLiftItemRange: number;
     _gemLiftItemSpeed: number;
     _gemLiftMoveSpeed: number;
+    /* Max */
     _gemMax: number;
     /* Mine */
     _gemMineDigAmount: number;
@@ -64,6 +65,7 @@ export type Stats = {
     _gemTunnelDigSpeed: number;
     _gemTunnelDigStrength: number;
     _gemTunnelMoveSpeed: number;
+    /* Labs */
     _labPoints: number;
 };
 
@@ -85,17 +87,21 @@ export type Item = {
 };
 
 export enum Items {
+    /* BUILDS */
     BUILD_FORGE_ORYON = 'FORGE_ORYON',
     BUILD_FORGE_VULKAN = 'FORGE_VULKAN',
+    /* GEMS */
     GEM_CARRY = 'GEM_CARRY',
     GEM_FLOOR = 'GEM_FLOOR',
     GEM_LIFT = 'GEM_LIFT',
     GEM_MINE = 'GEM_MINE',
     GEM_SHAFT = 'GEM_SHAFT',
     GEM_TUNNEL = 'GEM_TUNNEL',
+    /* MECHS */
     MK1_CARRY = 'MK1_CARRY',
     MK1_MINE = 'MK1_MINE',
     MK1_TUNNEL = 'MK1_TUNNEL',
+    /* RESOURCES */
     RES_CERULYN = 'CERULYN',
     RES_CLARYN = 'CLARYN',
     RES_DAMSYN = 'DAMSYN',

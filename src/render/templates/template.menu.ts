@@ -3,6 +3,7 @@ import { emit, GameEvents } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
 import { EngineEvents } from '@/engine/services/event';
 import { setState } from '@/engine/services/state';
+import { isBuildUnlocked } from '@/engine/systems/build';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType, isGemUnlocked } from '@/engine/systems/gem';
 import { getCraftData } from '@/engine/systems/item';
@@ -408,7 +409,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
 }) => {
     createElement({
         absolute: false,
-        css: 'item btn row align w-20 h-20',
+        css: 'item btn row align w-25 h-25',
         id: `Item${itemName}`,
         parent: 'AdminStorage',
     });
@@ -748,9 +749,9 @@ const createGemLift = ({ gemId }: { gemId: string }) => {
     createElement({
         absolute: false,
         css: 'w-20 t-10 t-l',
-        id: `ItemAmount${gemId}`,
+        id: `ItemRange${gemId}`,
         parent: `AdminGemStats${gemId}`,
-        text: `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`,
+        text: `Item Range: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemRange' })}`,
     });
 };
 
@@ -1008,9 +1009,9 @@ const updateGemLift = ({ gemId }: { gemId: string }) => {
     gemItemSpeedEl.innerText
         = `Item Speed: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemSpeed' })}`;
 
-    const gemItemAmountEl = getElement({ elId: `ItemAmount${gemId}` });
-    gemItemAmountEl.innerText
-        = `Item Amount: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemAmount' })}`;
+    const gemItemRangeEl = getElement({ elId: `ItemRange${gemId}` });
+    gemItemRangeEl.innerText
+        = `Item Range: ${getGemStat({ gemId, gemType: Gems.LIFT, stat: '_itemRange' })}`;
 };
 
 const updateGemMine = ({ gemId }: { gemId: string }) => {
@@ -1094,6 +1095,7 @@ const onClickGemView = ({ gemId }: { gemId: string }) => {
 };
 
 const onClickGemDeploy = ({ gemId }: { gemId: string }) => {
+    const gemType = getGemType({ gemId });
     const gemState = getComponent({ componentId: 'State', entityId: gemId });
 
     emit({
@@ -1101,6 +1103,27 @@ const onClickGemDeploy = ({ gemId }: { gemId: string }) => {
             ? GameEvents.GEM_STORE_DEPLOY
             : GameEvents.GEM_STORE,
     });
+
+    if (gemState._store) {
+        if (gemType === Gems.CARRY) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_CARRY_CANCEL });
+        }
+        else if (gemType === Gems.FLOOR) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_FLOOR_CANCEL });
+        }
+        else if (gemType === Gems.LIFT) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_LIFT_CANCEL });
+        }
+        else if (gemType === Gems.MINE) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_MINE_CANCEL });
+        }
+        else if (gemType === Gems.SHAFT) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_SHAFT_CANCEL });
+        }
+        else if (gemType === Gems.TUNNEL) {
+            emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_TUNNEL_CANCEL });
+        }
+    }
 
     updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
 
@@ -1265,10 +1288,18 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'sprite mr-32',
+        css: 'sprite mr-16',
         id: `CraftSprite${craft}`,
         image: getSpritePath({ spriteName: craftData.image }),
         parent: `Craft${craft}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'w-20 mr-16 t-20',
+        id: `CraftName${craft}`,
+        parent: `Craft${craft}`,
+        text: craftData.name.split('_').join(' '),
     });
 
     createElement({
@@ -1280,24 +1311,9 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
 
     createElement({
         absolute: false,
-        css: 'row align g-16',
-        id: `CraftInfo${craft}`,
-        parent: `CraftData${craft}`,
-    });
-
-    createElement({
-        absolute: false,
-        css: 't-20',
-        id: `CraftName${craft}`,
-        parent: `CraftInfo${craft}`,
-        text: craftData.name.split('_').join(' '),
-    });
-
-    createElement({
-        absolute: false,
-        css: 't-16',
+        css: 't-10',
         id: `CraftText${craft}`,
-        parent: `CraftInfo${craft}`,
+        parent: `CraftData${craft}`,
         text: craftData.text,
     });
 
@@ -1495,7 +1511,21 @@ const createLabStats = () => {
         absolute: false,
         id: 'GemMax',
         parent: 'LabStats',
-        text: `Max Gem: ${admin.stats._gemMax} (${admin.gems.length})`,
+        text: `Gems Owned: ${admin.gems.length}/${admin.stats._gemMax}`,
+    });
+
+    createElement({
+        absolute: false,
+        id: 'VulkanSpeed',
+        parent: 'LabStats',
+        text: `Vulkan Speed: ${admin.stats._forgeVulkanSpeed}`,
+    });
+
+    createElement({
+        absolute: false,
+        id: 'OryonSpeed',
+        parent: 'LabStats',
+        text: `Oryon Speed: ${admin.stats._forgeOryonSpeed}`,
     });
 };
 
@@ -1618,32 +1648,7 @@ export const updateLabs = () => {
         const labEl = checkElement({ elId: `Lab${lab.data.name}` });
 
         if (labEl) {
-            if (lab._done) {
-                const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
-                labDoneEl.style.display = 'block';
-
-                const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
-                labCostEl.style.display = 'none';
-
-                const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
-                labRunEl.style.display = 'none';
-
-                const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
-                labStartEl.style.display = 'none';
-            }
-            else if (lab._run) {
-                const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
-                labDoneEl.style.display = 'none';
-
-                const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
-                labCostEl.style.display = 'none';
-
-                const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
-                labRunEl.innerText = `Running: ${lab._progress}/${lab.data.time}`;
-
-                const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
-                labStartEl.style.display = 'none';
-            }
+            updateLab({ labName: lab.data.name });
         }
         else {
             createLab({
@@ -1654,6 +1659,8 @@ export const updateLabs = () => {
                 labText: lab.data.text,
                 labTime: lab.data.time,
             });
+
+            updateLab({ labName: lab.data.name });
         }
     }
 };
@@ -1665,7 +1672,25 @@ const updateLabStats = () => {
     labPointsEl.innerText = `Lab Points: ${admin.stats._labPoints}`;
 
     const gemMaxEl = getElement({ elId: 'GemMax' });
-    gemMaxEl.innerText = `Max Gem: ${admin.stats._gemMax} (${admin.gems.length})`;
+    gemMaxEl.innerText = `Gems Owned: ${admin.gems.length}/${admin.stats._gemMax}`;
+
+    const vulkanSpeedEl = getElement({ elId: 'VulkanSpeed' });
+    if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_VULKAN })) {
+        vulkanSpeedEl.style.display = 'flex';
+        vulkanSpeedEl.innerText = `Vulkan Speed: ${admin.stats._forgeVulkanSpeed}`;
+    }
+    else {
+        vulkanSpeedEl.style.display = 'none';
+    }
+
+    const oryonSpeedEl = getElement({ elId: 'OryonSpeed' });
+    if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_ORYON })) {
+        oryonSpeedEl.style.display = 'flex';
+        oryonSpeedEl.innerText = `Oryon Speed: ${admin.stats._forgeOryonSpeed}`;
+    }
+    else {
+        oryonSpeedEl.style.display = 'none';
+    }
 };
 
 const updateLabPage = () => {
@@ -1699,6 +1724,41 @@ const updateLabPage = () => {
     const totalPages = Math.ceil(displayableLabs.length / LAB_AMOUNT_PER_PAGE);
     const labPageIndexEl = getElement({ elId: 'LabPageIndex' });
     labPageIndexEl.innerText = `${LAB_PAGE_INDEX + 1}/${totalPages || 1}`;
+};
+
+const updateLab = ({ labName }: { labName: string }) => {
+    const admin = getAdmin();
+    const lab = admin.labs.find(lab => lab.data.name === labName) ?? error({
+        message: `Lab ${labName} not found`,
+        where: updateLab.name,
+    });
+
+    if (lab._done) {
+        const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
+        labDoneEl.style.display = 'block';
+
+        const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
+        labCostEl.style.display = 'none';
+
+        const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
+        labRunEl.style.display = 'none';
+
+        const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+        labStartEl.style.display = 'none';
+    }
+    else if (lab._run) {
+        const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
+        labDoneEl.style.display = 'none';
+
+        const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
+        labCostEl.style.display = 'none';
+
+        const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
+        labRunEl.innerText = `Running: ${lab._progress}/${lab.data.time}`;
+
+        const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+        labStartEl.style.display = 'none';
+    }
 };
 //#endregion
 
