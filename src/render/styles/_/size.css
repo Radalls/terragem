@@ -37,6 +37,10 @@
     width: 50%;
 }
 
+.w-75 {
+    width: 75%;
+}
+
 /* HEIGHT */
 .h-10 {
     height: 10%;

@@ -1,4 +1,3 @@
-import { getComponent } from '@/engine/systems/entity';
 import { getTileAtPosition } from '@/engine/systems/position';
 
 //#region CONSTANTS
@@ -107,11 +106,10 @@ const getValidNeighbors = (x: number, y: number): Point[] => {
         .map(dir => ({ x: x + dir.x, y: y + dir.y }))
         .filter(pos => {
             try {
-                const tileId = getTileAtPosition({ x: pos.x, y: pos.y });
+                const { tile, tileId } = getTileAtPosition({ x: pos.x, y: pos.y });
 
-                if (!tileId) return true;
+                if (!(tileId)) return true;
 
-                const tile = getComponent({ componentId: 'Tile', entityId: tileId });
                 return tile._destroy;
             } catch {
                 return false;

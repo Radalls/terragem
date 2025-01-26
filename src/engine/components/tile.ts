@@ -5,6 +5,7 @@ export type Tile = {
     _density: number;
     _destroy: boolean;
     _dropAmount: number;
+    _lift?: string;
     _lock: boolean;
     drops: Drop[];
 }

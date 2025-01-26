@@ -811,7 +811,6 @@
         "unlock": [
             { "type": "lab", "name": "LAB_GEM_MAX_30" },
             { "type": "lab", "name": "LAB_GEM_CARRY_ITEM_AMOUNT_1" },
-            { "type": "lab", "name": "LAB_GEM_LIFT_ITEM_CAPACITY_1" },
             { "type": "quest", "name": "QUEST_CARRY_11" }
         ]
     },

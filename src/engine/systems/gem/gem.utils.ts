@@ -105,9 +105,7 @@ export const getGemActionSpeed = ({ gemId }: { gemId: string }) => {
     else if (gemType === Gems.CARRY || gemType === Gems.LIFT) {
         const gemActionSpeed = (gemState._action === 'move')
             ? getGemStat({ gemId, gemType, stat: '_moveSpeed' })
-            : isGemAt({ at: 'start', gemId }) || isGemAt({ at: 'target', gemId })
-                ? getGemStat({ gemId, gemType, stat: '_itemSpeed' })
-                : getGemStat({ gemId, gemType, stat: '_moveSpeed' });
+            : getGemStat({ gemId, gemType, stat: '_itemSpeed' });
 
         return gemActionSpeed;
     }

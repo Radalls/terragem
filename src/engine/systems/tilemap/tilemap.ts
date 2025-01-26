@@ -193,7 +193,7 @@ const generateTileMapLayers = ({ tileMapId }: { tileMapId?: string | null }) => 
 
     for (let x = 0; x < TILEMAP_BASE_X_TILES_LOCKED; x++) {
         for (let y = 1; y <= TILEMAP_BASE_Y_TILES_LOCKED; y++) {
-            const tileId = getTileAtPosition({ x, y });
+            const { tileId } = getTileAtPosition({ x, y });
             lockTile({ tileId });
         }
     }
@@ -208,8 +208,11 @@ export const selectTile = ({ selectedTileId }: { selectedTileId: string }) => {
     });
 
     const selectedTilePosition = getComponent({ componentId: 'Position', entityId: selectedTileId });
-    const targetTileId = getTileAtPosition({ x: selectedTilePosition._x, y: selectedTilePosition._y - 1 });
-    const targetTile = getComponent({ componentId: 'Tile', entityId: targetTileId });
+
+    const { tile: targetTile, tileId: targetTileId } = getTileAtPosition({
+        x: selectedTilePosition._x,
+        y: selectedTilePosition._y - 1,
+    });
     const targetTilePosition = getComponent({ componentId: 'Position', entityId: targetTileId });
 
     if (getState({ key: 'requestGemMove' })) {
