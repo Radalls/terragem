@@ -58,5 +58,7 @@ export const runBuild = ({ buildName }: { buildName: Items }) => {
             addAdminItem({ amount: output.amount, name: output.name });
         }
     }
+
+    emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_STORAGE });
 };
 //#endregion

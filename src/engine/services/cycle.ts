@@ -128,9 +128,7 @@ const runCycle = () => {
             if (forgeVulkanTrigger >= 1) {
                 cycle.forgeVulkanTime = 0;
 
-                for (let i = 0; i < admin.builds.forges.vulkan; i++) {
-                    runBuild({ buildName: Items.BUILD_FORGE_VULKAN });
-                }
+                runBuild({ buildName: Items.BUILD_FORGE_VULKAN });
             }
         }
 
@@ -141,9 +139,7 @@ const runCycle = () => {
             if (forgeOryonTrigger >= 1) {
                 cycle.forgeOryonTime = 0;
 
-                for (let i = 0; i < admin.builds.forges.oryon; i++) {
-                    runBuild({ buildName: Items.BUILD_FORGE_ORYON });
-                }
+                runBuild({ buildName: Items.BUILD_FORGE_ORYON });
             }
         }
 

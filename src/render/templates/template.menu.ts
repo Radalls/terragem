@@ -397,7 +397,7 @@ export const displayAdminMenu = ({ display }: { display: boolean }) => {
 const createStorage = () => {
     createElement({
         absolute: false,
-        css: 'storage row full g-12',
+        css: 'storage row wrap full g-12',
         id: 'AdminStorage',
         parent: 'AdminContent',
     });
@@ -409,7 +409,7 @@ const createStorageItem = ({ itemName, itemAmount }: {
 }) => {
     createElement({
         absolute: false,
-        css: 'item btn row align w-25 h-25',
+        css: 'item btn row align',
         id: `Item${itemName}`,
         parent: 'AdminStorage',
     });
@@ -1518,14 +1518,14 @@ const createLabStats = () => {
         absolute: false,
         id: 'VulkanSpeed',
         parent: 'LabStats',
-        text: `Vulkan Speed: ${admin.stats._forgeVulkanSpeed}`,
+        text: `Vulkan Speed: ${admin.stats._forgeVulkanSpeed * 60}/min`,
     });
 
     createElement({
         absolute: false,
         id: 'OryonSpeed',
         parent: 'LabStats',
-        text: `Oryon Speed: ${admin.stats._forgeOryonSpeed}`,
+        text: `Oryon Speed: ${admin.stats._forgeOryonSpeed * 60}/min`,
     });
 };
 
@@ -1677,7 +1677,7 @@ const updateLabStats = () => {
     const vulkanSpeedEl = getElement({ elId: 'VulkanSpeed' });
     if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_VULKAN })) {
         vulkanSpeedEl.style.display = 'flex';
-        vulkanSpeedEl.innerText = `Vulkan Speed: ${admin.stats._forgeVulkanSpeed}`;
+        vulkanSpeedEl.innerText = `Vulkan Speed: ${admin.stats._forgeVulkanSpeed * 60}/min`;
     }
     else {
         vulkanSpeedEl.style.display = 'none';
@@ -1686,7 +1686,7 @@ const updateLabStats = () => {
     const oryonSpeedEl = getElement({ elId: 'OryonSpeed' });
     if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_ORYON })) {
         oryonSpeedEl.style.display = 'flex';
-        oryonSpeedEl.innerText = `Oryon Speed: ${admin.stats._forgeOryonSpeed}`;
+        oryonSpeedEl.innerText = `Oryon Speed: ${admin.stats._forgeOryonSpeed * 60}/min`;
     }
     else {
         oryonSpeedEl.style.display = 'none';
