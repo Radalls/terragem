@@ -127,8 +127,8 @@ export const createRun = () => {
     createEntityGem({ type: Gems.CARRY });
 
     emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
-    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
-    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    emit({ data: { audioName: 'bgm_menu', list: true }, target: 'engine', type: EngineEvents.AUDIO_STOP });
+    emit({ data: { audioName: 'bgm_game', list: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 
 export const loadRun = ({ saveData }: { saveData: SaveData }) => {
@@ -145,7 +145,7 @@ export const loadRun = ({ saveData }: { saveData: SaveData }) => {
     loadSaveGem();
 
     emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
-    emit({ data: { audioName: 'bgm_menu1' }, target: 'engine', type: EngineEvents.AUDIO_STOP });
-    emit({ data: { audioName: 'bgm_game1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    emit({ data: { audioName: 'bgm_menu', list: true }, target: 'engine', type: EngineEvents.AUDIO_STOP });
+    emit({ data: { audioName: 'bgm_game', list: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
 };
 //#endregion
