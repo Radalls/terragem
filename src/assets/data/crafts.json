@@ -9,7 +9,7 @@
     { "@": "MECHS" },
     { "name": "MK1_MINE", "image": "mech_mk1_mine", "text": "Equip to a MINE to improve its stats. Can be unequipped.", "components": [{ "name": "GEOLYN", "amount": 500 }, { "name": "CERULYN", "amount": 500 }, { "name": "STONE", "amount": 100 }] },
     { "name": "MK1_TUNNEL", "image": "mech_mk1_tunnel", "text": "Equip to a TUNNEL to improve its stats. Can be unequipped.", "components": [{ "name": "VIRIDYN", "amount": 100 }, { "name": "STONE", "amount": 100 }] },
-    { "name": "MK1_CARRY", "image": "mech_mk1_carry", "text": "Equip to a CARRY to improve its stats. Can be unequipped.", "components": [{ "name": "FIRMYN", "amount": 100 }, { "name": "STONE", "amount": 100 }] },
+    { "name": "MK1_CARRY", "image": "mech_mk1_carry", "text": "Equip to a CARRY to improve its stats. Can be unequipped.", "components": [{ "name": "FIRMYN", "amount": 25 }, { "name": "STONE", "amount": 100 }] },
     { "@": "BUILDS" },
     { "name": "FORGE_VULKAN", "image": "build_forge_vulkan", "text": "Build to forge hard ressources. Deploy themself on the surface close to the base. Merge resources into others on a cycle based on VULKAN SPEED stat. Multiples stack on top of each other.", "components": [{ "name": "DAMSYN", "amount": 50 }, { "name": "STONE", "amount": 500 }] },
     { "name": "FORGE_ORYON", "image": "build_forge_oryon", "text": "Build to forge soft ressources. Deploy themself on the surface close to the base. Merge resources into others on a cycle based on ORYON SPEED stat. Multiples stack on top of each other.", "components": [{ "name": "CLARYN", "amount": 50 }, { "name": "STONE", "amount": 500 }] }

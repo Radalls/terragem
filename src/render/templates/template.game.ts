@@ -235,6 +235,10 @@ export const updateTileEntity = ({ elId }: { elId: string }) => {
     el.style.top = `${((elPosition._y + ((TILEMAP_GROUND_LEVEL + 1) - elSprite._height)) * TILE_SIZE)}px`;
 };
 
+//#region BUILD
+//#region CONSTANTS
+//#endregion
+
 //#region ADMIN
 const createAdmin = () => {
     const adminBuildData = getBuildData({ buildName: 'ADMIN' });
@@ -269,10 +273,6 @@ export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
 };
 //#endregion
 
-//#region BUILD
-//#region CONSTANTS
-//#endregion
-
 export const createBuild = ({ buildName }: { buildName: Items }) => {
     const admin = getAdmin();
 
@@ -293,7 +293,7 @@ export const createBuild = ({ buildName }: { buildName: Items }) => {
         height: buildData.height,
         width: buildData.width,
         x: buildData.x,
-        y: buildCount - 1,
+        y: 0 - (buildCount - 1),
         z: 0,
     });
 };

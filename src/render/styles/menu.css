@@ -75,6 +75,11 @@
 }
 
 /* STORAGE */
+.menus .item {
+    height: calc(20% - 12px);
+    width: calc(20% - 12px);
+}
+
 .menus .item .icon {
     height: 10vh;
     width: 10vh;
