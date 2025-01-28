@@ -101,7 +101,12 @@ export const onEvent = ({
         pauseAudio({ audioName: data.audioName });
     }
     else if (type === EngineEvents.AUDIO_PLAY && data.audioName) {
-        playAudio({ audioName: data.audioName, loop: data.loop });
+        playAudio({
+            audioName: data.audioName,
+            list: data.list,
+            loop: data.loop,
+            volume: data.volume,
+        });
     }
     else if (type === EngineEvents.AUDIO_STOP && data.audioName) {
         stopAudio({ audioName: data.audioName });

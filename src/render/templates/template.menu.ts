@@ -228,7 +228,7 @@ export const displayLaunch = ({ display }: { display: boolean }) => {
         : 'none';
 
     if (display) {
-        emit({ data: { audioName: 'bgm_menu1', loop: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+        emit({ data: { audioName: 'bgm_menu', list: true }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
 };
 //#endregion
