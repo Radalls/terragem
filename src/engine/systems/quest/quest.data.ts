@@ -5,6 +5,7 @@ import { error } from '@/engine/services/error';
 //#region TYPES
 export type QuestData =
     | {
+        image: string;
         mine: { amount: number, name: string };
         name: string;
         reward: ({ amount: number, type: 'lab' } | { amount: number, name: Items, type: 'item' })[];
@@ -14,6 +15,7 @@ export type QuestData =
     }
     | {
         carry: number;
+        image: string;
         name: string;
         reward: ({ amount: number, type: 'lab' } | { amount: number, name: Items, type: 'item' })[];
         text: string;
@@ -22,6 +24,7 @@ export type QuestData =
     }
     | {
         gems: number;
+        image: string;
         name: string;
         reward: ({ amount: number, type: 'lab' } | { amount: number, name: Items, type: 'item' })[];
         text: string;
@@ -35,7 +38,7 @@ export const getQuestData = ({ questName }: { questName: string }) => {
     const questz = quests.filter((data) => !(data['@']));
 
     const questData = questz.find((data) => data.name === questName) ?? error({
-        message: `CraftData for ${questName} not found`,
+        message: `QuestData for ${questName} not found`,
         where: getQuestData.name,
     });
 

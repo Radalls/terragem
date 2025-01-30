@@ -114,7 +114,7 @@ const runCycle = () => {
 
             for (const lab of admin.labs) {
                 if (lab._run) {
-                    progressLab({ name: lab.data.name });
+                    progressLab({ name: lab._name });
                 }
             }
         }

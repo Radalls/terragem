@@ -43,13 +43,39 @@
 /* SETTINGS */
 
 /* ADMIN */
-.admin-tab {
-    min-width: 100%;
+.menus .tabs {
+    min-width: auto;
 }
 
-.save {
+.menus .tab {
+    background-size: 50%;
+    min-width: auto;
+}
+
+.menus .close {
     right: 2vh;
     top: 2vh;
+    min-width: auto;
+}
+
+.menus .home {
+    background-size: 75%;
+    left: 2vh;
+    top: -4vh;
+    min-width: auto;
+}
+
+.home-confirm {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100000000;
+}
+
+.menus .save {
+    background-size: 75%;
+    right: 2vh;
+    top: -4vh;
     min-width: auto;
 }
 
@@ -76,7 +102,6 @@
 
 /* STORAGE */
 .menus .item {
-    height: calc(20% - 12px);
     width: calc(20% - 12px);
 }
 
@@ -117,21 +142,48 @@
 }
 
 .menus .destroy {
-    background-color: #F02222;
-    border: none;
+    background-color: #A50000;
     right: -0.8vh;
     top: -0.8vh;
-    height: 2vh;
-    width: 2vh;
+    height: 4vh;
+    width: 4vh;
     min-width: auto;
+}
+
+.destroy-confirm {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100000000;
 }
 
 /* WORKSHOP */
 /* --- */
 
 /* LAB */
+.labs .lab {
+    overflow: hidden;
+}
+
+.labs .lab.done {
+    color: #FFFFFF;
+}
+
+.labs .lab-progress {
+    background-color: transparent;
+    border: none;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
 .labs .sprite {
     height: 6vh;
     width: 6vh;
     min-width: 3vh;
+}
+
+.labs .icon {
+    height: 6vh;
+    width: 6vh;
 }

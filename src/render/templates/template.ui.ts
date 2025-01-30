@@ -5,12 +5,14 @@ import { EngineEvents } from '@/engine/services/event';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemType, isGemUnlocked } from '@/engine/systems/gem';
 import { getTileAtPosition } from '@/engine/systems/position';
+import { getQuestData } from '@/engine/systems/quest';
 import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
 import {
     checkElement,
     createButton,
     createElement,
+    createProgress,
     destroyElement,
     displayAdminMenu,
     getElement,
@@ -18,6 +20,7 @@ import {
     setAllOtherGemsMode,
     setGemMode,
     setTileMode,
+    updateProgress,
 } from '@/render/templates';
 
 //#region TEMPLATES
@@ -55,7 +58,7 @@ const ALERT_SUCCESS_COLOR = '#30CB48;';
 
 const createAlerts = () => {
     createElement({
-        css: 'alerts col align gap-sm disable full-w g-4 p-box',
+        css: 'alerts col align disable full-w g-4 p-box',
         id: 'Alerts',
         parent: 'app',
     });
@@ -64,7 +67,7 @@ const createAlerts = () => {
 const addAlert = ({ text, type, alert }: {
     alert?: boolean,
     text: string,
-    type: string,
+    type: 'confirm' | 'success' | 'warning' | 'error' | 'quest',
 }) => {
     const infoEl = createElement({
         absolute: false,
@@ -96,6 +99,17 @@ const addAlert = ({ text, type, alert }: {
 
         emit({ data: { audioName: 'main_error' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
+    else if (type === 'quest') {
+        const questData = getQuestData({ questName: text });
+
+        const questReward = questData.reward.map(reward => (reward.type === 'item')
+            ? `${reward.name} x${reward.amount}`
+            : `LabPoint x${reward.amount}`
+        ).join(', ');
+
+        infoEl.style.backgroundColor = ALERT_SUCCESS_COLOR;
+        infoEl.innerText = `${questData.text} complete ! (${questReward})`;
+    }
 };
 
 const removeAlert = () => {
@@ -109,7 +123,7 @@ const removeAlert = () => {
 export const displayAlert = ({ text, type, alert }: {
     alert?: boolean,
     text: string,
-    type: string,
+    type: 'confirm' | 'success' | 'warning' | 'error' | 'quest',
 }) => {
     const infosEl = getElement({ elId: 'Alerts' });
     if (infosEl.children.length >= MAX_ALERT_COUNT) {
@@ -131,6 +145,9 @@ export const displayAlert = ({ text, type, alert }: {
     }
     else if (type === 'error') {
         timeout = ALERT_ERROR_TIMEOUT;
+    }
+    else if (type === 'quest') {
+        timeout = ALERT_SUCCESS_TIMEOUT;
     }
 
     setTimeout(
@@ -811,14 +828,6 @@ const createGem = ({ gemId }: { gemId: string }) => {
         parent: `Gem${gemId}`,
         text: gem._name,
     });
-
-    createElement({
-        absolute: false,
-        css: 'disable',
-        id: `GemLevel${gemId}`,
-        parent: `Gem${gemId}`,
-        text: `Lvl: ${gem._xpLvl}`,
-    });
 };
 //#endregion
 
@@ -1018,6 +1027,7 @@ export const displayAdminUI = ({ display }: { display: boolean }) => {
 //#endregion
 
 //#region QUEST
+//#region CREATE
 const createQuests = () => {
     createElement({
         css: 'quests frame col hidden enable w-20 g-8 p-8 t-10',
@@ -1048,51 +1058,75 @@ const createQuest = ({ name, progress, total, text }: {
     text: string,
     total: number,
 }) => {
+    const questData = getQuestData({ questName: name });
+
     createElement({
+        absolute: false,
+        id: `Quest-${name}`,
+        parent: 'Quests',
+    });
+
+    createElement({
+        css: 'icon',
+        id: `QuestIcon-${name}`,
+        image: getSpritePath({ spriteName: questData.image }),
+        parent: `Quest-${name}`,
+    });
+
+    createProgress({
         absolute: false,
         css: 'quest btn t-12',
         id: `Quest-${name}`,
-        parent: 'Quests',
+        parent: `Quest-${name}`,
         text: `${text}: ${progress}/${total}`,
+        value: (progress / total) * 100,
     });
 };
 
+const removeQuest = ({ name }: { name: string }) => {
+    destroyElement({ elId: `Quest-${name}` });
+};
+//#endregion
+
+//#region UPDATE
 export const updateQuests = () => {
     const admin = getAdmin();
 
     for (const quest of admin.quests) {
-        const questEl = checkElement({ elId: `Quest-${quest.data.name}` });
+        const questEl = checkElement({ elId: `Quest-${quest._name}` });
 
         if (quest._done) {
             if (questEl) {
-                removeQuest({ name: quest.data.name });
+                removeQuest({ name: quest._name });
             }
 
             continue;
         }
 
+        const questData = getQuestData({ questName: quest._name });
+
         if (!(questEl)) {
             createQuest({
-                name: quest.data.name,
+                name: quest._name,
                 progress: quest._progress,
-                text: quest.data.text,
-                total: (quest.data.type === 'mine')
-                    ? quest.data.mine.amount
-                    : (quest.data.type === 'carry')
-                        ? quest.data.carry
-                        : quest.data.gems,
+                text: questData.text,
+                total: (questData.type === 'mine')
+                    ? questData.mine.amount
+                    : (questData.type === 'carry')
+                        ? questData.carry
+                        : questData.gems,
             });
         }
         else {
             updateQuest({
-                name: quest.data.name,
+                name: quest._name,
                 progress: quest._progress,
-                text: quest.data.text,
-                total: (quest.data.type === 'mine')
-                    ? quest.data.mine.amount
-                    : (quest.data.type === 'carry')
-                        ? quest.data.carry
-                        : quest.data.gems,
+                text: questData.text,
+                total: (questData.type === 'mine')
+                    ? questData.mine.amount
+                    : (questData.type === 'carry')
+                        ? questData.carry
+                        : questData.gems,
             });
         }
     }
@@ -1104,14 +1138,13 @@ const updateQuest = ({ name, progress, total, text }: {
     text: string,
     total: number,
 }) => {
-    const questEl = getElement({ elId: `Quest-${name}` });
-
-    questEl.innerText = `${text}: ${progress}/${total}`;
+    updateProgress({
+        elId: `Quest-${name}`,
+        text: `${text}: ${progress}/${total}`,
+        value: (progress / total) * 100,
+    });
 };
-
-const removeQuest = ({ name }: { name: string }) => {
-    destroyElement({ elId: `Quest-${name}` });
-};
+//#endregion
 
 export const displayQuests = ({ display }: { display: boolean }) => {
     const questsEl = getElement({ elId: 'Quests' });

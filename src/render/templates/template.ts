@@ -31,6 +31,10 @@ type ElementData =
 type ButtonData = ElementData & {
     click: () => void;
 }
+
+type ProgressData = ElementData & {
+    value: number;
+}
 //#endregion
 
 //#region TEMPLATES
@@ -96,6 +100,54 @@ export const createButton = ({
     btn.addEventListener('click', click);
 
     return btn;
+};
+
+export const createProgress = ({
+    value,
+    ...el
+}: ProgressData) => {
+    if (!(el.id)) throw error({
+        message: 'Element id must be provided',
+        where: createProgress.name,
+    });
+
+    const progressContainer = createElement({
+        ...el,
+        id: `${el.id}-ProgressContainer`,
+        text: undefined,
+    });
+    progressContainer.classList.add('progress-container');
+
+    createElement({
+        css: 'progress',
+        id: `${el.id}-Progress`,
+        parent: `${el.id}-ProgressContainer`,
+    });
+
+    if (el.text) {
+        createElement({
+            css: 'progress-text',
+            id: `${el.id}-ProgressText`,
+            parent: `${el.id}-ProgressContainer`,
+            text: el.text,
+        });
+    }
+
+    updateProgress({ elId: el.id, value });
+};
+
+export const updateProgress = ({ elId, value, text }: {
+    elId: string;
+    text?: string;
+    value: number;
+}) => {
+    const progress = getElement({ elId: `${elId}-Progress` });
+    progress.style.width = `${value}%`;
+
+    if (text) {
+        const progressText = getElement({ elId: `${elId}-ProgressText` });
+        progressText.innerText = text;
+    }
 };
 
 export const destroyElement = ({ elId }: { elId: string }) => {

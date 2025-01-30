@@ -7,6 +7,7 @@ import { isBuildUnlocked } from '@/engine/systems/build';
 import { getAdmin, getComponent } from '@/engine/systems/entity';
 import { gemHasItems, getGem, getGemStat, getGemType, isGemUnlocked } from '@/engine/systems/gem';
 import { getCraftData } from '@/engine/systems/item';
+import { getLabData } from '@/engine/systems/lab';
 import { exportSaveFile, getProjectVersion, importSaveFile } from '@/engine/systems/save';
 import { getSpritePath } from '@/engine/systems/sprite';
 import { RenderEvents } from '@/render/events';
@@ -14,11 +15,13 @@ import {
     checkElement,
     createButton,
     createElement,
+    createProgress,
     destroyElement,
     displayAdminUI,
     displayGemView,
     getElement,
     searchElementsByClassName,
+    updateProgress,
 } from '@/render/templates';
 
 //#region CONSTANTS
@@ -263,7 +266,7 @@ enum AdminTabs {
     // eslint-disable-next-line typescript-sort-keys/string-enum
     WORKSHOP = 'AdminTabWorkshop',
     // eslint-disable-next-line typescript-sort-keys/string-enum
-    LAB = 'AdminTabLab',
+    LAB = 'AdminTabLabs',
 }
 //#endregion
 
@@ -277,7 +280,7 @@ export const createAdminMenu = () => {
 
     createElement({
         absolute: false,
-        css: 'frame col around w-15 p-8',
+        css: 'tabs frame col align w-15 g-12 p-8',
         id: 'AdminTabs',
         parent: 'Admin',
     });
@@ -290,30 +293,37 @@ export const createAdminMenu = () => {
     });
 
     createButton({
-        click: () => onClickSaveGame(),
-        css: 'save p-4 t-12',
-        id: 'AdminSave',
+        click: () => displayAdminMenu({ display: false }),
+        css: 'close p-24',
+        id: 'AdminClose',
+        image: getSpritePath({ spriteName: 'menu_close' }),
         parent: 'Admin',
-        text: 'Save',
     });
 
     createButton({
-        absolute: false,
-        click: () => displayAdminMenu({ display: false }),
-        css: 'admin-tab full-w t-20 p-24',
-        id: 'AdminBack',
+        click: () => onClickHome(),
+        css: 'home p-24',
+        id: 'AdminHome',
+        image: getSpritePath({ spriteName: 'menu_home' }),
         parent: 'AdminTabs',
-        text: 'Back',
+    });
+
+    createButton({
+        click: () => onClickSaveGame(),
+        css: 'save p-24',
+        id: 'AdminSave',
+        image: getSpritePath({ spriteName: 'menu_save' }),
+        parent: 'AdminTabs',
     });
 
     for (const tab of Object.values(AdminTabs)) {
         createButton({
             absolute: false,
             click: () => selectAdminTab({ tab }),
-            css: 'admin-tab full-w t-20 p-24',
+            css: 'tab full-w h-20',
             id: tab,
+            image: getSpritePath({ spriteName: `menu_${tab.replace('AdminTab', '').toLowerCase()}` }),
             parent: 'AdminTabs',
-            text: tab.replace('AdminTab', ''),
         });
     }
 
@@ -355,7 +365,7 @@ const updateAdminContent = ({ tab, page }: {
 
 //#region ACTIONS
 const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
-    const adminTabsEls = searchElementsByClassName({ className: 'admin-tab', parent: 'AdminTabs' });
+    const adminTabsEls = searchElementsByClassName({ className: 'tab', parent: 'AdminTabs' });
 
     adminTabsEls.forEach((adminTabEl) => adminTabEl.classList.remove('select'));
 
@@ -370,7 +380,63 @@ const selectAdminTab = ({ tab }: { tab?: AdminTabs }) => {
 };
 
 const onClickSaveGame = () => {
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+
     exportSaveFile();
+};
+
+const onClickHome = () => {
+    createElement({
+        css: 'home-confirm frame col w-25 p-box g-32',
+        id: 'HomeConfirm',
+        parent: 'app',
+    });
+
+    createElement({
+        absolute: false,
+        css: 'mt-32',
+        id: 'HomeConfirmText',
+        parent: 'HomeConfirm',
+        text: 'Leave to menu ?',
+    });
+
+    createElement({
+        absolute: false,
+        css: 'row between full-w p-box',
+        id: 'HomeConfirmActions',
+        parent: 'HomeConfirm',
+    });
+
+    createButton({
+        absolute: false,
+        click: () => onClickHomeConfirm({ home: false }),
+        id: 'HomeConfirmNo',
+        parent: 'HomeConfirmActions',
+        text: 'No',
+    });
+
+    createButton({
+        absolute: false,
+        click: () => onClickHomeConfirm({ home: true }),
+        id: 'HomeConfirmYes',
+        parent: 'HomeConfirmActions',
+        text: 'Yes',
+    });
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const onClickHomeConfirm = ({ home }: { home: boolean }) => {
+    if (home) {
+        emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+
+        window.location.reload();
+    }
+    else {
+        destroyElement({ elId: 'HomeConfirm' });
+
+        emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
 };
 //#endregion
 
@@ -397,7 +463,7 @@ export const displayAdminMenu = ({ display }: { display: boolean }) => {
 const createStorage = () => {
     createElement({
         absolute: false,
-        css: 'storage row wrap full g-12',
+        css: 'storage row wrap g-12',
         id: 'AdminStorage',
         parent: 'AdminContent',
     });
@@ -409,12 +475,21 @@ const createStorageItem = ({ itemName, itemAmount }: {
 }) => {
     createElement({
         absolute: false,
-        css: 'item btn row align',
+        css: 'item btn col align',
         id: `Item${itemName}`,
         parent: 'AdminStorage',
     });
 
     createElement({
+        absolute: false,
+        css: 'row align right full-w pr-8',
+        id: `ItemAmount${itemName}`,
+        parent: `Item${itemName}`,
+        text: `x${itemAmount}`,
+    });
+
+    createElement({
+        absolute: false,
         css: 'icon',
         id: `ItemIcon${itemName}`,
         image: getSpritePath({ spriteName: `resource_${itemName.toLowerCase()}` }),
@@ -422,17 +497,11 @@ const createStorageItem = ({ itemName, itemAmount }: {
     });
 
     createElement({
-        css: 'label t-12',
+        absolute: false,
+        css: 'row align full-w t-12',
         id: `ItemLabel${itemName}`,
         parent: `Item${itemName}`,
         text: itemName.replace('_', ' '),
-    });
-
-    createElement({
-        css: 'amount',
-        id: `ItemAmount${itemName}`,
-        parent: `Item${itemName}`,
-        text: `x${itemAmount}`,
     });
 };
 
@@ -587,6 +656,7 @@ const createGem = ({ gemId }: { gemId: string }) => {
         click: () => onClickGemDestroy({ gemId }),
         css: 'destroy',
         id: `AdminGemDestroy${gemId}`,
+        image: getSpritePath({ spriteName: 'menu_destroy' }),
         parent: `AdminGem${gemId}`,
     });
 
@@ -1139,13 +1209,59 @@ const onClickGemEquip = ({ gemId }: { gemId: string }) => {
 };
 
 const onClickGemDestroy = ({ gemId }: { gemId: string }) => {
-    emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_DESTROY });
+    createElement({
+        css: 'destroy-confirm frame col w-25 p-box g-32',
+        id: 'DestroyConfirm',
+        parent: 'app',
+    });
 
-    destroyElement({ elId: `AdminGem${gemId}` });
+    createElement({
+        absolute: false,
+        css: 'mt-32',
+        id: 'DestroyConfirmText',
+        parent: 'DestroyConfirm',
+        text: 'Destroy this gem ?\n You will get back resources used to craft it.',
+    });
 
-    updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+    createElement({
+        absolute: false,
+        css: 'row between full-w p-box',
+        id: 'DestroyConfirmActions',
+        parent: 'DestroyConfirm',
+    });
 
-    emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    createButton({
+        absolute: false,
+        click: () => onClickGemDestroyConfirm({ destroy: false, gemId }),
+        id: 'DestroyConfirmNo',
+        parent: 'DestroyConfirmActions',
+        text: 'No',
+    });
+
+    createButton({
+        absolute: false,
+        click: () => onClickGemDestroyConfirm({ destroy: true, gemId }),
+        id: 'DestroyConfirmYes',
+        parent: 'DestroyConfirmActions',
+        text: 'Yes',
+    });
+};
+
+const onClickGemDestroyConfirm = ({ gemId, destroy }: {
+    destroy: boolean,
+    gemId: string,
+}) => {
+    if (destroy) {
+        emit({ entityId: gemId, target: 'engine', type: EngineEvents.GEM_DESTROY });
+
+        destroyElement({ elId: `AdminGem${gemId}` });
+
+        updateAdminContent({ page: GEMS_PAGE_INDEX, tab: AdminTabs.GEMS });
+
+        emit({ data: { audioName: 'main_action' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    }
+
+    destroyElement({ elId: 'DestroyConfirm' });
 };
 
 const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
@@ -1353,7 +1469,7 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
     createButton({
         absolute: false,
         click: () => onClickWorkshopCraft({ craft }),
-        css: 'w-15 p-box ml-32',
+        css: 'w-10 p-box ml-32',
         id: `CraftRun${craft}`,
         parent: `Craft${craft}`,
         text: 'Craft',
@@ -1495,37 +1611,97 @@ const createLabStats = () => {
 
     createElement({
         absolute: false,
-        css: 'row g-32 t-20',
+        css: 'row g-32 mb-32 t-20',
         id: 'LabStats',
         parent: 'AdminLabs',
     });
 
     createElement({
         absolute: false,
+        css: 'row align g-4',
         id: 'LabPoints',
         parent: 'LabStats',
-        text: `Lab Points: ${admin.stats._labPoints}`,
     });
 
     createElement({
         absolute: false,
+        css: 'icon',
+        id: 'LabPointsIcon',
+        image: getSpritePath({ spriteName: 'lab_points' }),
+        parent: 'LabPoints',
+    });
+
+    createElement({
+        absolute: false,
+        id: 'LabPointsValue',
+        parent: 'LabPoints',
+        text: `x${admin.stats._labPoints}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'row align g-4',
         id: 'GemMax',
         parent: 'LabStats',
-        text: `Gems Owned: ${admin.gems.length}/${admin.stats._gemMax}`,
     });
 
     createElement({
         absolute: false,
+        css: 'icon',
+        id: 'GemMaxIcon',
+        image: getSpritePath({ spriteName: 'lab_gem_count' }),
+        parent: 'GemMax',
+    });
+
+    createElement({
+        absolute: false,
+        id: 'GemMaxValue',
+        parent: 'GemMax',
+        text: `${admin.gems.length}/${admin.stats._gemMax}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'row align g-4',
         id: 'VulkanSpeed',
         parent: 'LabStats',
-        text: `Vulkan Speed: ${admin.stats._forgeVulkanSpeed * 60}/min`,
     });
 
     createElement({
         absolute: false,
+        css: 'icon',
+        id: 'VulkanSpeedIcon',
+        image: getSpritePath({ spriteName: 'lab_forge_vulkan_speed' }),
+        parent: 'VulkanSpeed',
+    });
+
+    createElement({
+        absolute: false,
+        id: 'VulkanSpeedValue',
+        parent: 'VulkanSpeed',
+        text: `${admin.stats._forgeVulkanSpeed * 60}/min`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'row align g-4',
         id: 'OryonSpeed',
         parent: 'LabStats',
-        text: `Oryon Speed: ${admin.stats._forgeOryonSpeed * 60}/min`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'icon',
+        id: 'OryonSpeedIcon',
+        image: getSpritePath({ spriteName: 'lab_forge_oryon_speed' }),
+        parent: 'OryonSpeed',
+    });
+
+    createElement({
+        absolute: false,
+        id: 'OryonSpeedValue',
+        parent: 'OryonSpeed',
+        text: `${admin.stats._forgeOryonSpeed * 60}/min`,
     });
 };
 
@@ -1583,9 +1759,16 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 }) => {
     createElement({
         absolute: false,
-        css: 'btn row between h-20 p-box',
+        css: 'lab btn row between h-20 p-box',
         id: `Lab${labName}`,
         parent: 'LabPage',
+    });
+
+    createProgress({
+        css: 'lab-progress',
+        id: `Lab${labName}`,
+        parent: `Lab${labName}`,
+        value: (labProgress / labTime) * 100,
     });
 
     createElement({
@@ -1606,18 +1789,46 @@ const createLab = ({ labName, labText, labImage, labCost, labProgress, labTime }
 
     createElement({
         absolute: false,
-        css: 't-12',
+        css: 'row align g-4',
         id: `LabCost${labName}`,
         parent: `Lab${labName}`,
-        text: `Cost: ${labCost}`,
     });
 
     createElement({
         absolute: false,
-        css: 't-16',
+        css: 'icon',
+        id: `LabCostIcon${labName}`,
+        image: getSpritePath({ spriteName: 'lab_points' }),
+        parent: `LabCost${labName}`,
+    });
+
+    createElement({
+        absolute: false,
+        id: `LabCostValue${labName}`,
+        parent: `LabCost${labName}`,
+        text: `x${labCost}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'row align g-4',
         id: `LabRun${labName}`,
         parent: `Lab${labName}`,
-        text: `Running: ${labProgress}/${labTime}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'icon',
+        id: `LabRunIcon${labName}`,
+        image: getSpritePath({ spriteName: 'lab_run' }),
+        parent: `LabRun${labName}`,
+    });
+
+    createElement({
+        absolute: false,
+        id: `LabRunValue${labName}`,
+        parent: `LabRun${labName}`,
+        text: `${labProgress}/${labTime}`,
     });
 
     createElement({
@@ -1645,22 +1856,24 @@ export const updateLabs = () => {
     updateLabStats();
 
     for (const lab of admin.labs) {
-        const labEl = checkElement({ elId: `Lab${lab.data.name}` });
+        const labEl = checkElement({ elId: `Lab${lab._name}` });
 
         if (labEl) {
-            updateLab({ labName: lab.data.name });
+            updateLab({ labName: lab._name });
         }
         else {
+            const labData = getLabData({ name: lab._name });
+
             createLab({
-                labCost: lab.data.cost,
-                labImage: lab.data.image,
-                labName: lab.data.name,
+                labCost: labData.cost,
+                labImage: labData.image,
+                labName: lab._name,
                 labProgress: lab._progress,
-                labText: lab.data.text,
-                labTime: lab.data.time,
+                labText: labData.text,
+                labTime: labData.time,
             });
 
-            updateLab({ labName: lab.data.name });
+            updateLab({ labName: lab._name });
         }
     }
 };
@@ -1668,16 +1881,18 @@ export const updateLabs = () => {
 const updateLabStats = () => {
     const admin = getAdmin();
 
-    const labPointsEl = getElement({ elId: 'LabPoints' });
-    labPointsEl.innerText = `Lab Points: ${admin.stats._labPoints}`;
+    const labPointsEl = getElement({ elId: 'LabPointsValue' });
+    labPointsEl.innerText = `x${admin.stats._labPoints}`;
 
-    const gemMaxEl = getElement({ elId: 'GemMax' });
-    gemMaxEl.innerText = `Gems Owned: ${admin.gems.length}/${admin.stats._gemMax}`;
+    const gemMaxEl = getElement({ elId: 'GemMaxValue' });
+    gemMaxEl.innerText = `${admin.gems.length}/${admin.stats._gemMax}`;
 
     const vulkanSpeedEl = getElement({ elId: 'VulkanSpeed' });
     if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_VULKAN })) {
         vulkanSpeedEl.style.display = 'flex';
-        vulkanSpeedEl.innerText = `Vulkan Speed: ${admin.stats._forgeVulkanSpeed * 60}/min`;
+
+        const vulkanSpeedValueEl = getElement({ elId: 'VulkanSpeedValue' });
+        vulkanSpeedValueEl.innerText = `${admin.stats._forgeVulkanSpeed * 60}/min`;
     }
     else {
         vulkanSpeedEl.style.display = 'none';
@@ -1686,7 +1901,9 @@ const updateLabStats = () => {
     const oryonSpeedEl = getElement({ elId: 'OryonSpeed' });
     if (isBuildUnlocked({ buildName: Items.BUILD_FORGE_ORYON })) {
         oryonSpeedEl.style.display = 'flex';
-        oryonSpeedEl.innerText = `Oryon Speed: ${admin.stats._forgeOryonSpeed * 60}/min`;
+
+        const oryonSpeedValueEl = getElement({ elId: 'OryonSpeedValue' });
+        oryonSpeedValueEl.innerText = `${admin.stats._forgeOryonSpeed * 60}/min`;
     }
     else {
         oryonSpeedEl.style.display = 'none';
@@ -1701,7 +1918,7 @@ const updateLabPage = () => {
 
     const labMapping = labEls.map(labEl => {
         const adminLab = admin.labs.find(lab => {
-            const labId = `Lab${lab.data.name}`;
+            const labId = `Lab${lab._name}`;
             return labEl.id === labId;
         });
 
@@ -1728,36 +1945,45 @@ const updateLabPage = () => {
 
 const updateLab = ({ labName }: { labName: string }) => {
     const admin = getAdmin();
-    const lab = admin.labs.find(lab => lab.data.name === labName) ?? error({
+    const lab = admin.labs.find(lab => lab._name === labName) ?? error({
         message: `Lab ${labName} not found`,
         where: updateLab.name,
     });
 
+    const labData = getLabData({ name: lab._name });
+
     if (lab._done) {
-        const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
+        const labEl = getElement({ elId: `Lab${lab._name}` });
+        labEl.classList.add('done');
+
+        const labDoneEl = getElement({ elId: `LabDone${lab._name}` });
         labDoneEl.style.display = 'block';
 
-        const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
+        const labCostEl = getElement({ elId: `LabCost${lab._name}` });
         labCostEl.style.display = 'none';
 
-        const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
+        const labRunEl = getElement({ elId: `LabRun${lab._name}` });
         labRunEl.style.display = 'none';
 
-        const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+        const labStartEl = getElement({ elId: `LabStart${lab._name}` });
         labStartEl.style.display = 'none';
+
+        updateProgress({ elId: `Lab${labName}`, value: (lab._progress / labData.time) * 100 });
     }
     else if (lab._run) {
-        const labDoneEl = getElement({ elId: `LabDone${lab.data.name}` });
+        const labDoneEl = getElement({ elId: `LabDone${lab._name}` });
         labDoneEl.style.display = 'none';
 
-        const labCostEl = getElement({ elId: `LabCost${lab.data.name}` });
+        const labCostEl = getElement({ elId: `LabCost${lab._name}` });
         labCostEl.style.display = 'none';
 
-        const labRunEl = getElement({ elId: `LabRun${lab.data.name}` });
-        labRunEl.innerText = `Running: ${lab._progress}/${lab.data.time}`;
+        const labRunEl = getElement({ elId: `LabRunValue${lab._name}` });
+        labRunEl.innerText = `${lab._progress}/${labData.time}`;
 
-        const labStartEl = getElement({ elId: `LabStart${lab.data.name}` });
+        const labStartEl = getElement({ elId: `LabStart${lab._name}` });
         labStartEl.style.display = 'none';
+
+        updateProgress({ elId: `Lab${labName}`, value: (lab._progress / labData.time) * 100 });
     }
 };
 //#endregion
@@ -1810,7 +2036,7 @@ const getLabPagesCount = () => {
 
     const visibleLabsCount = labEls.filter(labEl => {
         const adminLab = admin.labs.find(lab => {
-            const labId = `Lab${lab.data.name}`;
+            const labId = `Lab${lab._name}`;
             return labEl.id === labId;
         });
 

@@ -13,13 +13,12 @@ import { RenderEvents } from '@/render/events';
 //#region SYSTEMS
 export const createQuest = ({ questName }: { questName: string }) => {
     const admin = getAdmin();
-
     const questData = getQuestData({ questName });
 
     const quest: Quest = {
         _done: false,
+        _name: questData.name,
         _progress: 0,
-        data: questData,
     };
 
     if (questData.type === 'gem') {
@@ -36,15 +35,16 @@ export const progressQuestMine = ({ name, amount }: {
     name: Items,
 }) => {
     const quest = searchQuest({ name, type: 'mine' });
-
     if (!(quest)) return;
     if (quest._done) return;
-    if (!(quest.data.type === 'mine')) return;
+
+    const questData = getQuestData({ questName: quest._name });
+    if (!(questData.type === 'mine')) return;
 
     quest._progress += amount;
 
-    if (quest._progress >= quest.data.mine.amount) {
-        endQuest({ name: quest.data.name, type: 'mine' });
+    if (quest._progress >= questData.mine.amount) {
+        endQuest({ name: questData.name, type: 'mine' });
         return;
     }
 
@@ -53,15 +53,16 @@ export const progressQuestMine = ({ name, amount }: {
 
 export const progressQuestCarry = ({ amount }: { amount: number }) => {
     const quest = searchQuest({ name: 'carry', type: 'carry' });
-
     if (!(quest)) return;
     if (quest._done) return;
-    if (!(quest.data.type === 'carry')) return;
+
+    const questData = getQuestData({ questName: quest._name });
+    if (!(questData.type === 'carry')) return;
 
     quest._progress += amount;
 
-    if (quest._progress >= quest.data.carry) {
-        endQuest({ name: quest.data.name, type: 'carry' });
+    if (quest._progress >= questData.carry) {
+        endQuest({ name: questData.name, type: 'carry' });
         return;
     }
 
@@ -70,15 +71,16 @@ export const progressQuestCarry = ({ amount }: { amount: number }) => {
 
 export const progressQuestGems = ({ amount }: { amount: number }) => {
     const quest = searchQuest({ name: 'gems', type: 'gem' });
-
     if (!(quest)) return;
     if (quest._done) return;
-    if (!(quest.data.type === 'gem')) return;
+
+    const questData = getQuestData({ questName: quest._name });
+    if (!(questData.type === 'gem')) return;
 
     quest._progress += amount;
 
-    if (quest._progress >= quest.data.gems) {
-        endQuest({ name: quest.data.name, type: 'gem' });
+    if (quest._progress >= questData.gems) {
+        endQuest({ name: questData.name, type: 'gem' });
         return;
     }
 
@@ -98,9 +100,11 @@ const endQuest = ({ name, type }: {
         where: endQuest.name,
     });
 
+    const questData = getQuestData({ questName: quest._name });
+
     quest._done = true;
 
-    for (const reward of quest.data.reward) {
+    for (const reward of questData.reward) {
         if (reward.type === 'lab') {
             admin.stats._labPoints += reward.amount;
 
@@ -113,7 +117,7 @@ const endQuest = ({ name, type }: {
         }
     }
 
-    for (const unlock of quest.data.unlock) {
+    for (const unlock of questData.unlock) {
         if (unlock.type === 'lab') {
             createLab({ name: unlock.name });
 
@@ -125,6 +129,10 @@ const endQuest = ({ name, type }: {
     }
 
     emit({ target: 'render', type: RenderEvents.QUEST_END });
-    emit({ data: { text: `${name} complete !`, type: 'success' }, target: 'render', type: RenderEvents.INFO });
+    emit({
+        data: { text: quest._name, type: 'quest' },
+        target: 'render',
+        type: RenderEvents.INFO,
+    });
 };
 //#endregion
