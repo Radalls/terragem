@@ -1,6 +1,3 @@
-import { LabData } from '@/engine/systems/lab';
-import { QuestData } from '@/engine/systems/quest';
-
 export type Admin = {
     _: 'Admin';
     builds: Builds;
@@ -17,15 +14,15 @@ export type Admin = {
 
 export type Quest = {
     _done: boolean,
+    _name: string,
     _progress: number,
-    data: QuestData,
 };
 
 export type Lab = {
     _done: boolean,
+    _name: string,
     _progress: number,
     _run: boolean,
-    data: LabData,
 };
 
 export type Stats = {

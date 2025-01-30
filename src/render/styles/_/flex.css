@@ -34,6 +34,11 @@
     justify-content: flex-start;
 }
 
+.right {
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
 /* GAP */
 .g-4 {
     gap: 4px;

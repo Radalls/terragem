@@ -9,7 +9,7 @@ export const searchLab = ({ name }: { name: string }) => {
     const admin = getAdmin();
 
     const lab = admin.labs.find((lab) =>
-        lab.data.name === name
+        lab._name === name
         && lab._done === false
     );
 

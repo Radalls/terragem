@@ -16,9 +16,9 @@ export const createLab = ({ name }: { name: string }) => {
 
     const lab: Lab = {
         _done: false,
+        _name: labData.name,
         _progress: 0,
         _run: false,
-        data: labData,
     };
 
     admin.labs.push(lab);
@@ -32,8 +32,10 @@ export const runLab = ({ name }: { name: string }) => {
     if (!(lab)) return;
     if (lab._run) return;
 
-    if (admin.stats._labPoints >= lab.data.cost) {
-        admin.stats._labPoints -= lab.data.cost;
+    const labData = getLabData({ name: lab._name });
+
+    if (admin.stats._labPoints >= labData.cost) {
+        admin.stats._labPoints -= labData.cost;
 
         lab._run = true;
 
@@ -59,10 +61,12 @@ export const progressLab = ({ name }: { name: string }) => {
     if (!(lab)) return;
     if (!(lab._run)) return;
 
+    const labData = getLabData({ name: lab._name });
+
     lab._progress += 1;
 
-    if (lab._progress >= lab.data.time) {
-        endLab({ name: lab.data.name });
+    if (lab._progress >= labData.time) {
+        endLab({ name: labData.name });
 
         emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
 
@@ -82,10 +86,12 @@ export const endLab = ({ name }: { name: string }) => {
         where: endLab.name,
     });
 
+    const labData = getLabData({ name: lab._name });
+
     lab._run = false;
     lab._done = true;
 
-    for (const unlock of lab.data.unlock) {
+    for (const unlock of labData.unlock) {
         if (unlock.type === 'craft') {
             admin.crafts.push(unlock.name);
 
@@ -101,6 +107,6 @@ export const endLab = ({ name }: { name: string }) => {
     }
 
     emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
-    emit({ data: { text: `${name} complete !`, type: 'success' }, target: 'render', type: RenderEvents.INFO });
+    emit({ data: { text: `${labData.text} complete !`, type: 'success' }, target: 'render', type: RenderEvents.INFO });
 };
 //#endregion

@@ -133,6 +133,19 @@
     z-index: 1000;
 }
 
+.ui .quest {
+    height: 5vh;
+}
+
+.ui .quest .icon {
+    height: 3vh;
+    width: 3vh;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
 .ui .quests-icon {
     background-color: #30CB48;
     border-radius: 10px 20px;

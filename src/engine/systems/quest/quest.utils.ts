@@ -1,17 +1,17 @@
 import { getAdmin } from '@/engine/systems/entity';
+
 //#region CONSTANTS
 //#endregion
 
 //#region UTILS
-export const searchQuest = ({ type, name }: {
+export const searchQuest = ({ name }: {
     name: string
     type: 'mine' | 'carry' | 'gem'
 }) => {
     const admin = getAdmin();
 
     const quest = admin.quests.find((quest) =>
-        quest.data.type === type
-        && (quest.data.name.includes(name.toUpperCase()) || quest.data.name === name)
+        (quest._name.includes(name.toUpperCase()) || quest._name === name)
         && quest._done === false
     );
 

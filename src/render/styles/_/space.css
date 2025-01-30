@@ -24,6 +24,20 @@
     padding: 8px 16px;
 }
 
+/* LEFT */
+.pl-16 {
+    padding-left: 16px;
+}
+
+/* RIGHT */
+.pr-8 {
+    padding-right: 8px;
+}
+
+.pr-16 {
+    padding-right: 16px;
+}
+
 /* TOP */
 .pt-32 {
     padding-top: 32px;
@@ -54,4 +68,14 @@
 
 .mr-32 {
     margin-right: 32px;
+}
+
+/* TOP */
+.mt-32 {
+    margin-top: 32px;
+}
+
+/* BOTTOM */
+.mb-32 {
+    margin-bottom: 32px;
 }

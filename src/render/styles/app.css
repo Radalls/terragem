@@ -66,6 +66,7 @@ div {
 }
 
 /* COMPONENTS */
+/* BUTTON */
 .btn {
     cursor: pointer;
     background-color: #B4B8D2;
@@ -80,6 +81,31 @@ div {
     border: solid 0.5vh #30CB48;
 }
 
+/* PROGRESS */
+.progress-container {
+    align-items: flex-end;
+    background-color: #6B648D;
+    border: 0.4vh solid #FFFFFF;
+    border-radius: 0.8vh;
+    color: #FFFFFF;
+    display: flex;
+    overflow: hidden;
+}
+
+.progress {
+    transition: linear 0.1s;
+    background-color: #30CB48;
+    height: 100%;
+}
+
+.progress-text {
+    left: 50%;
+    top: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+}
+
+/* FRAME */
 .frame {
     background-color: #D1D5ED;
     border: solid 1vh #FFFFFF;

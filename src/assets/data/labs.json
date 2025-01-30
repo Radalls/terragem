@@ -83,7 +83,7 @@
     { "@": "GEM_MAX" },
     {
         "name": "LAB_GEM_MAX_1",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 1,
         "time": 30,
@@ -91,7 +91,7 @@
     },
     {
         "name": "LAB_GEM_MAX_2",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 1,
         "time": 30,
@@ -99,7 +99,7 @@
     },
     {
         "name": "LAB_GEM_MAX_3",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 1,
         "time": 30,
@@ -107,7 +107,7 @@
     },
     {
         "name": "LAB_GEM_MAX_4",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 1,
         "time": 30,
@@ -115,7 +115,7 @@
     },
     {
         "name": "LAB_GEM_MAX_5",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 1,
         "time": 30,
@@ -123,7 +123,7 @@
     },
     {
         "name": "LAB_GEM_MAX_6",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 2,
         "time": 30,
@@ -131,7 +131,7 @@
     },
     {
         "name": "LAB_GEM_MAX_7",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 2,
         "time": 30,
@@ -139,7 +139,7 @@
     },
     {
         "name": "LAB_GEM_MAX_8",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 2,
         "time": 30,
@@ -147,7 +147,7 @@
     },
     {
         "name": "LAB_GEM_MAX_9",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 2,
         "time": 30,
@@ -155,7 +155,7 @@
     },
     {
         "name": "LAB_GEM_MAX_10",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 2,
         "time": 30,
@@ -163,7 +163,7 @@
     },
     {
         "name": "LAB_GEM_MAX_11",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 3,
         "time": 60,
@@ -171,7 +171,7 @@
     },
     {
         "name": "LAB_GEM_MAX_12",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 3,
         "time": 60,
@@ -179,7 +179,7 @@
     },
     {
         "name": "LAB_GEM_MAX_13",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 3,
         "time": 60,
@@ -187,7 +187,7 @@
     },
     {
         "name": "LAB_GEM_MAX_14",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 3,
         "time": 60,
@@ -195,7 +195,7 @@
     },
     {
         "name": "LAB_GEM_MAX_15",
-        "text": "Increase the maximum Gem Amount by 1",
+        "text": "Increase Max Gem by 1",
         "image": "lab_gem_max",
         "cost": 3,
         "time": 60,
@@ -203,7 +203,7 @@
     },
     {
         "name": "LAB_GEM_MAX_16",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 5,
         "time": 90,
@@ -211,7 +211,7 @@
     },
     {
         "name": "LAB_GEM_MAX_17",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 5,
         "time": 90,
@@ -219,7 +219,7 @@
     },
     {
         "name": "LAB_GEM_MAX_18",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 5,
         "time": 90,
@@ -227,7 +227,7 @@
     },
     {
         "name": "LAB_GEM_MAX_19",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 5,
         "time": 90,
@@ -235,7 +235,7 @@
     },
     {
         "name": "LAB_GEM_MAX_20",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 5,
         "time": 90,
@@ -243,7 +243,7 @@
     },
     {
         "name": "LAB_GEM_MAX_21",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 6,
         "time": 90,
@@ -251,7 +251,7 @@
     },
     {
         "name": "LAB_GEM_MAX_22",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 6,
         "time": 90,
@@ -259,7 +259,7 @@
     },
     {
         "name": "LAB_GEM_MAX_23",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 6,
         "time": 90,
@@ -267,7 +267,7 @@
     },
     {
         "name": "LAB_GEM_MAX_24",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 6,
         "time": 90,
@@ -275,7 +275,7 @@
     },
     {
         "name": "LAB_GEM_MAX_25",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 6,
         "time": 90,
@@ -283,7 +283,7 @@
     },
     {
         "name": "LAB_GEM_MAX_26",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 7,
         "time": 120,
@@ -291,7 +291,7 @@
     },
     {
         "name": "LAB_GEM_MAX_27",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 7,
         "time": 120,
@@ -299,7 +299,7 @@
     },
     {
         "name": "LAB_GEM_MAX_28",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 7,
         "time": 120,
@@ -307,7 +307,7 @@
     },
     {
         "name": "LAB_GEM_MAX_29",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 7,
         "time": 120,
@@ -315,7 +315,7 @@
     },
     {
         "name": "LAB_GEM_MAX_30",
-        "text": "Increase the maximum Gem Amount by 2",
+        "text": "Increase Max Gem by 2",
         "image": "lab_gem_max",
         "cost": 7,
         "time": 120,
@@ -323,7 +323,7 @@
     },
     {
         "name": "LAB_GEM_MAX_31",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 9,
         "time": 120,
@@ -331,7 +331,7 @@
     },
     {
         "name": "LAB_GEM_MAX_32",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 9,
         "time": 120,
@@ -339,7 +339,7 @@
     },
     {
         "name": "LAB_GEM_MAX_33",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 9,
         "time": 120,
@@ -347,7 +347,7 @@
     },
     {
         "name": "LAB_GEM_MAX_34",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 9,
         "time": 120,
@@ -355,7 +355,7 @@
     },
     {
         "name": "LAB_GEM_MAX_35",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 9,
         "time": 120,
@@ -363,7 +363,7 @@
     },
     {
         "name": "LAB_GEM_MAX_36",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 12,
         "time": 150,
@@ -371,7 +371,7 @@
     },
     {
         "name": "LAB_GEM_MAX_37",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 12,
         "time": 150,
@@ -379,7 +379,7 @@
     },
     {
         "name": "LAB_GEM_MAX_38",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 12,
         "time": 150,
@@ -387,7 +387,7 @@
     },
     {
         "name": "LAB_GEM_MAX_39",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 12,
         "time": 150,
@@ -395,7 +395,7 @@
     },
     {
         "name": "LAB_GEM_MAX_40",
-        "text": "Increase the maximum Gem Amount by 3",
+        "text": "Increase Max Gem by 3",
         "image": "lab_gem_max",
         "cost": 12,
         "time": 150,
