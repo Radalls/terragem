@@ -27,6 +27,7 @@ import {
     updateScroll,
     createBuild,
     createGemToast,
+    createAdminToast,
 } from '@/render/templates';
 
 //#region TYPES
@@ -39,6 +40,7 @@ export type RenderEvent = {
 export enum RenderEvents {
     /* ADMIN */
     ADMIN_CREATE = 'ADMIN_CREATE',
+    ADMIN_TOAST = 'ADMIN_TOAST',
     ADMIN_UPDATE_GEMS = 'ADMIN_UPDATE_GEMS',
     ADMIN_UPDATE_LABS = 'ADMIN_UPDATE_LABS',
     ADMIN_UPDATE_STORAGE = 'ADMIN_UPDATE_STORAGE',
@@ -113,6 +115,9 @@ export const onEvent = ({
     }
     else if (type === RenderEvents.ADMIN_UPDATE_WORKSHOP) {
         updateWorkshop();
+    }
+    else if (type === RenderEvents.ADMIN_TOAST && data.name && data.amount) {
+        createAdminToast({ amount: data.amount, name: data.name });
     }
     /* BUILDS */
     else if (type === RenderEvents.BUILD_CREATE && data) {

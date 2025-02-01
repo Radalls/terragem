@@ -136,9 +136,10 @@
     }
 }
 
-.gem-toast {
+.toast {
     width: 32px;
     animation: gem-toast-anim 3.1s ease-in-out;
+    z-index: 100;
 }
 
 @keyframes gem-toast-anim {

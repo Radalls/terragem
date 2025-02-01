@@ -160,40 +160,33 @@ const scrollButtons: Record<'left' | 'right' | 'top' | 'bottom', ScrollButton> =
     left: { elId: 'ScrollLeft', isHovered: false, isPressed: false },
     right: { elId: 'ScrollRight', isHovered: false, isPressed: false },
     top: { elId: 'ScrollTop', isHovered: false, isPressed: false },
-};
+} as const;
 //#endregion
 
 export const initScroll = () => {
-    createElement({
-        css: 'scroll',
-        id: 'ScrollContainer',
-        parent: 'UI',
-    });
-
     for (const [direction, button] of Object.entries(scrollButtons)) {
         const scrollButtonEl = createElement({
-            css: `scroll-${direction} enable`,
+            css: `scroll-${direction} btn enable`,
             id: button.elId,
             image: getSpritePath({ spriteName: `ui_scroll_${direction}` }),
-            parent: 'ScrollContainer',
+            parent: 'UI',
             title: `Hold to scroll ${direction}`,
         });
 
         scrollButtonEl.addEventListener('mouseenter', () => {
-            button.isHovered = true;
+            updateScrollButton(direction as keyof typeof scrollButtons, { isHovered: true });
         });
 
         scrollButtonEl.addEventListener('mouseleave', () => {
-            button.isHovered = false;
-            button.isPressed = false;
+            updateScrollButton(direction as keyof typeof scrollButtons, { isHovered: false, isPressed: false });
         });
 
         scrollButtonEl.addEventListener('mousedown', () => {
-            button.isPressed = true;
+            updateScrollButton(direction as keyof typeof scrollButtons, { isPressed: true });
         });
 
         scrollButtonEl.addEventListener('mouseup', () => {
-            button.isPressed = false;
+            updateScrollButton(direction as keyof typeof scrollButtons, { isPressed: false });
         });
     }
 
@@ -248,6 +241,10 @@ export const updateScroll = () => {
     tileMapEl.style.transform = `translate3d(${-scrollViewportX}px, ${-scrollViewportY}px, 0)`;
 };
 
+const updateScrollButton = (direction: keyof typeof scrollButtons, newState: Partial<ScrollButton>) => {
+    scrollButtons[direction] = { ...scrollButtons[direction], ...newState };
+};
+
 const setScroll = () => {
     const tileMap = getComponent({ componentId: 'TileMap', entityId: tileMapElId });
     const { innerWidth, innerHeight } = window;
@@ -294,6 +291,7 @@ export const updateTileEntity = ({ elId }: { elId: string }) => {
 
 //#region BUILD
 //#region CONSTANTS
+const ADMIN_TOAST_TIMEOUT = 3000;
 //#endregion
 
 export const createBuild = ({ buildName }: { buildName: Items }) => {
@@ -342,6 +340,42 @@ const createAdmin = () => {
         y: 0,
         z: 0,
     });
+};
+
+export const createAdminToast = ({ name, amount }: {
+    amount: number,
+    name: string,
+}) => {
+    const adminBuildData = getBuildData({ buildName: 'ADMIN' });
+
+    const timestamp = Date.now();
+    const adminToastEl = createElement({
+        css: 'toast row align',
+        id: `AdminToast${name}${amount}${timestamp}`,
+        parent: tileMapElId,
+    });
+    adminToastEl.style.left = `${(adminBuildData.x * TILE_SIZE) + adminBuildData.width}px`;
+    adminToastEl.style.top = `${(
+        (0 + ((TILEMAP_GROUND_LEVEL + 1) - adminBuildData.height)
+        ) * TILE_SIZE) - (TILE_SIZE / 2)}px`;
+
+    createElement({
+        absolute: false,
+        css: 't-8',
+        id: `AdminToastAmount${name}${amount}${timestamp}`,
+        parent: `AdminToast${name}${amount}${timestamp}`,
+        text: `${amount}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'icon',
+        id: `AdminToastIcon${name}${amount}${timestamp}`,
+        image: getSpritePath({ spriteName: `resource_${name.toLowerCase()}` }),
+        parent: `AdminToast${name}${amount}${timestamp}`,
+    });
+
+    setTimeout(() => destroyElement({ elId: `AdminToast${name}${amount}${timestamp}` }), ADMIN_TOAST_TIMEOUT);
 };
 
 export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
@@ -442,7 +476,7 @@ export const createGemToast = ({ gemId, name, amount }: {
 
     const timestamp = Date.now();
     const gemToastEl = createElement({
-        css: 'gem-toast row align',
+        css: 'toast row align',
         id: `GemToast${gemId}${name}${amount}${timestamp}`,
         parent: tileMapElId,
     });
@@ -454,7 +488,7 @@ export const createGemToast = ({ gemId, name, amount }: {
     createElement({
         absolute: false,
         css: 't-8',
-        id: `GemToastAmount${gemId}`,
+        id: `GemToastAmount${gemId}${name}${amount}${timestamp}`,
         parent: `GemToast${gemId}${name}${amount}${timestamp}`,
         text: `${amount}`,
     });
@@ -462,7 +496,7 @@ export const createGemToast = ({ gemId, name, amount }: {
     createElement({
         absolute: false,
         css: 'icon',
-        id: `GemToastIcon${gemId}`,
+        id: `GemToastIcon${gemId}${name}${amount}${timestamp}`,
         image: getSpritePath({ spriteName: `resource_${name.toLowerCase()}` }),
         parent: `GemToast${gemId}${name}${amount}${timestamp}`,
     });

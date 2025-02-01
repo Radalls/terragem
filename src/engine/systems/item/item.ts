@@ -30,6 +30,8 @@ export const addAdminItem = ({ name, amount }: {
     if (isItemMech({ itemName: name })) {
         admin.mechs.push(name);
     }
+
+    emit({ data: { amount, name }, target: 'render', type: RenderEvents.ADMIN_TOAST });
 };
 
 export const removeAdminItem = ({ name, amount }: {

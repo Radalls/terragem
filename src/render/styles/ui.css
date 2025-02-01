@@ -25,39 +25,40 @@
 }
 
 /* SCROLL */
-.scroll {
-    left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-
 .scroll-top {
-    left: 0;
-    right: 0;
+    left: 50%;
     top: 0;
-    height: 6vh;
+    height: 5vh;
+    width: 20vh;
+    transform: translate(-50%, 0);
+    min-width: auto;
 }
 
 .scroll-bottom {
-    left: 0;
-    right: 0;
+    left: 50%;
     bottom: 0;
-    height: 6vh;
+    height: 5vh;
+    width: 20vh;
+    transform: translate(-50%, 0);
+    min-width: auto;
 }
 
 .scroll-left {
-    top: 0;
-    bottom: 0;
+    top: 50%;
     left: 0;
-    width: 6vh;
+    height: 20vh;
+    width: 5vh;
+    transform: translate(0, -50%);
+    min-width: auto;
 }
 
 .scroll-right {
-    top: 0;
-    bottom: 0;
+    top: 50%;
     right: 0;
-    width: 6vh;
+    height: 20vh;
+    width: 5vh;
+    transform: translate(0, -50%);
+    min-width: auto;
 }
 
 /* GEM */
