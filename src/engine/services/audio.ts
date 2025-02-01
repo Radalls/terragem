@@ -20,7 +20,7 @@ type AudioCategory = {
 //#region CONSTANTS
 const audios: Map<string, HTMLAudioElement> = new Map();
 const audioCategories: Map<string, AudioCategory> = new Map([
-    ['bgm_game', { count: 16, prefix: 'bgm_game' }],
+    ['bgm_game', { count: 9, prefix: 'bgm_game' }],
     ['bgm_menu', { count: 1, prefix: 'bgm_menu' }],
 ]);
 //#endregion
@@ -48,24 +48,17 @@ export const initAudios = () => {
     createAudio({ audioName: 'bgm_game7' });
     createAudio({ audioName: 'bgm_game8' });
     createAudio({ audioName: 'bgm_game9' });
-    createAudio({ audioName: 'bgm_game10' });
-    createAudio({ audioName: 'bgm_game11' });
-    createAudio({ audioName: 'bgm_game12' });
-    createAudio({ audioName: 'bgm_game13' });
-    createAudio({ audioName: 'bgm_game14' });
-    createAudio({ audioName: 'bgm_game15' });
-    createAudio({ audioName: 'bgm_game16' });
     createAudio({ audioName: 'bgm_menu1' });
-    createAudio({ audioName: 'bgm_menu2' });
     /* MAIN */
     createAudio({ audioName: 'main_confirm' });
     createAudio({ audioName: 'main_error' });
     createAudio({ audioName: 'main_select' });
     createAudio({ audioName: 'main_success' });
     createAudio({ audioName: 'main_warning' });
-    /* MENU */
     createAudio({ audioName: 'main_action' });
     createAudio({ audioName: 'main_start' });
+    createAudio({ audioName: 'main_stop' });
+    createAudio({ audioName: 'main_unlock' });
 };
 
 export const createAudio = ({ audioName }: { audioName: string }) => {

@@ -122,6 +122,7 @@ export const craftAdminItem = ({ itemName }: { itemName: Items }) => {
         }
         else if (isItemBuild({ itemName })) {
             createBuild({ buildName: itemName });
+            addAdminItem({ amount: 1, name: craftData.name });
         }
         else {
             addAdminItem({ amount: 1, name: craftData.name });

@@ -16,6 +16,7 @@ type ElementData =
         parent?: string;
         sprite?: boolean;
         text?: string;
+        title?: string;
     }
     | {
         absolute?: boolean;
@@ -26,6 +27,7 @@ type ElementData =
         parent?: string;
         sprite?: boolean;
         text?: string;
+        title?: string;
     };
 
 type ButtonData = ElementData & {
@@ -40,13 +42,14 @@ type ProgressData = ElementData & {
 //#region TEMPLATES
 export const createElement = ({
     absolute = true,
-    entityId,
-    parent,
-    css,
     id,
-    image,
+    entityId,
+    css,
+    parent,
     sprite = false,
+    image,
     text,
+    title,
 }: ElementData) => {
     const el = document.createElement('div');
 
@@ -85,6 +88,12 @@ export const createElement = ({
     }
     else if (sprite) {
         createSprite({ elId });
+    }
+
+    if (title) {
+        el.addEventListener('mouseover', () => {
+            el.title = title;
+        });
     }
 
     return el;

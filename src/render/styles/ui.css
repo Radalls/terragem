@@ -12,7 +12,7 @@
     right: 0;
 }
 
-/* INFO */
+/* ALERT */
 .alerts {
     bottom: 0.8vh;
     z-index: 100000000;
@@ -24,19 +24,44 @@
     max-width: 80%;
 }
 
-/* GEM */
-.gem-view {
-    bottom: 1vh;
-    left: 1vh;
-    z-index: 1000;
+/* SCROLL */
+.scroll {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
 }
 
-.gem-view-icon {
-    background-color: #30CB48;
-    border: 0.5vh solid #B4B8D2;
-    border-radius: 10px 20px;
-    width: 8vh;
-    height: 8vh;
+.scroll-top {
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 6vh;
+}
+
+.scroll-bottom {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 6vh;
+}
+
+.scroll-left {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 6vh;
+}
+
+.scroll-right {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 6vh;
+}
+
+/* GEM */
+.gem-view {
     bottom: 1vh;
     left: 1vh;
     z-index: 1000;

@@ -122,6 +122,11 @@ const endQuest = ({ name, type }: {
             createLab({ name: unlock.name });
 
             emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_LABS });
+            emit({
+                data: { text: `${unlock.name.split('_').join(' ')} unlocked`, type: 'success' },
+                target: 'render',
+                type: RenderEvents.INFO,
+            });
         }
         else if (unlock.type === 'quest') {
             createQuest({ questName: unlock.name });

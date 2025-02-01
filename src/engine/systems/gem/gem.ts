@@ -138,6 +138,9 @@ export const requestGemCarry = ({ gemId, x, y }: {
         gemCarry._moveStartX = x;
         gemCarry._moveStartY = y;
 
+        const { tile } = getTileAtPosition({ x, y });
+        tile.carry.push(gemId);
+
         emit({
             data: { text: `${gemCarry._name} carry start set`, type: 'confirm' },
             entityId: gemId,
@@ -148,6 +151,9 @@ export const requestGemCarry = ({ gemId, x, y }: {
     else if (getState({ key: 'requestGemCarryTarget' })) {
         gemCarry._moveTargetX = x;
         gemCarry._moveTargetY = y;
+
+        const { tile } = getTileAtPosition({ x, y });
+        tile.carry.push(gemId);
 
         setGemRequest({ gemId, request: true });
         setGemAction({ action: 'work', gemId });
@@ -163,6 +169,16 @@ export const requestGemCarry = ({ gemId, x, y }: {
 
 export const stopGemCarry = ({ gemId }: { gemId: string }) => {
     const gemCarry = getComponent({ componentId: 'Carry', entityId: gemId });
+
+    if (gemCarry._moveStartX && gemCarry._moveStartY) {
+        const { tile: startTile } = getTileAtPosition({ x: gemCarry._moveStartX, y: gemCarry._moveStartY });
+        startTile.carry.splice(startTile.carry.indexOf(gemId), 1);
+    }
+
+    if (gemCarry._moveTargetX && gemCarry._moveTargetY) {
+        const { tile: targetTile } = getTileAtPosition({ x: gemCarry._moveTargetX, y: gemCarry._moveTargetY });
+        targetTile.carry.splice(targetTile.carry.indexOf(gemId), 1);
+    }
 
     gemCarry._moveTo = undefined;
     gemCarry._moveStartX = undefined;
@@ -658,7 +674,12 @@ export const requestGemLift = ({ gemId }: { gemId: string }) => {
             y: gemLift._moveStartY + 1,
         });
 
-        if (gemTile._destroy || !(isGround({ tileId: gemTileId })) || isLock({ tileId: gemTileId })) {
+        if (
+            gemTile._destroy
+            || !(isGround({ tileId: gemTileId }))
+            || isLock({ tileId: gemTileId })
+            || gemTile._lift
+        ) {
             emit({
                 data: { alert: true, text: `${gemLift._name} cannot start a lift on this tile`, type: 'error' },
                 entityId: gemId,
@@ -959,6 +980,12 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
     if (drop) {
         xpGemMine({ gemId });
 
+        emit({
+            data: { amount: 1, name: drop },
+            entityId: gemId,
+            target: 'render',
+            type: RenderEvents.GEM_TOAST,
+        });
         emit({
             data: { amount: 1, name: drop },
             entityId: gemId,

@@ -131,11 +131,20 @@
     min-width: auto;
 }
 
+.menus .deploy {
+    background-color: #30CB48;
+    top: -8.5vh;
+    left: 8vh;
+    height: 7vh;
+    width: 7vh;
+    min-width: auto;
+}
+
 .menus .type {
     background-color: #30CB48;
     background-size: 5vh 5vh;
     top: -8.5vh;
-    left: 9vh;
+    left: 16vh;
     height: 7vh;
     width: 7vh;
     min-width: auto;
@@ -158,7 +167,18 @@
 }
 
 /* WORKSHOP */
-/* --- */
+.workshop .count {
+    top: -8vh;
+    left: 0;
+}
+
+.workshop .craft .count {
+    top: 50%;
+    right: -4.5vh;
+    left: inherit;
+    transform: translateY(-50%);
+    min-width: auto;
+}
 
 /* LAB */
 .labs .lab {

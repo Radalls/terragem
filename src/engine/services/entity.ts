@@ -117,7 +117,8 @@ export const createEntityTile = ({ tileId, density, drops, dropAmount, destroy =
     return tileId;
 };
 
-export const createEntityGem = ({ gemId, type, x = 0, y = 0 }: {
+export const createEntityGem = ({ gemId, type, deploy = false, x = 0, y = 0 }: {
+    deploy?: boolean,
     gemId?: string | null,
     type: Gems,
     x?: number,
@@ -141,6 +142,11 @@ export const createEntityGem = ({ gemId, type, x = 0, y = 0 }: {
         admin.gems.push(gemId);
 
         emit({ data: { amount: 1 }, target: 'engine', type: EngineEvents.GEM_QUEST });
+
+        if (deploy) {
+            emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_CREATE });
+            emit({ entityId: gemId, target: 'all', type: GameEvents.GEM_STORE_DEPLOY });
+        }
     }
     else {
         const gemState = getComponent({ componentId: 'State', entityId: gemId });

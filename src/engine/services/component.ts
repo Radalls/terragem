@@ -189,6 +189,7 @@ export const addTile = ({ tileId, density, drops, dropAmount, destroy = false }:
         _destroy: destroy,
         _dropAmount: dropAmount,
         _lock: false,
+        carry: [],
         drops,
     };
 
