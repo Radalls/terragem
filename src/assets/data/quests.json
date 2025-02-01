@@ -1,4 +1,19 @@
 [
+    { "@": "MINE_STONE" },
+    {
+        "name": "QUEST_MINE_STONE_1",
+        "type": "mine",
+        "text": "Mine 15 Stone",
+        "image": "resource_stone",
+        "mine": { "name": "STONE", "amount": 15 },
+        "reward": [
+            { "type": "item", "name": "LUMYN", "amount": 1 },
+            { "type": "lab", "amount": 1 }
+        ],
+        "unlock": [
+            { "type": "lab", "name": "LAB_CRAFT_GEM_CARRY" }
+        ]
+    },
     { "@": "MINE_GEOLYN" },
     {
         "name": "QUEST_MINE_GEOLYN_1",
@@ -723,7 +738,6 @@
             { "type": "lab", "amount": 1 }
         ],
         "unlock": [
-            { "type": "lab", "name": "LAB_CRAFT_GEM_CARRY" },
             { "type": "lab", "name": "LAB_GEM_MAX_3" },
             { "type": "quest", "name": "QUEST_CARRY_2" }
         ]

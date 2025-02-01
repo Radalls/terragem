@@ -13,7 +13,7 @@ import {
     getRawEntityId,
 } from '@/engine/systems/entity';
 import { createQuest } from '@/engine/systems/quest';
-import { getProjectVersion, getSaveTileMap, loadSaveGem, SaveData } from '@/engine/systems/save';
+import { getProjectVersion, getSaveTileMap, loadSaveBuild, loadSaveGem, SaveData } from '@/engine/systems/save';
 import { RenderEvents } from '@/render/events';
 
 //#region SYSTEMS
@@ -118,13 +118,14 @@ export const createRun = () => {
     createEntityAdmin({ adminId: getStore({ key: 'adminId' }) });
     createEntityTileMap({ tileMapName: 'map1' });
 
+    createQuest({ questName: 'QUEST_MINE_STONE_1' });
     createQuest({ questName: 'QUEST_MINE_GEOLYN_1' });
     createQuest({ questName: 'QUEST_MINE_CERULYN_1' });
     createQuest({ questName: 'QUEST_CARRY_1' });
     createQuest({ questName: 'QUEST_GEMS_1' });
 
-    createEntityGem({ type: Gems.MINE });
-    createEntityGem({ type: Gems.CARRY });
+    createEntityGem({ deploy: true, type: Gems.MINE, x: 18, y: 0 });
+    createEntityGem({ deploy: true, type: Gems.CARRY, x: 10, y: 0 });
 
     emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     emit({ data: { audioName: 'bgm_menu', list: true }, target: 'engine', type: EngineEvents.AUDIO_STOP });
@@ -143,6 +144,7 @@ export const loadRun = ({ saveData }: { saveData: SaveData }) => {
     emit({ target: 'render', type: RenderEvents.QUEST_CREATE });
 
     loadSaveGem();
+    loadSaveBuild();
 
     emit({ data: { audioName: 'main_start' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     emit({ data: { audioName: 'bgm_menu', list: true }, target: 'engine', type: EngineEvents.AUDIO_STOP });

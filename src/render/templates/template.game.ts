@@ -74,7 +74,7 @@ export const createTile = ({ tileId }: { tileId: string }) => {
 };
 
 export const setTileMode = ({ tileId, mode, remove }: {
-    mode: 'base' | 'request' | 'destroy' | 'ground' | 'move',
+    mode: 'base' | 'request' | 'destroy' | 'ground' | 'path',
     remove?: boolean,
     tileId?: string,
 }) => {
@@ -107,7 +107,7 @@ export const setTileMode = ({ tileId, mode, remove }: {
             ) {
                 const gemId = getStore({ key: 'requestId' });
 
-                setAllOtherGemsMode({ gemId, mode: 'disable', remove: true });
+                setAllGemsMode({ gemId, mode: 'disable', remove: true });
             }
         }
     }
@@ -126,7 +126,7 @@ export const setTileMode = ({ tileId, mode, remove }: {
             || getState({ key: 'requestGemCarryTarget' })
         ) {
             const gemId = getStore({ key: 'requestId' });
-            setAllOtherGemsMode({ gemId, mode: 'disable' });
+            setAllGemsMode({ gemId, mode: 'disable' });
         }
     }
     else {
@@ -148,40 +148,97 @@ const selectTile = ({ tileId }: { tileId: string }) => {
 //#region SCROLL
 //#region CONSTANTS
 const SCROLL_SPEED = 5;
-const SCROLL_EDGE_TRIGGER = 10;
-let cursorX = 0;
-let cursorY = 0;
+const SCROLL_EDGE_TRIGGER = 64;
 let scrollMaxX = 0;
 let scrollMaxY = 0;
 let scrollViewportX = 0;
 let scrollViewportY = 0;
+
+type ScrollButton = { elId: string, isHovered: boolean, isPressed: boolean };
+const scrollButtons: Record<'left' | 'right' | 'top' | 'bottom', ScrollButton> = {
+    bottom: { elId: 'ScrollBottom', isHovered: false, isPressed: false },
+    left: { elId: 'ScrollLeft', isHovered: false, isPressed: false },
+    right: { elId: 'ScrollRight', isHovered: false, isPressed: false },
+    top: { elId: 'ScrollTop', isHovered: false, isPressed: false },
+};
 //#endregion
 
 export const initScroll = () => {
+    createElement({
+        css: 'scroll',
+        id: 'ScrollContainer',
+        parent: 'UI',
+    });
+
+    for (const [direction, button] of Object.entries(scrollButtons)) {
+        const scrollButtonEl = createElement({
+            css: `scroll-${direction} enable`,
+            id: button.elId,
+            image: getSpritePath({ spriteName: `ui_scroll_${direction}` }),
+            parent: 'ScrollContainer',
+            title: `Hold to scroll ${direction}`,
+        });
+
+        scrollButtonEl.addEventListener('mouseenter', () => {
+            button.isHovered = true;
+        });
+
+        scrollButtonEl.addEventListener('mouseleave', () => {
+            button.isHovered = false;
+            button.isPressed = false;
+        });
+
+        scrollButtonEl.addEventListener('mousedown', () => {
+            button.isPressed = true;
+        });
+
+        scrollButtonEl.addEventListener('mouseup', () => {
+            button.isPressed = false;
+        });
+    }
+
     window.addEventListener('mousemove', (e: MouseEvent) => {
-        cursorX = e.clientX;
-        cursorY = e.clientY;
+        const { clientX: x, clientY: y } = e;
+        const { innerWidth: w, innerHeight: h } = window;
+
+        const scrollButtonLeftEl = getElement({ elId: scrollButtons.left.elId });
+        scrollButtonLeftEl.style.display = (x < SCROLL_EDGE_TRIGGER)
+            ? 'block'
+            : 'none';
+
+        const scrollButtonRightEl = getElement({ elId: scrollButtons.right.elId });
+        scrollButtonRightEl.style.display = (x > w - SCROLL_EDGE_TRIGGER)
+            ? 'block'
+            : 'none';
+
+        const scrollButtonTopEl = getElement({ elId: scrollButtons.top.elId });
+        scrollButtonTopEl.style.display = (y < SCROLL_EDGE_TRIGGER)
+            ? 'block'
+            : 'none';
+
+        const scrollButtonBottomEl = getElement({ elId: scrollButtons.bottom.elId });
+        scrollButtonBottomEl.style.display = (y > h - SCROLL_EDGE_TRIGGER)
+            ? 'block'
+            : 'none';
     });
 };
 
 export const updateScroll = () => {
-    const { innerWidth, innerHeight } = window;
     const tileMapEl = getElement({ elId: tileMapElId });
 
     let newScrollX = scrollViewportX;
     let newScrollY = scrollViewportY;
 
-    if (cursorX > innerWidth - SCROLL_EDGE_TRIGGER) {
+    if (scrollButtons.right.isPressed) {
         newScrollX = Math.min(newScrollX + SCROLL_SPEED, scrollMaxX);
     }
-    if (cursorX < SCROLL_EDGE_TRIGGER) {
+    if (scrollButtons.left.isPressed) {
         newScrollX = Math.max(newScrollX - SCROLL_SPEED, 0);
     }
-
-    if (cursorY > innerHeight - SCROLL_EDGE_TRIGGER) {
+    if (scrollButtons.bottom.isPressed) {
         newScrollY = Math.min(newScrollY + SCROLL_SPEED, scrollMaxY);
     }
-    if (cursorY < SCROLL_EDGE_TRIGGER) {
+    if (scrollButtons.top.isPressed) {
         newScrollY = Math.max(newScrollY - SCROLL_SPEED, 0);
     }
 
@@ -239,40 +296,6 @@ export const updateTileEntity = ({ elId }: { elId: string }) => {
 //#region CONSTANTS
 //#endregion
 
-//#region ADMIN
-const createAdmin = () => {
-    const adminBuildData = getBuildData({ buildName: 'ADMIN' });
-
-    createButton({
-        click: () => displayAdminMenu({ display: true }),
-        css: 'admin',
-        id: 'AdminEntity',
-        image: getSpritePath({ spriteName: 'build_admin' }),
-        parent: tileMapElId,
-    });
-
-    placeTileEntity({
-        elId: 'AdminEntity',
-        height: adminBuildData.height,
-        width: adminBuildData.width,
-        x: adminBuildData.x,
-        y: 0,
-        z: 0,
-    });
-};
-
-export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
-    const adminEl = getElement({ elId: 'AdminEntity' });
-
-    if (mode === 'base') {
-        adminEl.classList.remove('disable');
-    }
-    else if (mode === 'disable') {
-        adminEl.classList.add('disable');
-    }
-};
-//#endregion
-
 export const createBuild = ({ buildName }: { buildName: Items }) => {
     const admin = getAdmin();
 
@@ -298,7 +321,47 @@ export const createBuild = ({ buildName }: { buildName: Items }) => {
     });
 };
 
+//#region ADMIN
+const createAdmin = () => {
+    const adminBuildData = getBuildData({ buildName: 'ADMIN' });
+
+    createButton({
+        click: () => displayAdminMenu({ display: true }),
+        css: 'admin',
+        id: 'AdminEntity',
+        image: getSpritePath({ spriteName: 'build_admin' }),
+        parent: tileMapElId,
+        title: 'Admin',
+    });
+
+    placeTileEntity({
+        elId: 'AdminEntity',
+        height: adminBuildData.height,
+        width: adminBuildData.width,
+        x: adminBuildData.x,
+        y: 0,
+        z: 0,
+    });
+};
+
+export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
+    const adminEl = getElement({ elId: 'AdminEntity' });
+
+    if (mode === 'base') {
+        adminEl.classList.remove('disable');
+    }
+    else if (mode === 'disable') {
+        adminEl.classList.add('disable');
+    }
+};
+//#endregion
+//#endregion
+
 //#region GEM
+//#region CONSTANTS
+const GEM_TOAST_TIMEOUT = 3000;
+//#endregion
+
 export const createGem = ({ gemId }: { gemId: string }) => {
     const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
     const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
@@ -358,12 +421,7 @@ export const setGemMode = ({ gemId, mode, remove }: {
     }
 };
 
-const onClickGem = ({ gemId }: { gemId: string }) => {
-    setGemMode({ gemId, mode: 'request' });
-    displayGemView({ display: true, gemId });
-};
-
-export const setAllOtherGemsMode = ({ gemId, mode, remove }: {
+export const setAllGemsMode = ({ gemId, mode, remove }: {
     gemId: string,
     mode: 'base' | 'request' | 'disable'
     remove?: boolean,
@@ -372,6 +430,49 @@ export const setAllOtherGemsMode = ({ gemId, mode, remove }: {
         .filter((gemEl) => gemEl.id !== gemId);
 
     gemEls.forEach((gemEl) => setGemMode({ gemId: gemEl.id, mode, remove }));
+};
+
+export const createGemToast = ({ gemId, name, amount }: {
+    amount: number,
+    gemId: string,
+    name: string,
+}) => {
+    const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+    const gemSprite = getComponent({ componentId: 'Sprite', entityId: gemId });
+
+    const timestamp = Date.now();
+    const gemToastEl = createElement({
+        css: 'gem-toast row align',
+        id: `GemToast${gemId}${name}${amount}${timestamp}`,
+        parent: tileMapElId,
+    });
+    gemToastEl.style.left = `${gemPosition._x * TILE_SIZE}px`;
+    gemToastEl.style.top = `${(
+        (gemPosition._y + ((TILEMAP_GROUND_LEVEL + 1) - gemSprite._height)
+        ) * TILE_SIZE) - (TILE_SIZE / 2)}px`;
+
+    createElement({
+        absolute: false,
+        css: 't-8',
+        id: `GemToastAmount${gemId}`,
+        parent: `GemToast${gemId}${name}${amount}${timestamp}`,
+        text: `${amount}`,
+    });
+
+    createElement({
+        absolute: false,
+        css: 'icon',
+        id: `GemToastIcon${gemId}`,
+        image: getSpritePath({ spriteName: `resource_${name.toLowerCase()}` }),
+        parent: `GemToast${gemId}${name}${amount}${timestamp}`,
+    });
+
+    setTimeout(() => destroyElement({ elId: `GemToast${gemId}${name}${amount}${timestamp}` }), GEM_TOAST_TIMEOUT);
+};
+
+const onClickGem = ({ gemId }: { gemId: string }) => {
+    setGemMode({ gemId, mode: 'request' });
+    displayGemView({ display: true, gemId });
 };
 //#endregion
 //#endregion

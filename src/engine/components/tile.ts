@@ -7,6 +7,7 @@ export type Tile = {
     _dropAmount: number;
     _lift?: string;
     _lock: boolean;
+    carry: string[];
     drops: Drop[];
 }
 

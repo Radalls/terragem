@@ -27,7 +27,7 @@
     pointer-events: none;
 }
 
-.tilemap .tile.move {
+.tilemap .tile.path {
     border: solid 0.4vh #30CB48;
 }
 
@@ -133,5 +133,30 @@
 
     50% {
         transform: translateY(-3px);
+    }
+}
+
+.gem-toast {
+    width: 32px;
+    animation: gem-toast-anim 3.1s ease-in-out;
+}
+
+@keyframes gem-toast-anim {
+    0% {
+        opacity: 0;
+        transform: translateY(0);
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-100%);
     }
 }

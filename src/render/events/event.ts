@@ -26,6 +26,7 @@ import {
     updateGems,
     updateScroll,
     createBuild,
+    createGemToast,
 } from '@/render/templates';
 
 //#region TYPES
@@ -48,12 +49,14 @@ export enum RenderEvents {
     GEM_CREATE = 'GEM_CREATE',
     GEM_DESTROY = 'GEM_DESTROY',
     GEM_STOP = 'GEM_STOP',
+    GEM_TOAST = 'GEM_TOAST',
     GEM_UPDATE = 'GEM_UPDATE',
     GEM_WORK = 'GEM_WORK',
     /* INFO */
     INFO = 'INFO',
     /* MODE */
     MODE_BASE = 'MODE_BASE',
+    MODE_PATH = 'MODE_PATH',
     MODE_REQUEST = 'MODE_REQUEST',
     /* POSITION */
     POSITION_UPDATE = 'POSITION_UPDATE',
@@ -134,6 +137,9 @@ export const onEvent = ({
     else if (type === RenderEvents.GEM_STOP && entityId) {
         setGemMode({ gemId: entityId, mode: 'base' });
     }
+    else if (type === RenderEvents.GEM_TOAST && entityId && data.name && data.amount) {
+        createGemToast({ amount: data.amount, gemId: entityId, name: data.name });
+    }
     else if (type === GameEvents.GEM_STORE_DEPLOY && entityId) {
         emit({ entityId, target: 'render', type: RenderEvents.GEM_CREATE });
 
@@ -181,6 +187,9 @@ export const onEvent = ({
         setAdminMode({ mode: 'disable' });
         setTileMode({ mode: 'request' });
         setUIMode({ mode: 'request' });
+    }
+    else if (type === RenderEvents.MODE_PATH) {
+        setTileMode({ mode: 'path' });
     }
     /* POSITION */
     else if (type === RenderEvents.POSITION_UPDATE && entityId) {

@@ -198,7 +198,7 @@ export const setGemStore = ({ gemId, store }: {
     }
 
     emit({
-        data: { text: `${gem._name} ${store ? 'stored' : 'deployed'}`, type: 'confirm' },
+        data: { text: `${gem._name} ${(store) ? 'stored' : 'deployed'}`, type: 'confirm' },
         entityId: gemId,
         target: 'render',
         type: RenderEvents.INFO,

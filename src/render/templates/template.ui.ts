@@ -17,7 +17,7 @@ import {
     displayAdminMenu,
     getElement,
     setAdminMode,
-    setAllOtherGemsMode,
+    setAllGemsMode,
     setGemMode,
     setTileMode,
     updateProgress,
@@ -109,6 +109,8 @@ const addAlert = ({ text, type, alert }: {
 
         infoEl.style.backgroundColor = ALERT_SUCCESS_COLOR;
         infoEl.innerText = `${questData.text} complete ! (${questReward})`;
+
+        emit({ data: { audioName: 'main_success' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
     }
 };
 
@@ -167,13 +169,6 @@ const createGemView = () => {
     createElement({
         css: 'gem-view frame col left hidden enable w-25 g-16 p-16',
         id: 'GemView',
-        parent: 'UI',
-    });
-
-    createElement({
-        css: 'gem-view-icon',
-        id: 'GemViewIcon',
-        image: getSpritePath({ spriteName: 'ui_gem_placeholder' }),
         parent: 'UI',
     });
 
@@ -630,10 +625,68 @@ const displayGemPath = ({ display }: { display: boolean }) => {
                 && gem._moveTargetY !== undefined
             ) {
                 const { tileId: tileStart } = getTileAtPosition({ x: gem._moveStartX, y: gem._moveStartY });
-                setTileMode({ mode: 'move', remove: !(display), tileId: tileStart });
+                setTileMode({ mode: 'path', remove: !(display), tileId: tileStart });
 
                 const { tileId: tileTarget } = getTileAtPosition({ x: gem._moveTargetX, y: gem._moveTargetY });
-                setTileMode({ mode: 'move', remove: !(display), tileId: tileTarget });
+                setTileMode({ mode: 'path', remove: !(display), tileId: tileTarget });
+            }
+        }
+    }
+};
+
+const displayHighlights = ({ display }: { display: boolean }) => {
+    if (!(CURRENT_GEM_ID)) return;
+    const gemId = CURRENT_GEM_ID;
+    const gemType = getGemType({ gemId });
+
+    if (gemType === Gems.LIFT) {
+        const gemLift = getComponent({ componentId: 'Lift', entityId: gemId });
+        const gemState = getComponent({ componentId: 'State', entityId: gemId });
+
+        if (gemState._action === 'work') {
+            if (
+                gemLift._moveStartX !== undefined
+                && gemLift._moveStartY !== undefined
+                && gemLift._moveTargetX !== undefined
+                && gemLift._moveTargetY !== undefined
+            ) {
+                const carryIds = [];
+                const { tile: startTile } = getTileAtPosition({ x: gemLift._moveStartX, y: gemLift._moveStartY });
+                carryIds.push(...startTile.carry);
+
+                const { tile: targetTile } = getTileAtPosition({ x: gemLift._moveTargetX, y: gemLift._moveTargetY });
+                carryIds.push(...targetTile.carry);
+
+                for (const carryId of carryIds) {
+                    setGemMode({ gemId: carryId, mode: 'request', remove: !(display) });
+                }
+            }
+        }
+    }
+    else if (gemType === Gems.MINE) {
+        const admin = getAdmin();
+
+        const gemPosition = getComponent({ componentId: 'Position', entityId: gemId });
+        const gemState = getComponent({ componentId: 'State', entityId: gemId });
+
+        if (gemState._action === 'work') {
+            const searchRange = Math.round(admin.stats._gemCarryItemRange * 2);
+
+            const carryIds = [];
+            let searchCount = 0;
+            while (carryIds.length === 0) {
+                if (searchCount > searchRange) break;
+
+                const { tile } = getTileAtPosition({ x: gemPosition._x, y: gemPosition._y - searchCount });
+                if (tile.carry.length) {
+                    carryIds.push(...tile.carry);
+                }
+
+                searchCount++;
+            }
+
+            for (const carryId of carryIds) {
+                setGemMode({ gemId: carryId, mode: 'request', remove: !(display) });
             }
         }
     }
@@ -645,15 +698,10 @@ export const displayGemView = ({ gemId, display }: {
     gemId?: string,
 }) => {
     const gemEl = getElement({ elId: 'GemView' });
-    const gemPlaceholderEl = getElement({ elId: 'GemViewIcon' });
 
     gemEl.style.display = (display)
         ? 'flex'
         : 'none';
-
-    gemPlaceholderEl.style.display = (display)
-        ? 'none'
-        : 'flex';
 
     if (display) {
         if (!(gemId)) return;
@@ -661,11 +709,14 @@ export const displayGemView = ({ gemId, display }: {
         CURRENT_GEM_ID = gemId;
 
         updateGemView();
+
         setGemMode({ gemId, mode: 'request' });
         setGemMode({ gemId, mode: 'hover', remove: true });
-        setAllOtherGemsMode({ gemId, mode: 'disable' });
+        setAllGemsMode({ gemId, mode: 'disable' });
         setAdminMode({ mode: 'disable' });
+
         displayGemPath({ display: true });
+        displayHighlights({ display: true });
     }
     else {
         if (!(gemId) && CURRENT_GEM_ID) gemId = CURRENT_GEM_ID;
@@ -673,9 +724,11 @@ export const displayGemView = ({ gemId, display }: {
 
         setGemMode({ gemId, mode: 'request', remove: true });
         setGemMode({ gemId, mode: 'hover', remove: true });
-        setAllOtherGemsMode({ gemId, mode: 'disable', remove: true });
+        setAllGemsMode({ gemId, mode: 'disable', remove: true });
         setAdminMode({ mode: 'base' });
+
         displayGemPath({ display: false });
+        displayHighlights({ display: false });
 
         CURRENT_GEM_ID = null;
     }
@@ -730,6 +783,7 @@ const createGems = () => {
         id: 'GemsIcon',
         image: getSpritePath({ spriteName: 'ui_gems_placeholder' }),
         parent: 'UI',
+        title: 'Gems',
     });
 
     createElement({
@@ -758,6 +812,7 @@ const createGemsActions = () => {
         id: 'GemsAll',
         image: getSpritePath({ spriteName: 'ui_gem_placeholder' }),
         parent: 'Gems',
+        title: 'Filter All',
     });
 
     createButton({
@@ -766,6 +821,7 @@ const createGemsActions = () => {
         id: 'GemsType',
         image: getSpritePath({ spriteName: Object.values(GemsTabs)[GEMS_TAB_INDEX] }),
         parent: 'Gems',
+        title: 'Filter Type',
     });
 
     createElement({
@@ -778,7 +834,6 @@ const createGemsActions = () => {
     createButton({
         absolute: false,
         click: () => onClickGemsPage({ action: 'previous' }),
-        css: 'p-box',
         id: 'GemsPagePrevious',
         parent: 'GemsActions',
         text: '<',
@@ -787,7 +842,6 @@ const createGemsActions = () => {
     createButton({
         absolute: false,
         click: () => onClickGemsPage({ action: 'next' }),
-        css: 'p-box',
         id: 'GemsPageNext',
         parent: 'GemsActions',
         text: '>',
@@ -865,6 +919,33 @@ const updateGem = ({ gemId }: { gemId: string }) => {
 };
 
 const updateGemsPage = () => {
+    const gemsPagesCount = getGemsPagesCount();
+
+    const gemsPageIndexEl = getElement({ elId: 'GemsPageIndex' });
+    gemsPageIndexEl.innerText = `${GEMS_PAGE_INDEX + 1}/${gemsPagesCount || 1}`;
+};
+//#endregion
+
+//#region ACTIONS
+const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
+    const gemsPageEl = getElement({ elId: 'GemsPage' });
+    const gemsPagesCount = getGemsPagesCount();
+
+    if (!(gemsPageEl.children.length)) return;
+
+    if (action === 'previous') {
+        GEMS_PAGE_INDEX = Math.max(0, GEMS_PAGE_INDEX - 1);
+    }
+    else if (action === 'next') {
+        GEMS_PAGE_INDEX = Math.min(GEMS_PAGE_INDEX + 1, gemsPagesCount - 1);
+    }
+
+    updateGemsPage();
+
+    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+};
+
+const getGemsPagesCount = () => {
     const gemsPageEl = getElement({ elId: 'GemsPage' });
     const gemEls = Array.from(gemsPageEl.children) as HTMLElement[];
 
@@ -887,28 +968,8 @@ const updateGemsPage = () => {
         .forEach(el => el.style.display = 'flex');
 
     const totalPages = Math.ceil(displayableGems.length / GEMS_AMOUNT_PER_PAGE);
-    const gemsPageIndexEl = getElement({ elId: 'GemsPageIndex' });
-    gemsPageIndexEl.innerText = `${GEMS_PAGE_INDEX + 1}/${totalPages || 1}`;
-};
-//#endregion
 
-//#region ACTIONS
-const onClickGemsPage = ({ action }: { action: 'previous' | 'next' }) => {
-    const gemsPageEl = getElement({ elId: 'GemsPage' });
-    const gemsPagesCount = Math.ceil(gemsPageEl.children.length / GEMS_AMOUNT_PER_PAGE);
-
-    if (!(gemsPageEl.children.length)) return;
-
-    if (action === 'previous') {
-        GEMS_PAGE_INDEX = Math.max(0, GEMS_PAGE_INDEX - 1);
-    }
-    else if (action === 'next') {
-        GEMS_PAGE_INDEX = Math.min(GEMS_PAGE_INDEX + 1, gemsPagesCount - 1);
-    }
-
-    updateGemsPage();
-
-    emit({ data: { audioName: 'main_select' }, target: 'engine', type: EngineEvents.AUDIO_PLAY });
+    return totalPages;
 };
 
 const onClickGemsAll = () => {
@@ -1012,6 +1073,7 @@ const createAdminUI = () => {
         id: 'AdminIcon',
         image: getSpritePath({ spriteName: 'ui_admin_placeholder' }),
         parent: 'UI',
+        title: 'Admin',
     });
 };
 
@@ -1041,6 +1103,7 @@ const createQuests = () => {
         id: 'QuestsIcon',
         image: getSpritePath({ spriteName: 'ui_quests_placeholder' }),
         parent: 'UI',
+        title: 'Quests',
     });
 
     createButton({
