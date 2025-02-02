@@ -11,6 +11,7 @@ import {
     entities,
     Entity,
     getRawEntityId,
+    TILEMAP_ENTITY_NAME,
 } from '@/engine/systems/entity';
 import { createQuest } from '@/engine/systems/quest';
 import { getProjectVersion, getSaveTileMap, loadSaveBuild, loadSaveGem, SaveData } from '@/engine/systems/save';
@@ -72,6 +73,11 @@ export const saveGame = () => {
     const adminIds = Object.keys(entities).filter(id => getRawEntityId({ entityId: id }) === ADMIN_ENTITY_NAME);
     for (const adminId of adminIds) {
         if (adminId !== getStore({ key: 'adminId' })) delete entities[adminId];
+    }
+
+    const tileMapIds = Object.keys(entities).filter(id => getRawEntityId({ entityId: id }) === TILEMAP_ENTITY_NAME);
+    for (const tileMapId of tileMapIds) {
+        if (tileMapId !== getStore({ key: 'tileMapId' })) delete entities[tileMapId];
     }
 
     Object.entries(entities).forEach(([entityId, entity]) => {
