@@ -141,7 +141,7 @@ export const createEntityGem = ({ gemId, type, deploy = false, x = 0, y = 0 }: {
 
         admin.gems.push(gemId);
 
-        emit({ data: { amount: 1 }, target: 'engine', type: EngineEvents.GEM_QUEST });
+        emit({ data: { amount: 1 }, target: 'engine', type: EngineEvents.QUEST_GEMS });
 
         if (deploy) {
             emit({ entityId: gemId, target: 'render', type: RenderEvents.GEM_CREATE });

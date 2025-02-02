@@ -1,6 +1,7 @@
 import { Items } from '@/engine/components';
 import { emit } from '@/engine/services/emit';
 import { error } from '@/engine/services/error';
+import { EngineEvents } from '@/engine/services/event';
 import { getBuildData, isBuild } from '@/engine/systems/build';
 import { getAdmin } from '@/engine/systems/entity';
 import { addAdminItem, removeAdminItem } from '@/engine/systems/item';
@@ -56,6 +57,12 @@ export const runBuild = ({ buildName }: { buildName: Items }) => {
 
         for (const output of buildData.forge.outputs) {
             addAdminItem({ amount: output.amount, name: output.name });
+
+            emit({
+                data: { amount: output.name, name: output.amount },
+                target: 'engine',
+                type: EngineEvents.QUEST_FORGE,
+            });
         }
     }
 

@@ -87,9 +87,30 @@ export const progressQuestGems = ({ amount }: { amount: number }) => {
     emit({ target: 'render', type: RenderEvents.QUEST_UPDATE });
 };
 
+export const progressQuestForge = ({ name, amount }: {
+    amount: number,
+    name: Items,
+}) => {
+    const quest = searchQuest({ name, type: 'forge' });
+    if (!(quest)) return;
+    if (quest._done) return;
+
+    const questData = getQuestData({ questName: quest._name });
+    if (!(questData.type === 'forge')) return;
+
+    quest._progress += amount;
+
+    if (quest._progress >= questData.forge.amount) {
+        endQuest({ name: questData.name, type: 'forge' });
+        return;
+    }
+
+    emit({ target: 'render', type: RenderEvents.QUEST_UPDATE });
+};
+
 const endQuest = ({ name, type }: {
     name: string,
-    type: 'mine' | 'carry' | 'gem',
+    type: 'mine' | 'carry' | 'gem' | 'forge',
 }) => {
     const admin = getAdmin();
 
