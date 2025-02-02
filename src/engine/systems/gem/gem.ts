@@ -352,8 +352,9 @@ const runGemCarryDrop = ({ gemId }: { gemId: string }) => {
                 data: { amount: item.amount },
                 entityId: gemId,
                 target: 'engine',
-                type: EngineEvents.GEM_CARRY_QUEST,
+                type: EngineEvents.QUEST_CARRY,
             });
+            emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_STORAGE });
 
             return true;
         }
@@ -990,7 +991,7 @@ export const runGemMine = ({ gemId }: { gemId: string }) => {
             data: { amount: 1, name: drop },
             entityId: gemId,
             target: 'engine',
-            type: EngineEvents.GEM_MINE_QUEST,
+            type: EngineEvents.QUEST_MINE,
         });
     }
 

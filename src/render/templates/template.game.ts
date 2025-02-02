@@ -394,6 +394,8 @@ export const setAdminMode = ({ mode }: { mode: 'base' | 'disable' }) => {
 //#region GEM
 //#region CONSTANTS
 const GEM_TOAST_TIMEOUT = 3000;
+
+type GemMode = 'base' | 'request' | 'hover' | 'disable' | 'work' | 'mine' | 'carry';
 //#endregion
 
 export const createGem = ({ gemId }: { gemId: string }) => {
@@ -423,7 +425,7 @@ export const destroyGem = ({ gemId }: { gemId: string }) => {
 
 export const setGemMode = ({ gemId, mode, remove }: {
     gemId: string,
-    mode: 'base' | 'request' | 'hover' | 'disable' | 'work' | 'mine' | 'carry',
+    mode: GemMode,
     remove?: boolean,
 }) => {
     const gemType = getGemType({ gemId });
@@ -457,7 +459,7 @@ export const setGemMode = ({ gemId, mode, remove }: {
 
 export const setAllGemsMode = ({ gemId, mode, remove }: {
     gemId: string,
-    mode: 'base' | 'request' | 'disable'
+    mode: GemMode,
     remove?: boolean,
 }) => {
     const gemEls = searchElementsByClassName({ className: 'gem', parent: tileMapElId })

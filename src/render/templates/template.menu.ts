@@ -1321,6 +1321,7 @@ const getGemsPagesCount = () => {
 
 const onClickGemsAll = () => {
     DISPLAY_ALL_GEMS = true;
+    DISPLAY_STORE_GEMS = false;
     GEMS_PAGE_INDEX = 0;
 
     updateAdminGems();
@@ -1332,6 +1333,7 @@ const onClickGemsType = () => {
     const gemsTabsCount = Object.values(GemsTabs).length;
 
     DISPLAY_ALL_GEMS = false;
+    DISPLAY_STORE_GEMS = false;
     GEMS_PAGE_INDEX = 0;
 
     GEMS_TAB_INDEX = (GEMS_TAB_INDEX + 1) % gemsTabsCount;
@@ -1351,8 +1353,8 @@ const onClickGemsType = () => {
 };
 
 const onClickGemsStore = () => {
-    DISPLAY_STORE_GEMS = true;
     DISPLAY_ALL_GEMS = false;
+    DISPLAY_STORE_GEMS = true;
     GEMS_PAGE_INDEX = 0;
 
     updateAdminGems();
@@ -1566,8 +1568,8 @@ const createWorkshopCraft = ({ craft }: { craft: string }) => {
         id: `CraftCountValue${craft}`,
         parent: `CraftCount${craft}`,
         text: (isItemGem({ itemName: craft as Items }))
-            ? `${getGemTypeCount({ gemType: itemToGem({ itemName: craft as Items }) })}`
-            : `${getItemCount({ itemName: craft as Items })}`,
+            ? `${getGemTypeCount({ gemType: itemToGem({ itemName: craft as Items }) }) ?? 0}`
+            : `${getItemCount({ itemName: craft as Items }) ?? 0}`,
     });
 };
 //#endregion
@@ -1825,7 +1827,7 @@ const createLabActions = () => {
 
     createButton({
         click: () => onClickLabDisplayDone(),
-        css: 'done p-box',
+        css: 'done t-10 p-box',
         id: 'LabDisplayDone',
         parent: 'LabActions',
         text: (LAB_DISPLAY_DONE)

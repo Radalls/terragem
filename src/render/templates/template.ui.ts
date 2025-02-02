@@ -711,8 +711,13 @@ export const displayGemView = ({ gemId, display }: {
         updateGemView();
 
         setGemMode({ gemId, mode: 'request' });
+        setGemMode({ gemId, mode: 'disable', remove: true });
         setGemMode({ gemId, mode: 'hover', remove: true });
+
         setAllGemsMode({ gemId, mode: 'disable' });
+        setAllGemsMode({ gemId, mode: 'request', remove: true });
+        setAllGemsMode({ gemId, mode: 'hover', remove: true });
+
         setAdminMode({ mode: 'disable' });
 
         displayGemPath({ display: true });
@@ -724,7 +729,12 @@ export const displayGemView = ({ gemId, display }: {
 
         setGemMode({ gemId, mode: 'request', remove: true });
         setGemMode({ gemId, mode: 'hover', remove: true });
+        setGemMode({ gemId, mode: 'disable', remove: true });
+
         setAllGemsMode({ gemId, mode: 'disable', remove: true });
+        setAllGemsMode({ gemId, mode: 'request', remove: true });
+        setAllGemsMode({ gemId, mode: 'hover', remove: true });
+
         setAdminMode({ mode: 'base' });
 
         displayGemPath({ display: false });
@@ -1167,17 +1177,22 @@ export const updateQuests = () => {
         }
 
         const questData = getQuestData({ questName: quest._name });
+        const questTotal = (questData.type === 'mine')
+            ? questData.mine.amount
+            : (questData.type === 'carry')
+                ? questData.carry
+                : (questData.type === 'gem')
+                    ? questData.gems
+                    : (questData.type === 'forge')
+                        ? questData.forge.amount
+                        : 0;
 
         if (!(questEl)) {
             createQuest({
                 name: quest._name,
                 progress: quest._progress,
                 text: questData.text,
-                total: (questData.type === 'mine')
-                    ? questData.mine.amount
-                    : (questData.type === 'carry')
-                        ? questData.carry
-                        : questData.gems,
+                total: questTotal,
             });
         }
         else {
@@ -1185,11 +1200,7 @@ export const updateQuests = () => {
                 name: quest._name,
                 progress: quest._progress,
                 text: questData.text,
-                total: (questData.type === 'mine')
-                    ? questData.mine.amount
-                    : (questData.type === 'carry')
-                        ? questData.carry
-                        : questData.gems,
+                total: questTotal,
             });
         }
     }

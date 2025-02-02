@@ -6,7 +6,7 @@ import { getAdmin } from '@/engine/systems/entity';
 //#region UTILS
 export const searchQuest = ({ name }: {
     name: string
-    type: 'mine' | 'carry' | 'gem'
+    type: 'mine' | 'carry' | 'gem' | 'forge'
 }) => {
     const admin = getAdmin();
 

@@ -31,6 +31,15 @@ export type QuestData =
         type: 'gem';
         unlock: { name: string, type: 'lab' | 'quest' }[];
     }
+    | {
+        forge: { amount: number, name: string };
+        image: string;
+        name: string;
+        reward: ({ amount: number, type: 'lab' } | { amount: number, name: Items, type: 'item' })[];
+        text: string;
+        type: 'forge';
+        unlock: { name: string, type: 'lab' | 'quest' }[];
+    }
 //#endregion
 
 //#region DATA

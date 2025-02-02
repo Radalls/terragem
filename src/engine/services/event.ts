@@ -23,9 +23,8 @@ import {
 } from '@/engine/systems/gem';
 import { craftAdminItem } from '@/engine/systems/item';
 import { runLab } from '@/engine/systems/lab';
-import { progressQuestCarry, progressQuestGems, progressQuestMine } from '@/engine/systems/quest';
+import { progressQuestCarry, progressQuestForge, progressQuestGems, progressQuestMine } from '@/engine/systems/quest';
 import { selectTile } from '@/engine/systems/tilemap';
-import { RenderEvents } from '@/render/events';
 
 //#region TYPES
 export type EngineEvent = {
@@ -47,20 +46,22 @@ export enum EngineEvents {
     GEM_CARRY_CANCEL = 'GEM_CARRY_CANCEL',
     GEM_CARRY_CONFIRM_START = 'GEM_CARRY_CONFIRM_START',
     GEM_CARRY_CONFIRM_TARGET = 'GEM_CARRY_CONFIRM_TARGET',
-    GEM_CARRY_QUEST = 'GEM_CARRY_QUEST',
     GEM_DESTROY = 'GEM_DESTROY',
     GEM_EQUIP = 'GEM_EQUIP',
     GEM_FLOOR_CANCEL = 'GEM_FLOOR_CANCEL',
     GEM_LIFT_CANCEL = 'GEM_LIFT_CANCEL',
     GEM_MINE_CANCEL = 'GEM_MINE_CANCEL',
-    GEM_MINE_QUEST = 'GEM_MINE_QUEST',
     GEM_MOVE_CANCEL = 'GEM_MOVE_CANCEL',
     GEM_MOVE_CONFIRM = 'GEM_MOVE_CONFIRM',
-    GEM_QUEST = 'GEM_QUEST',
     GEM_SHAFT_CANCEL = 'GEM_SHAFT_CANCEL',
     GEM_TUNNEL_CANCEL = 'GEM_TUNNEL_CANCEL',
     /* LAB */
     LAB_RUN = 'LAB_RUN',
+    /* QUEST */
+    QUEST_CARRY = 'QUEST_CARRY',
+    QUEST_FORGE = 'QUEST_FORGE',
+    QUEST_GEMS = 'QUEST_GEMS',
+    QUEST_MINE = 'QUEST_MINE',
     /* TILEMAP */
     TILE_SELECT = 'TILE_SELECT',
 }
@@ -111,6 +112,10 @@ export const onEvent = ({
     else if (type === EngineEvents.AUDIO_STOP && data.audioName) {
         stopAudio({ audioName: data.audioName });
     }
+    /* CRAFT */
+    else if (type === EngineEvents.CRAFT_REQUEST && data) {
+        craftAdminItem({ itemName: data });
+    }
     /* GEM */
     /* GEM MOVE */
     else if (type === GameEvents.GEM_MOVE_REQUEST && entityId) {
@@ -127,11 +132,6 @@ export const onEvent = ({
         stopGemMove({ gemId: entityId });
     }
     /* GEM CARRY */
-    else if (type === EngineEvents.GEM_CARRY_QUEST && (data.amount !== undefined)) {
-        progressQuestCarry({ amount: data.amount });
-
-        emit({ target: 'render', type: RenderEvents.ADMIN_UPDATE_STORAGE });
-    }
     else if (type === GameEvents.GEM_CARRY_REQUEST && entityId) {
         setState({ key: 'requestGemCarryStart', value: true });
         setState({ key: 'requestTile', value: true });
@@ -164,9 +164,6 @@ export const onEvent = ({
         stopGemLift({ gemId: entityId });
     }
     /* GEM MINE */
-    else if (type === EngineEvents.GEM_MINE_QUEST && (data.amount !== undefined) && data.name) {
-        progressQuestMine({ amount: data.amount, name: data.name });
-    }
     else if (type === GameEvents.GEM_MINE_REQUEST && entityId) {
         requestGemMine({ gemId: entityId });
     }
@@ -200,20 +197,26 @@ export const onEvent = ({
     else if (type === EngineEvents.GEM_EQUIP && entityId) {
         equipGem({ gemId: entityId });
     }
-    else if (type === EngineEvents.GEM_QUEST && (data.amount !== undefined)) {
-        progressQuestGems({ amount: data.amount });
-    }
     /* LAB */
     else if (type === EngineEvents.LAB_RUN && data) {
         runLab({ name: data });
     }
+    /* QUEST */
+    else if (type === EngineEvents.QUEST_MINE && (data.amount !== undefined) && data.name) {
+        progressQuestMine({ amount: data.amount, name: data.name });
+    }
+    else if (type === EngineEvents.QUEST_CARRY && (data.amount !== undefined)) {
+        progressQuestCarry({ amount: data.amount });
+    }
+    else if (type === EngineEvents.QUEST_GEMS && (data.amount !== undefined)) {
+        progressQuestGems({ amount: data.amount });
+    }
+    else if (type === EngineEvents.QUEST_FORGE && (data.amount !== undefined) && data.name) {
+        progressQuestForge({ amount: data.amount, name: data.name });
+    }
     /* TILEMAP */
     else if (type === EngineEvents.TILE_SELECT && entityId) {
         selectTile({ selectedTileId: entityId });
-    }
-    /* CRAFT */
-    else if (type === EngineEvents.CRAFT_REQUEST && data) {
-        craftAdminItem({ itemName: data });
     }
     else error({
         message: `Unknown event type: ${type} ${entityId} ${data}`,
