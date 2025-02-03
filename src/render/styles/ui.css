@@ -141,6 +141,15 @@
     height: 5vh;
 }
 
+/* BUILD */
+.ui .build .close {
+    top: -3vh;
+    right: -3vh;
+    width: 5vh;
+    min-width: auto;
+    height: 5vh;
+}
+
 /* ADMIN */
 .ui .admin-icon {
     background-color: #30CB48;

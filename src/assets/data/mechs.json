@@ -3,19 +3,19 @@
     {
         "name": "MK1_MINE",
         "stats": {
-            "digSpeed": 2,
+            "digSpeed": 0.5,
             "digStrength": 1,
-            "itemCapacity": 10
+            "itemCapacity": 20
         }
     },
     { "@": "CARRY" },
     {
         "name": "MK1_CARRY",
         "stats": {
-            "itemSpeed": 2,
+            "itemSpeed": 1,
             "itemCapacity": 30,
             "itemAmount": 1,
-            "itemRange": 3
+            "itemRange": 2
         }
     },
     { "@": "TUNNEL" },

@@ -3,16 +3,25 @@ import { Items } from '@/engine/components';
 import { error } from '@/engine/services/error';
 
 //#region TYPES
-export type BuildData = {
-    forge?: {
-        inputs: { amount: number, name: Items }[];
-        outputs: { amount: number, name: Items }[];
+export type BuildData =
+    | {
+        height: number;
+        name: string;
+        type: 'admin';
+        width: number;
+        x: number;
     }
-    height: number;
-    name: string;
-    width: number;
-    x: number;
-};
+    | {
+        forge: {
+            inputs: { amount: number, name: Items }[];
+            outputs: { amount: number, name: Items }[];
+        };
+        height: number;
+        name: string;
+        type: 'forge';
+        width: number;
+        x: number;
+    };
 //#endregion
 
 //#region DATA

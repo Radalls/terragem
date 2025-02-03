@@ -1601,8 +1601,8 @@ const updateWorkshopCraft = ({ craft }: { craft: string }) => {
     if (count) {
         const countEl = getElement({ elId: `CraftCountValue${craft}` });
         countEl.innerText = (isItemGem({ itemName: craft as Items }))
-            ? `${getGemTypeCount({ gemType: itemToGem({ itemName: craft as Items }) })}`
-            : `${getItemCount({ itemName: craft as Items })}`;
+            ? `${getGemTypeCount({ gemType: itemToGem({ itemName: craft as Items }) }) ?? 0}`
+            : `${getItemCount({ itemName: craft as Items }) ?? 0}`;
     }
 
     for (const comp of craftData.components) {

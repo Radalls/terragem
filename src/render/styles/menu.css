@@ -174,8 +174,7 @@
 
 .workshop .craft .count {
     top: 50%;
-    right: -4.5vh;
-    left: inherit;
+    left: 99%;
     transform: translateY(-50%);
     min-width: auto;
 }
