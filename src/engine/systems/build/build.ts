@@ -38,31 +38,27 @@ export const runBuild = ({ buildName }: { buildName: Items }) => {
     const admin = getAdmin();
     const buildData = getBuildData({ buildName });
 
-    if (!(buildData.forge)) throw error({
-        message: `${buildName} has no forge data`,
-        where: runBuild.name,
-    });
+    if (buildData.type === 'forge') {
+        const forgeCount = (buildName === Items.BUILD_FORGE_VULKAN)
+            ? admin.builds.forges.vulkan
+            : admin.builds.forges.oryon;
 
-    //TODO: future proof
-    const forgeCount = (buildName === Items.BUILD_FORGE_VULKAN)
-        ? admin.builds.forges.vulkan
-        : admin.builds.forges.oryon;
+        for (let i = 0; i < forgeCount; i++) {
+            for (const input of buildData.forge.inputs) {
+                const removeItem = removeAdminItem({ amount: input.amount, name: input.name });
 
-    for (let i = 0; i < forgeCount; i++) {
-        for (const input of buildData.forge.inputs) {
-            const removeItem = removeAdminItem({ amount: input.amount, name: input.name });
+                if (!(removeItem)) return;
+            }
 
-            if (!(removeItem)) return;
-        }
+            for (const output of buildData.forge.outputs) {
+                addAdminItem({ amount: output.amount, name: output.name });
 
-        for (const output of buildData.forge.outputs) {
-            addAdminItem({ amount: output.amount, name: output.name });
-
-            emit({
-                data: { amount: output.name, name: output.amount },
-                target: 'engine',
-                type: EngineEvents.QUEST_FORGE,
-            });
+                emit({
+                    data: { amount: output.amount, name: output.name },
+                    target: 'engine',
+                    type: EngineEvents.QUEST_FORGE,
+                });
+            }
         }
     }
 

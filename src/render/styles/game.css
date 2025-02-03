@@ -31,6 +31,12 @@
     border: solid 0.4vh #30CB48;
 }
 
+/* BUILD */
+.tilemap .build {
+    background-color: transparent;
+    border: none;
+}
+
 /* ADMIN */
 .tilemap .admin {
     background-color: transparent;

@@ -298,25 +298,132 @@ export const createBuild = ({ buildName }: { buildName: Items }) => {
     const admin = getAdmin();
 
     const buildData = getBuildData({ buildName });
-    const buildCount = (buildName === Items.BUILD_FORGE_VULKAN)
-        ? admin.builds.forges.vulkan
-        : admin.builds.forges.oryon;
+    if (buildData.type === 'forge') {
+        const forgeCount = (buildName === Items.BUILD_FORGE_VULKAN)
+            ? admin.builds.forges.vulkan
+            : admin.builds.forges.oryon;
 
-    createElement({
-        css: 'build',
-        id: `Build${buildName}-${buildCount}`,
-        image: getSpritePath({ spriteName: `build_${buildName.toLowerCase()}` }),
-        parent: tileMapElId,
-    });
+        createButton({
+            click: () => onClickBuild({ buildName }),
+            css: 'build',
+            id: `Build${buildName}-${forgeCount}`,
+            image: getSpritePath({ spriteName: `build_${buildName.toLowerCase()}` }),
+            parent: tileMapElId,
+        });
 
-    placeTileEntity({
-        elId: `Build${buildName}-${buildCount}`,
-        height: buildData.height,
-        width: buildData.width,
-        x: buildData.x,
-        y: 0 - (buildCount - 1),
-        z: 0,
-    });
+        placeTileEntity({
+            elId: `Build${buildName}-${forgeCount}`,
+            height: buildData.height,
+            width: buildData.width,
+            x: buildData.x,
+            y: 0 - (forgeCount - 1),
+            z: 0,
+        });
+    }
+};
+
+const onClickBuild = ({ buildName }: { buildName: Items }) => {
+    const admin = getAdmin();
+
+    const buildData = getBuildData({ buildName });
+
+    const buildInfoElExist = checkElement({ elId: 'BuildInfo' });
+    if (buildInfoElExist) return;
+
+    if (buildData.type === 'forge') {
+        const forgeEl = getElement({ elId: `Build${buildName}-${1}` });
+
+        const buildInfoEl = createElement({
+            css: 'build frame row align g-8 p-box',
+            id: 'BuildInfo',
+            parent: 'UI',
+        });
+        buildInfoEl.style.left = `${forgeEl.offsetLeft + TILE_SIZE}px`;
+        buildInfoEl.style.top = `${forgeEl.offsetTop - TILE_SIZE}px`;
+
+        for (const input of buildData.forge.inputs) {
+            createElement({
+                absolute: false,
+                css: 'row align g-4',
+                id: `BuildInfoInput${input.name}`,
+                parent: 'BuildInfo',
+            });
+
+            createElement({
+                absolute: false,
+                css: 'icon',
+                id: `BuildInfoInputIcon${input.name}`,
+                image: getSpritePath({ spriteName: `resource_${input.name.toLowerCase()}` }),
+                parent: `BuildInfoInput${input.name}`,
+            });
+
+            createElement({
+                absolute: false,
+                css: 't-10',
+                id: `BuildInfoInputAmount${input.name}`,
+                parent: `BuildInfoInput${input.name}`,
+                text: `x${input.amount}`,
+            });
+        }
+
+        createElement({
+            absolute: false,
+            css: 'row align g-4',
+            id: 'BuildInfoSpeed',
+            parent: 'BuildInfo',
+        });
+
+        createElement({
+            absolute: false,
+            css: 'icon',
+            id: 'BuildInfoSpeedIcon',
+            image: getSpritePath({ spriteName: 'lab_run' }),
+            parent: 'BuildInfoSpeed',
+        });
+
+        createElement({
+            absolute: false,
+            css: 't-10',
+            id: 'BuildInfoSpeedAmount',
+            parent: 'BuildInfoSpeed',
+            text: (buildName === Items.BUILD_FORGE_VULKAN)
+                ? `${admin.stats._forgeVulkanSpeed * 100}s`
+                : `${admin.stats._forgeOryonSpeed * 100}s`,
+        });
+
+        for (const output of buildData.forge.outputs) {
+            createElement({
+                absolute: false,
+                css: 'row align g-4',
+                id: `BuildInfoOutput${output.name}`,
+                parent: 'BuildInfo',
+            });
+
+            createElement({
+                absolute: false,
+                css: 'icon',
+                id: `BuildInfoOutputIcon${output.name}`,
+                image: getSpritePath({ spriteName: `resource_${output.name.toLowerCase()}` }),
+                parent: `BuildInfoOutput${output.name}`,
+            });
+
+            createElement({
+                absolute: false,
+                css: 't-10',
+                id: `BuildInfoOutputAmount${output.name}`,
+                parent: `BuildInfoOutput${output.name}`,
+                text: `x${output.amount}`,
+            });
+        }
+
+        createButton({
+            click: () => destroyElement({ elId: 'BuildInfo' }),
+            css: 'close enable',
+            id: 'BuildInfoClose',
+            image: getSpritePath({ spriteName: 'ui_close' }),
+            parent: 'BuildInfo',
+        });
+    }
 };
 
 //#region ADMIN
